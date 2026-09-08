@@ -1,0 +1,1640 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
+body{margin:0;background:#e6e0d3;font-family:"Archivo",system-ui,sans-serif;color:#171A18;font-size:15px}
+a{color:#F26A2E}a:hover{color:#d9551c}
+*{box-sizing:border-box}
+input{font-family:inherit}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid #F26A2E;outline-offset:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes detailIn{0%{opacity:0;transform:scale(.92) translateY(28px);border-radius:28px}100%{opacity:1;transform:none;border-radius:0}}
+@keyframes momentIn{0%{opacity:0;transform:translateY(6%) scale(1.02)}100%{opacity:1;transform:none}}
+@keyframes frameIn{0%{opacity:0;transform:scale(1.04)}100%{opacity:1;transform:none}}
+@keyframes toastIn{0%{opacity:0;transform:translate(-50%,10px) scale(.9)}15%{opacity:1;transform:translate(-50%,0) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-6px)}}
+@keyframes splashLogo{0%{opacity:0;transform:scale(.86)}60%{opacity:1;transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
+@keyframes splashBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes shimmer{0%{opacity:.45}50%{opacity:.9}100%{opacity:.45}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes topoDraw{0%{stroke-dashoffset:900;opacity:1}70%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes qrIn{0%{opacity:0;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}
+@keyframes readyIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes badgePop{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+.hs::-webkit-scrollbar{display:none}
+.hs{scrollbar-width:none}
+/* El snap del carril vive aquí y no en el estilo inline: React re-aplica los estilos en
+   cada render y borraría la suspensión temporal que necesita la animación de los botones. */
+.rail-snap{scroll-snap-type:x proximity}
+
+
+html,body{margin:0;width:100%;height:100%;min-height:100%;background:#e6e0d3;overflow:hidden}
+body{display:flex;justify-content:center;align-items:flex-start}
+#app{width:100%;height:100%;display:flex;justify-content:center;align-items:flex-start}
+.production-device{width:402px;height:100dvh;max-height:874px;min-height:620px;background:#F6F1E7;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(23,26,24,.18)}
+@media (max-width:480px){html,body{background:#F6F1E7}.production-device{width:100vw;height:100dvh;max-height:none;min-height:0;box-shadow:none}}
+/* Improve safe-area behavior on real phones */
+@supports(padding:max(0px)){.production-device{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}}
+</style></head><body><div id="app"><div id="appRoot" class="production-device"></div></div>
+<template id="dc-template">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F6F1E7;color:#171A18;font-family:'Archivo',system-ui,sans-serif;position:relative;overflow:hidden">
+
+    <!-- SPLASH -->
+    <sc-if value="{{ isSplash }}" hint-placeholder-val="{{ true }}">
+      <div data-screen-label="Splash" onClick="{{ goHome }}" style="flex:1;background:#0B2B24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;cursor:pointer;position:relative">
+        <img src="img/logo-cumbre-transparente.png" alt="Cumbre Salvaje" style="width:240px;height:auto;display:block;animation:splashLogo .9s cubic-bezier(.2,.8,.2,1) both">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;animation:fadeIn .8s .5s both">
+          <div style="font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#F6F1E7;font-weight:800">Cumbre GO</div>
+          <div style="width:88px;height:3px;border-radius:2px;background:#F26A2E;transform-origin:left;animation:splashBar 1.4s .6s cubic-bezier(.2,.8,.2,1) both"></div>
+        </div>
+        <div style="position:absolute;bottom:52px;font-size:11px;color:rgba(246,241,231,.55);animation:fadeIn 1s 1.2s both">Aventura · Naturaleza · Experiencias inolvidables</div>
+      </div>
+    </sc-if>
+
+    <!-- HOME -->
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Inicio" style="flex:1;overflow-y:auto;overflow-x:hidden;animation:fadeUp .35s ease both" class="hs">
+        <div style="position:relative;height:520px;background:#0B2B24">
+          <img src="img/24-portada-amigos-ranger-puente.jpg" alt="Ranger cruzando el puente colgante de Cumbre Salvaje" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,.42) 0%,rgba(11,43,36,0) 30%,rgba(11,43,36,0) 48%,rgba(11,43,36,.94) 100%)"></div>
+          <div style="position:absolute;top:60px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:center">
+            <img src="img/logo-cumbre-transparente.png" alt="Cumbre Salvaje" style="width:118px;height:auto;display:block">
+            <button onClick="{{ goTipo }}" style="height:38px;padding:0 14px;border-radius:999px;background:rgba(246,241,231,.16);backdrop-filter:blur(12px);border:1px solid rgba(246,241,231,.3);color:#F6F1E7;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">{{ visitLabel }}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg></button>
+          </div>
+          <div style="position:absolute;left:20px;right:20px;bottom:28px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#F6B26B;font-weight:800">{{ homeKicker }}</div>
+            <div style="font-size:38px;font-weight:800;line-height:1;letter-spacing:-.025em;color:#F6F1E7;text-wrap:pretty">{{ homeTitle }}</div>
+            <div style="font-size:15px;color:rgba(246,241,231,.82);line-height:1.4">Arma una experiencia a tu medida.</div>
+          </div>
+        </div>
+
+        <div style="padding:26px 0 0;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 20px">
+            <div style="font-size:20px;font-weight:800;letter-spacing:-.015em">{{ recoKicker }}</div>
+            <button onClick="{{ goExplorarTodo }}" style="background:none;border:0;padding:0;font-size:13px;font-weight:600;color:#F26A2E">Ver todo</button>
+          </div>
+          <div style="display:flex;gap:12px;overflow-x:auto;padding:0 20px 6px;scroll-snap-type:x mandatory;scroll-padding:20px" class="hs">
+            <sc-for list="{{ recos }}" as="r" hint-placeholder-count="3">
+              <button onClick="{{ r.open }}" style="flex:none;width:228px;height:310px;scroll-snap-align:start;text-align:left;padding:0;border:0;border-radius:22px;background:{{ r.tile }};position:relative;overflow:hidden;color:#F6F1E7;box-shadow:0 10px 26px rgba(23,26,24,.14);transition:transform .15s" style-active="transform:scale(.97)">
+                <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ true }}"><img src="{{ r.img }}" alt="{{ r.name }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:{{ r.ipos }}"></sc-if>
+                <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,0) 40%,rgba(11,43,36,.92) 100%)"></div>
+                <sc-if value="{{ r.noImg }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:22px;left:18px;width:56px;height:56px;border-radius:16px;background:rgba(246,241,231,.14);display:flex;align-items:center;justify-content:center">{{ r.iconEl }}</div></sc-if>
+                <div style="position:absolute;left:16px;right:16px;bottom:16px;display:flex;flex-direction:column;gap:4px">
+                  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#F6B26B;font-weight:800">{{ r.group }}</div>
+                  <div style="font-size:21px;font-weight:800;line-height:1.05;letter-spacing:-.015em">{{ r.name }}</div>
+                  <div style="font-size:12px;color:rgba(246,241,231,.82)">{{ r.priceLabel }}</div>
+                </div>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="padding:26px 20px 0">
+          <button onClick="{{ goMomentos }}" style="width:100%;height:230px;text-align:left;padding:0;border:0;border-radius:24px;position:relative;overflow:hidden;color:#F6F1E7;background:#0B2B24;box-shadow:0 14px 34px rgba(23,26,24,.18);transition:transform .15s" style-active="transform:scale(.98)">
+            <img src="img/05-tirolesa-emocion.jpg" alt="Emoción en la tirolesa" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%">
+            <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,43,36,.85) 0%,rgba(11,43,36,.35) 60%,rgba(11,43,36,.1) 100%)"></div>
+            <div style="position:absolute;left:20px;top:20px;bottom:20px;display:flex;flex-direction:column;justify-content:space-between;width:60%">
+              <div style="width:48px;height:48px;border-radius:999px;background:#F6F1E7;color:#0B2B24;display:flex;align-items:center;justify-content:center;padding-left:3px"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z"/></svg></div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#F6B26B;font-weight:800">Momentos Salvajes</div>
+                <div style="font-size:26px;font-weight:800;line-height:1;letter-spacing:-.02em">Mira cómo se vive.</div>
+                <div style="font-size:13px;color:rgba(246,241,231,.82)">Fotos y videos del parque, uno tras otro.</div>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <div style="padding:30px 20px 0;display:flex;flex-direction:column;gap:14px">
+          <div style="font-size:20px;font-weight:800;letter-spacing:-.015em">Explora el parque</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:150px;gap:12px">
+            <sc-for list="{{ homeCats }}" as="c" hint-placeholder-count="5">
+              <button onClick="{{ c.go }}" style="text-align:left;padding:0;border:0;border-radius:20px;background:linear-gradient(160deg,#3a423d 0%,#171A18 100%);position:relative;overflow:hidden;color:#F6F1E7;grid-row:{{ c.span }};transition:transform .15s" style-active="transform:scale(.97)">
+                <img src="{{ c.img }}" alt="{{ c.name }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:{{ c.pos }}">
+                <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,0) 40%,rgba(11,43,36,.88) 100%)"></div>
+                <div style="position:absolute;left:14px;right:14px;bottom:14px;display:flex;flex-direction:column;gap:2px"><div style="font-size:16px;font-weight:800;line-height:1.1">{{ c.name }}</div><sc-if value="{{ c.hasSub }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:rgba(246,241,231,.8);line-height:1.3">{{ c.sub }}</div></sc-if></div>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="padding:30px 20px 0;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="font-size:20px;font-weight:800;letter-spacing:-.015em">Así funciona</div>
+            <sc-if value="{{ howShowArrows }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:6px;flex:none">
+                <button onClick="{{ howPrev }}" data-how-arrow="prev" aria-label="Ver paso anterior" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.1);display:flex;align-items:center;justify-content:center;padding:0;transition:opacity .2s,transform .12s" style-active="transform:scale(.92)" style-focus="outline:2px solid #F26A2E;outline-offset:2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                <button onClick="{{ howNext }}" data-how-arrow="next" aria-label="Ver paso siguiente" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.1);display:flex;align-items:center;justify-content:center;padding:0;transition:opacity .2s,transform .12s" style-active="transform:scale(.92)" style-focus="outline:2px solid #F26A2E;outline-offset:2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+              </div>
+            </sc-if>
+          </div>
+          <div ref="{{ howRef }}" tabindex="0" role="group" aria-label="Cómo funciona la reservación" style="display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;padding:0 0 6px;cursor:grab;user-select:none;-webkit-user-select:none" style-focus="outline:2px solid #F26A2E;outline-offset:4px" class="hs rail-snap">
+            <div style="flex:none;width:200px;padding:16px;border-radius:18px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:8px;scroll-snap-align:start"><div style="width:28px;height:28px;border-radius:999px;background:#F26A2E;color:#F6F1E7;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">1</div><div style="font-size:14px;line-height:1.35;font-weight:600">Arma tu aventura y ve el total estimado en tiempo real.</div></div>
+            <div style="flex:none;width:200px;padding:16px;border-radius:18px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:8px;scroll-snap-align:start"><div style="width:28px;height:28px;border-radius:999px;background:#F26A2E;color:#F6F1E7;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">2</div><div style="font-size:14px;line-height:1.35;font-weight:600">Envía tu Pase de Aventura al WhatsApp oficial.</div></div>
+            <div style="flex:none;width:200px;padding:16px;border-radius:18px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:8px;scroll-snap-align:start"><div style="width:28px;height:28px;border-radius:999px;background:#F26A2E;color:#F6F1E7;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">3</div><div style="font-size:14px;line-height:1.35;font-weight:600">Aparta con el 50% y recibe tu Pase Salvaje con QR.</div></div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;padding-top:2px">
+            <sc-for list="{{ howDots }}" as="d" hint-placeholder-count="3"><button onClick="{{ d.go }}" data-how-dot="{{ d.i }}" aria-label="Ir al paso" style="height:6px;border-radius:999px;border:0;padding:0;transition:width .25s,background .25s" style-focus="outline:2px solid #F26A2E;outline-offset:3px"></button></sc-for>
+          </div>
+        </div>
+        <div style="height:190px"></div>
+      </div>
+      <div style="position:absolute;left:0;right:0;bottom:100px;padding:0 20px;pointer-events:none">
+        <button onClick="{{ startBuilder }}" style="pointer-events:auto;width:100%;height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 14px 34px rgba(242,106,46,.35);transition:transform .12s" style-active="transform:scale(.985);background:#d9551c">Armar mi aventura<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </sc-if>
+
+    <!-- TIPO DE VISITA -->
+    <sc-if value="{{ isTipo }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Tipo de visita" style="flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .35s ease both">
+        <div style="padding:64px 20px 0;display:flex;align-items:center;gap:12px">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;border:0;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.12);display:flex;align-items:center;justify-content:center;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div style="font-size:12px;font-weight:600;color:rgba(23,26,24,.6)">Personaliza tu inicio</div>
+        </div>
+        <div style="padding:22px 20px 14px;font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">¿Con quién vienes?</div>
+        <div style="flex:1;overflow:auto;padding:0 20px 40px;display:flex;flex-direction:column;gap:10px" class="hs">
+          <sc-for list="{{ visitTypes }}" as="t" hint-placeholder-count="6">
+            <button onClick="{{ t.select }}" style="width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border:2px solid {{ t.border }};border-radius:18px;background:{{ t.bg }};color:#171A18;transition:transform .12s" style-active="transform:scale(.98)">
+              <div style="display:flex;flex-direction:column;gap:3px">
+                <div style="font-size:18px;font-weight:800;letter-spacing:-.01em">{{ t.label }}</div>
+                <div style="font-size:12px;color:rgba(23,26,24,.6)">{{ t.hint }}</div>
+              </div>
+              <div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ t.ring }};background:{{ t.fill }};flex:none"></div>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- EXPLORAR -->
+    <sc-if value="{{ isExplorar }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Explorar" style="flex:1;display:flex;flex-direction:column;animation:fadeUp .35s ease both;min-height:0">
+        <div style="padding:64px 20px 0;display:flex;align-items:center;gap:12px">
+          <button onClick="{{ goHome }}" style="width:40px;height:40px;border-radius:999px;border:0;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.12);display:flex;align-items:center;justify-content:center;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div style="font-size:26px;font-weight:800;letter-spacing:-.02em">Explorar</div>
+        </div>
+        <div ref="{{ chipsRef }}" style="display:flex;gap:8px;margin-top:16px;padding:0 20px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;width:100%;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:pan-x" class="hs">
+          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+            <button onClick="{{ c.select }}" data-chip="{{ c.id }}" style="flex:none;height:40px;padding:0 16px;border-radius:999px;font-size:13px;font-weight:600;border:0;background:{{ c.bg }};color:{{ c.color }};white-space:nowrap;transition:background .2s,color .2s,transform .12s;box-shadow:0 1px 2px rgba(23,26,24,.06);cursor:inherit;user-select:none" style-active="transform:scale(.95)">{{ c.name }}</button>
+          </sc-for>
+          <div style="flex:none;width:20px;height:1px"></div>
+        </div>
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 20px 130px;display:flex;flex-direction:column;gap:14px" class="hs">
+          <sc-if value="{{ loadingExplore }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="height:240px;border-radius:22px;background:#dcd6ca;animation:shimmer 1.2s infinite"></div>
+              <div style="height:14px;width:60%;border-radius:7px;background:#dcd6ca;animation:shimmer 1.2s .1s infinite"></div>
+              <div style="height:12px;width:40%;border-radius:6px;background:#dcd6ca;animation:shimmer 1.2s .2s infinite"></div>
+              <div style="height:96px;border-radius:18px;background:#dcd6ca;animation:shimmer 1.2s .3s infinite;margin-top:10px"></div>
+              <div style="height:96px;border-radius:18px;background:#dcd6ca;animation:shimmer 1.2s .4s infinite"></div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ showExplore }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ exploreItems }}" as="e" hint-placeholder-count="3">
+              <sc-if value="{{ e.hasImg }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ e.open }}" style="text-align:left;padding:0;border:0;background:transparent;color:#171A18;display:flex;flex-direction:column;gap:10px;animation:fadeUp .4s ease both;transition:transform .15s" style-active="transform:scale(.98)">
+                  <div style="position:relative;width:100%;height:250px;border-radius:22px;background:#0B2B24;overflow:hidden;box-shadow:0 10px 26px rgba(23,26,24,.12)">
+                    <img src="{{ e.img }}" alt="{{ e.name }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ e.ipos }};display:block">
+                    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,.25) 0%,rgba(11,43,36,0) 30%)"></div>
+                    <div style="position:absolute;top:14px;left:14px;border-radius:999px;background:rgba(246,241,231,.92);color:#171A18;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;padding:6px 10px">{{ e.group }}</div>
+                    <sc-if value="{{ e.selected }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:14px;right:14px;border-radius:999px;background:#F26A2E;color:#F6F1E7;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;padding:6px 10px">En mi aventura</div></sc-if>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;width:100%;padding:0 4px">
+                    <div style="display:flex;flex-direction:column;gap:3px"><div style="font-size:18px;font-weight:800;letter-spacing:-.01em;line-height:1.1">{{ e.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ e.meta }}</div></div>
+                    <div style="text-align:right;flex:none"><div style="font-size:14px;font-weight:800">{{ e.priceShort }}</div><div style="font-size:10px;color:rgba(23,26,24,.55)">{{ e.perLabel }}</div></div>
+                  </div>
+                </button>
+              </sc-if>
+              <sc-if value="{{ e.noImg }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ e.open }}" style="text-align:left;padding:12px;border:0;border-radius:20px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);color:#171A18;display:flex;align-items:center;gap:14px;animation:fadeUp .4s ease both;transition:transform .15s" style-active="transform:scale(.98)">
+                  <div style="width:84px;height:84px;border-radius:18px;background:linear-gradient(160deg,#3a423d 0%,#171A18 100%);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex:none">{{ e.iconEl }}<div style="font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(246,241,231,.55);font-weight:700">Foto pendiente</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:3px"><div style="font-size:16px;font-weight:800;line-height:1.1">{{ e.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6);line-height:1.35">{{ e.shortDesc }}</div></div>
+                  <div style="text-align:right;flex:none"><div style="font-size:14px;font-weight:800">{{ e.priceShort }}</div><div style="font-size:10px;color:rgba(23,26,24,.55)">{{ e.perLabel }}</div></div>
+                </button>
+              </sc-if>
+            </sc-for>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- MOMENTOS SALVAJES -->
+    <sc-if value="{{ isMomentos }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Momentos Salvajes" onTouchStart="{{ momTouchStart }}" onTouchEnd="{{ momTouchEnd }}" onWheel="{{ momWheel }}" style="flex:1;position:relative;background:#050f0c;overflow:hidden;color:#F6F1E7;user-select:none">
+        <div key="{{ momentKey }}" style="position:absolute;inset:0;animation:momentIn .45s cubic-bezier(.2,.8,.2,1) both">
+          <img key="{{ frameKey }}" src="{{ mom.frame }}" alt="{{ mom.name }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:{{ mom.framePos }};animation:frameIn .5s ease both">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,15,12,.65) 0%,rgba(5,15,12,0) 22%,rgba(5,15,12,0) 50%,rgba(5,15,12,.92) 100%)"></div>
+          <button onClick="{{ prevFrame }}" aria-label="Anterior" style="position:absolute;left:0;top:120px;bottom:240px;width:35%;background:transparent;border:0;padding:0"></button>
+          <button onClick="{{ nextFrame }}" aria-label="Siguiente" style="position:absolute;right:0;top:120px;bottom:240px;width:65%;background:transparent;border:0;padding:0"></button>
+          <sc-if value="{{ mom.hasBars }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:50px;left:16px;right:16px;display:flex;gap:4px">
+              <sc-for list="{{ mom.bars }}" as="b" hint-placeholder-count="2"><div style="flex:1;height:3px;border-radius:2px;background:{{ b.bg }};transition:background .3s"></div></sc-for>
+            </div>
+          </sc-if>
+          <div style="position:absolute;top:74px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:rgba(246,241,231,.85);text-shadow:0 1px 8px rgba(0,0,0,.4)">Momentos Salvajes</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <sc-if value="{{ mom.isVideo }}" hint-placeholder-val="{{ false }}"><div style="border-radius:999px;background:rgba(246,241,231,.18);backdrop-filter:blur(8px);padding:4px 8px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z"/></svg>Video</div></sc-if>
+              <button onClick="{{ goHome }}" style="width:34px;height:34px;border-radius:999px;border:0;background:rgba(246,241,231,.18);backdrop-filter:blur(8px);color:#F6F1E7;display:flex;align-items:center;justify-content:center;padding:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </div>
+          </div>
+          <div style="position:absolute;right:14px;bottom:200px;display:flex;flex-direction:column;gap:14px;align-items:center">
+            <button onClick="{{ prevMoment }}" style="width:40px;height:40px;border-radius:999px;border:0;background:rgba(246,241,231,.14);backdrop-filter:blur(8px);color:#F6F1E7;display:flex;align-items:center;justify-content:center;padding:0;opacity:{{ prevOpacity }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg></button>
+            <button onClick="{{ saveMoment }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:transparent;color:#F6F1E7;padding:0;font-size:10px;font-weight:600"><div style="width:46px;height:46px;border-radius:999px;background:rgba(246,241,231,.14);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="{{ mom.saveFill }}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg></div>{{ mom.saveLabel }}</button>
+            <button onClick="{{ shareMoment }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:transparent;color:#F6F1E7;padding:0;font-size:10px;font-weight:600"><div style="width:46px;height:46px;border-radius:999px;background:rgba(246,241,231,.14);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/></svg></div>Compartir</button>
+            <button onClick="{{ openMoment }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:transparent;color:#F6F1E7;padding:0;font-size:10px;font-weight:600"><div style="width:46px;height:46px;border-radius:999px;background:rgba(246,241,231,.14);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>Detalles</button>
+            <button onClick="{{ nextMoment }}" style="width:40px;height:40px;border-radius:999px;border:0;background:rgba(246,241,231,.14);backdrop-filter:blur(8px);color:#F6F1E7;display:flex;align-items:center;justify-content:center;padding:0;opacity:{{ nextOpacity }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+          </div>
+          <div style="position:absolute;left:20px;right:84px;bottom:190px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px;align-items:center"><div style="border-radius:999px;background:rgba(246,241,231,.92);color:#171A18;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;padding:5px 10px">{{ mom.group }}</div><div style="font-size:12px;color:rgba(246,241,231,.8)">{{ mom.counter }}</div></div>
+            <div style="font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em;text-wrap:pretty">{{ mom.name }}</div>
+            <div style="font-size:14px;color:rgba(246,241,231,.85);line-height:1.4">{{ mom.shortDesc }}</div>
+            <div style="display:flex;gap:14px;font-size:13px;font-weight:600;color:rgba(246,241,231,.9)"><span>{{ mom.dur }}</span><span style="color:#F6B26B">{{ mom.priceShortFull }}</span></div>
+          </div>
+        </div>
+        <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}"><div key="{{ toastKey }}" style="position:absolute;left:50%;bottom:180px;transform:translateX(-50%);border-radius:999px;background:#F6F1E7;color:#0B2B24;padding:10px 16px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.35);animation:toastIn 1.6s ease both;white-space:nowrap"><div style="width:20px;height:20px;border-radius:999px;background:#44705A;color:#F6F1E7;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></div>{{ toast }}</div></sc-if>
+        <div style="position:absolute;left:0;right:0;bottom:100px;padding:0 20px">
+          <button onClick="{{ addMoment }}" style="width:100%;height:58px;border-radius:18px;background:{{ mom.ctaBg }};color:{{ mom.ctaColor }};border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 14px 34px rgba(0,0,0,.35);transition:transform .12s,background .25s" style-active="transform:scale(.985)">{{ mom.cta }}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="{{ mom.ctaIcon }}"/></svg></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- DETALLE -->
+    <sc-if value="{{ isDetalle }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Ficha de experiencia" style="flex:1;display:flex;flex-direction:column;min-height:0;animation:detailIn .45s cubic-bezier(.2,.8,.2,1) both;overflow:hidden;background:#F6F1E7">
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:130px" class="hs">
+          <sc-if value="{{ det.hasImg }}" hint-placeholder-val="{{ true }}">
+            <div style="position:relative;height:500px;background:#0B2B24;overflow:hidden">
+              <div style="display:flex;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory" class="hs">
+                <sc-for list="{{ detGallery }}" as="g" hint-placeholder-count="2">
+                  <img src="{{ g.src }}" alt="{{ g.alt }}" style="flex:none;width:100%;height:100%;object-fit:cover;object-position:{{ g.pos }};scroll-snap-align:start;display:block">
+                </sc-for>
+              </div>
+              <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(11,43,36,.5) 0%,rgba(11,43,36,0) 28%,rgba(11,43,36,0) 55%,rgba(11,43,36,.9) 100%)"></div>
+              <div style="position:absolute;top:60px;right:20px;display:flex;gap:6px;pointer-events:none">
+                <sc-for list="{{ detGallery }}" as="g" hint-placeholder-count="2"><div style="width:20px;height:3px;border-radius:2px;background:rgba(246,241,231,.7)"></div></sc-for>
+              </div>
+              <div style="position:absolute;left:20px;right:20px;bottom:26px;display:flex;flex-direction:column;gap:8px;pointer-events:none">
+                <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#F6B26B;font-weight:800">{{ det.group }}</div>
+                <div style="font-size:34px;font-weight:800;line-height:1;letter-spacing:-.025em;color:#F6F1E7">{{ det.name }}</div>
+                <div style="font-size:13px;color:rgba(246,241,231,.85)">{{ det.meta }}</div>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ det.noImg }}" hint-placeholder-val="{{ false }}">
+            <div style="position:relative;height:340px;background:linear-gradient(160deg,#3a423d 0%,#171A18 100%);overflow:hidden">
+              <div style="position:absolute;right:-30px;bottom:-30px;width:220px;height:220px;border-radius:999px;background:rgba(246,241,231,.05)"></div>
+              <div style="position:absolute;left:20px;top:118px;display:flex;align-items:center;gap:12px"><div style="width:72px;height:72px;border-radius:22px;background:rgba(246,241,231,.12);color:#F6F1E7;display:flex;align-items:center;justify-content:center">{{ det.iconElLg }}</div><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(246,241,231,.55);font-weight:700">Foto pendiente</div></div>
+              <div style="position:absolute;left:20px;right:20px;bottom:26px;display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#F6B26B;font-weight:800">{{ det.group }}</div>
+                <div style="font-size:34px;font-weight:800;line-height:1;letter-spacing:-.025em;color:#F6F1E7">{{ det.name }}</div>
+                <div style="font-size:13px;color:rgba(246,241,231,.85)">{{ det.meta }}</div>
+              </div>
+            </div>
+          </sc-if>
+          <button onClick="{{ back }}" style="position:absolute;top:60px;left:20px;width:40px;height:40px;border-radius:999px;border:0;background:rgba(11,43,36,.4);backdrop-filter:blur(10px);color:#F6F1E7;display:flex;align-items:center;justify-content:center;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div style="padding:22px 20px 0;display:flex;flex-direction:column;gap:18px">
+            <div style="font-size:15px;line-height:1.5;text-wrap:pretty">{{ det.desc }}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div style="padding:14px 16px;border-radius:16px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:3px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Duración</div><div style="font-size:15px;font-weight:700">{{ det.dur }}</div></div>
+              <div style="padding:14px 16px;border-radius:16px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:3px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Precio</div><div style="font-size:15px;font-weight:700">{{ det.priceLabel }}</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:16px;font-weight:800">Incluye</div>
+              <sc-for list="{{ detIncl }}" as="i" hint-placeholder-count="3">
+                <div style="display:flex;gap:10px;align-items:center;font-size:14px"><div style="width:22px;height:22px;border-radius:999px;background:rgba(68,112,90,.15);color:#44705A;display:flex;align-items:center;justify-content:center;flex:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>{{ i.t }}</div>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:18px;background:rgba(242,106,46,.08)">
+              <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#b8430f;font-weight:800">Restricciones</div>
+              <div style="font-size:13px;line-height:1.45;color:rgba(23,26,24,.8)">{{ det.restr }}</div>
+            </div>
+            <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.4">Precio de referencia editable. El total final está sujeto a disponibilidad y validación del equipo de reservaciones.</div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;padding:16px 20px 44px;background:linear-gradient(180deg,rgba(246,241,231,0),#F6F1E7 35%)">
+          <button onClick="{{ addDetail }}" style="width:100%;height:58px;border-radius:18px;background:{{ det.ctaBg }};color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 14px 34px rgba(23,26,24,.2);transition:transform .12s" style-active="transform:scale(.985)">{{ det.cta }}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- BUILDER -->
+    <sc-if value="{{ isBuilder }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Constructor de aventura" style="flex:1;display:flex;flex-direction:column;min-height:0">
+        <div style="padding:64px 20px 0;display:flex;align-items:center;gap:12px">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;border:0;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.12);display:flex;align-items:center;justify-content:center;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:rgba(23,26,24,.6)"><span>{{ stepLabel }}</span><span>{{ stepName }}</span></div>
+            <div style="display:flex;gap:4px">
+              <sc-for list="{{ stepSegs }}" as="s" hint-placeholder-count="5"><div style="flex:1;height:4px;border-radius:2px;background:{{ s.bg }};transition:background .3s"></div></sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;padding-bottom:20px" class="hs">
+        <sc-if value="{{ isFecha }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:22px 20px 0;display:flex;flex-direction:column;gap:18px;animation:fadeUp .3s ease both">
+            <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">¿Cuándo nos visitas?</div>
+            <div style="padding:18px 16px;border-radius:22px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-size:17px;font-weight:800">Octubre 2026</div>
+                <div style="font-size:11px;color:rgba(23,26,24,.55)">Sujeta a disponibilidad</div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+                <sc-for list="{{ dows }}" as="d" hint-placeholder-count="7"><div style="font-size:10px;text-align:center;color:rgba(23,26,24,.5);font-weight:800;letter-spacing:.08em;padding-bottom:4px">{{ d.t }}</div></sc-for>
+                <sc-for list="{{ days }}" as="d" hint-placeholder-count="35">
+                  <button onClick="{{ d.select }}" disabled="{{ d.blank }}" style="height:44px;border:0;border-radius:12px;background:{{ d.bg }};color:{{ d.color }};font-size:14px;font-weight:600;padding:0;transition:transform .1s,background .2s" style-active="transform:scale(.9)">{{ d.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="font-size:13px;color:rgba(23,26,24,.7);line-height:1.45">{{ dateHint }}</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isVisitantes }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:22px 20px 0;display:flex;flex-direction:column;gap:14px;animation:fadeUp .3s ease both">
+            <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:4px">¿Cuántos vienen?</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:18px;border-radius:20px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)">
+              <div style="display:flex;flex-direction:column;gap:3px"><div style="font-size:19px;font-weight:800">Adultos</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ entradaLabel }}</div></div>
+              <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px">
+                <button onClick="{{ decA }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:22px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.1)" style-active="transform:scale(.92)">−</button>
+                <div style="width:44px;text-align:center;font-size:20px;font-weight:800">{{ adults }}</div>
+                <button onClick="{{ incA }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:22px;font-weight:600;color:#F6F1E7" style-active="transform:scale(.92)">+</button>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:18px;border-radius:20px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)">
+              <div style="display:flex;flex-direction:column;gap:3px"><div style="font-size:19px;font-weight:800">Niños</div><div style="font-size:12px;color:rgba(23,26,24,.6)">Siempre con un adulto</div></div>
+              <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px">
+                <button onClick="{{ decK }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:22px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.1)" style-active="transform:scale(.92)">−</button>
+                <div style="width:44px;text-align:center;font-size:20px;font-weight:800">{{ kids }}</div>
+                <button onClick="{{ incK }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:22px;font-weight:600;color:#F6F1E7" style-active="transform:scale(.92)">+</button>
+              </div>
+            </div>
+            <div style="position:relative;height:220px;border-radius:22px;background:#0B2B24;overflow:hidden;margin-top:6px">
+              <img src="img/07-safari.jpg" alt="Familias en el safari" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%">
+              <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,0) 30%,rgba(11,43,36,.9) 100%)"></div>
+              <div style="position:absolute;left:16px;right:16px;bottom:16px;font-size:14px;color:#F6F1E7;line-height:1.35">En grupos, cualquier cambio en el número de asistentes queda sujeto a disponibilidad.</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isEstancia }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:22px 20px 0;display:flex;flex-direction:column;gap:18px;animation:fadeUp .3s ease both">
+            <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">¿Nos quedamos a dormir?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <button onClick="{{ setDia }}" style="text-align:left;padding:16px;height:130px;border:2px solid {{ diaBorder }};border-radius:22px;background:{{ diaBg }};color:{{ diaColor }};display:flex;flex-direction:column;justify-content:space-between;transition:all .2s" style-active="transform:scale(.97)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><div><div style="font-size:18px;font-weight:800;line-height:1.1">Pasar el día</div><div style="font-size:12px;opacity:.75">Sin hospedaje</div></div></button>
+              <button onClick="{{ setNoche }}" style="text-align:left;padding:16px;height:130px;border:2px solid {{ nocheBorder }};border-radius:22px;background:{{ nocheBg }};color:{{ nocheColor }};display:flex;flex-direction:column;justify-content:space-between;transition:all .2s" style-active="transform:scale(.97)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg><div><div style="font-size:18px;font-weight:800;line-height:1.1">Quedarnos</div><div style="font-size:12px;opacity:.75">Glamping, cabaña o camping</div></div></button>
+            </div>
+            <sc-if value="{{ isNoche }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:10px;animation:fadeUp .3s ease both">
+                <div style="font-size:16px;font-weight:800">Elige tu hospedaje</div>
+                <sc-for list="{{ lodgings }}" as="l" hint-placeholder-count="3">
+                  <div style="display:flex;flex-direction:column;gap:0">
+                  <button onClick="{{ l.select }}" style="width:100%;text-align:left;display:flex;align-items:center;gap:14px;padding:10px;border:2px solid {{ l.border }};border-radius:20px;background:#FFFDF8;color:#171A18;transition:all .2s;box-shadow:0 1px 2px rgba(23,26,24,.05)" style-active="transform:scale(.98)">
+                    <div style="width:80px;height:80px;border-radius:16px;overflow:hidden;background:{{ l.tile }};color:#F6F1E7;display:flex;align-items:center;justify-content:center;flex:none"><sc-if value="{{ l.hasImg }}" hint-placeholder-val="{{ false }}"><img src="{{ l.img }}" alt="{{ l.name }}" style="width:100%;height:100%;object-fit:cover;display:block"></sc-if><sc-if value="{{ l.noImg }}" hint-placeholder-val="{{ true }}">{{ l.iconEl }}</sc-if></div>
+                    <div style="flex:1;display:flex;flex-direction:column;gap:3px"><div style="font-size:17px;font-weight:800">{{ l.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ l.priceLabel }}</div></div>
+                    <div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ l.ring }};background:{{ l.fill }};flex:none"></div>
+                  </button>
+                  <sc-if value="{{ l.showSel }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin:-4px 10px 0;padding:14px;border:2px solid {{ l.selBorder }};border-top:0;border-radius:0 0 18px 18px;background:#FFFDF8;display:flex;flex-direction:column;gap:10px;animation:fadeUp .25s ease both">
+                      <div style="font-size:12px;color:rgba(23,26,24,.6);line-height:1.35">¿Quiénes pernoctan? El precio del camping es por persona.</div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                        <div style="font-size:13px;font-weight:700">Adultos</div>
+                        <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
+                          <button onClick="{{ l.aDec }}" aria-label="Quitar adulto del hospedaje" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
+                          <div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ l.qAdults }}</div>
+                          <button onClick="{{ l.aInc }}" aria-label="Agregar adulto al hospedaje" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
+                        </div>
+                      </div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                        <div style="font-size:13px;font-weight:700">Niños</div>
+                        <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
+                          <button onClick="{{ l.kDec }}" aria-label="Quitar niño del hospedaje" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
+                          <div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ l.qKids }}</div>
+                          <button onClick="{{ l.kInc }}" aria-label="Agregar niño al hospedaje" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
+                        </div>
+                      </div>
+                      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid rgba(23,26,24,.08);padding-top:10px">
+                        <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Subtotal hospedaje</div>
+                        <div style="font-size:16px;font-weight:800">{{ l.subLabel }}</div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  </div>
+                </sc-for>
+                <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.4">Fogatas solo en zonas autorizadas. Respeta horarios y el descanso de otros visitantes.</div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isActividades }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:22px 20px 0;display:flex;flex-direction:column;gap:16px;animation:fadeUp .3s ease both">
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">Agrega algo de adrenalina.</div><div style="font-size:13px;color:rgba(23,26,24,.65)">Precios de referencia por persona o por unidad.</div></div>
+            <sc-if value="{{ hasQtyWarn }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:12px 14px;border-radius:16px;background:#FDEDE4;border:2px solid #F26A2E;font-size:12px;line-height:1.4;color:#7a2f0d;font-weight:600">{{ qtyWarn }}</div>
+            </sc-if>
+            <sc-for list="{{ actGroups }}" as="g" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#b8430f;font-weight:800">{{ g.name }}</div>
+                <sc-for list="{{ g.items }}" as="a" hint-placeholder-count="3">
+                  <div style="display:flex;flex-direction:column;gap:0">
+                  <button onClick="{{ a.toggle }}" style="width:100%;text-align:left;display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border:2px solid {{ a.border }};border-radius:20px;background:#FFFDF8;color:#171A18;transition:all .2s;box-shadow:0 1px 2px rgba(23,26,24,.05)" style-active="transform:scale(.98)">
+                    <div style="width:80px;height:80px;flex:none;border-radius:16px;overflow:hidden;background:linear-gradient(160deg,#3a423d 0%,#171A18 100%);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px"><sc-if value="{{ a.hasImg }}" hint-placeholder-val="{{ true }}"><img src="{{ a.img }}" alt="{{ a.name }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ a.ipos }};display:block"></sc-if><sc-if value="{{ a.noImg }}" hint-placeholder-val="{{ false }}">{{ a.iconEl }}<div style="font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:rgba(246,241,231,.55);font-weight:700">Foto pendiente</div></sc-if></div>
+                    <div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800;line-height:1.1">{{ a.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ a.meta }}</div></div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none"><div style="font-size:13px;font-weight:800">{{ a.priceShort }}</div><div style="width:26px;height:26px;border-radius:999px;border:2px solid {{ a.ring }};background:{{ a.fill }};display:flex;align-items:center;justify-content:center;color:#F6F1E7;transition:all .15s"><sc-if value="{{ a.selected }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" style="animation:pop .3s ease"><path d="M20 6 9 17l-5-5"/></svg></sc-if></div></div>
+                  </button>
+                  <sc-if value="{{ a.showSel }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin:-4px 10px 0;padding:14px;border:2px solid {{ a.selBorder }};border-top:0;border-radius:0 0 18px 18px;background:#FFFDF8;display:flex;flex-direction:column;gap:12px;animation:fadeUp .25s ease both">
+                      <sc-if value="{{ a.isPerson }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                          <div style="font-size:13px;font-weight:700">{{ a.qtyLabel }}</div>
+                          <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
+                            <button onClick="{{ a.qtyDec }}" aria-label="Quitar uno" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
+                            <div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ a.qty }}</div>
+                            <button onClick="{{ a.qtyInc }}" aria-label="Agregar uno" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ a.isUnit }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:10px">
+                          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                            <div style="display:flex;flex-direction:column;gap:1px"><div style="font-size:13px;font-weight:700">Participantes</div><div style="font-size:11px;color:rgba(23,26,24,.55)">{{ a.seatsNote }}</div></div>
+                            <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
+                              <button onClick="{{ a.qtyDec }}" aria-label="Quitar participante" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
+                              <div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ a.qty }}</div>
+                              <button onClick="{{ a.qtyInc }}" aria-label="Agregar participante" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
+                            </div>
+                          </div>
+                          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                            <div style="font-size:13px;font-weight:700">Unidades</div>
+                            <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
+                              <button onClick="{{ a.unitsDec }}" aria-label="Quitar unidad" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
+                              <div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ a.unitsVal }}</div>
+                              <button onClick="{{ a.unitsInc }}" aria-label="Agregar unidad" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
+                            </div>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ a.isAN }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:10px">
+                          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                            <div style="font-size:13px;font-weight:700">Adultos</div>
+                            <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
+                              <button onClick="{{ a.aDec }}" aria-label="Quitar adulto" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
+                              <div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ a.qAdults }}</div>
+                              <button onClick="{{ a.aInc }}" aria-label="Agregar adulto" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
+                            </div>
+                          </div>
+                          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                            <div style="font-size:13px;font-weight:700">Niños</div>
+                            <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
+                              <button onClick="{{ a.kDec }}" aria-label="Quitar niño" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
+                              <div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ a.qKids }}</div>
+                              <button onClick="{{ a.kInc }}" aria-label="Agregar niño" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
+                            </div>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid rgba(23,26,24,.08);padding-top:10px">
+                        <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Subtotal actividad</div>
+                        <div style="font-size:16px;font-weight:800">{{ a.subLabel }}</div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isExtras }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:22px 20px 0;display:flex;flex-direction:column;gap:14px;animation:fadeUp .3s ease both">
+            <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">Alimentos y extras</div>
+            <button onClick="{{ goCombo }}" style="position:relative;height:200px;border-radius:22px;background:#0B2B24;overflow:hidden;border:0;padding:0;text-align:left;width:100%;transition:transform .15s;box-shadow:0 10px 26px rgba(23,26,24,.12)" style-active="transform:scale(.98)">
+              <img src="img/09-alimentos.jpg" alt="Servicio de alimentos en el parque" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%">
+              <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,0) 25%,rgba(11,43,36,.9) 100%)"></div>
+              <sc-if value="{{ comboAdded }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:14px;right:14px;border-radius:999px;background:#F26A2E;color:#F6F1E7;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;padding:6px 10px">Combo agregado</div></sc-if>
+              <div style="position:absolute;left:16px;right:16px;bottom:16px;color:#F6F1E7;display:flex;justify-content:space-between;align-items:flex-end;gap:12px"><div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#F6B26B;font-weight:800">Alimentos y bebidas</div><div style="font-size:20px;font-weight:800;line-height:1.1">Arma tu combo</div><div style="font-size:13px;color:rgba(246,241,231,.8)">{{ comboTeaserLabel }}</div></div><div style="width:40px;height:40px;border-radius:999px;background:#F6F1E7;color:#0B2B24;display:flex;align-items:center;justify-content:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div>
+            </button>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ extrasList }}" as="x" hint-placeholder-count="4">
+                <button onClick="{{ x.toggle }}" style="width:100%;text-align:left;display:flex;align-items:center;gap:12px;padding:14px 14px;border:2px solid {{ x.border }};border-radius:18px;background:#FFFDF8;color:#171A18;transition:all .2s" style-active="transform:scale(.98)">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800;line-height:1.1">{{ x.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ x.meta }}</div></div>
+                  <div style="display:flex;align-items:center;gap:12px;flex:none"><div style="font-size:13px;font-weight:800">{{ x.priceShort }}</div><div style="width:26px;height:26px;border-radius:999px;border:2px solid {{ x.ring }};background:{{ x.fill }};display:flex;align-items:center;justify-content:center;color:#F6F1E7"><sc-if value="{{ x.selected }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" style="animation:pop .3s ease"><path d="M20 6 9 17l-5-5"/></svg></sc-if></div></div>
+                </button>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;padding-top:6px">
+              <div style="font-size:18px;font-weight:800;letter-spacing:-.01em">¿Celebran algo o necesitan algo especial?</div>
+              <div style="display:flex;border-radius:999px;background:#ECE6D9;padding:3px;gap:3px">
+                <button onClick="{{ celebNo }}" style="flex:1;height:40px;border-radius:999px;font-size:13px;font-weight:600;border:0;background:{{ celebNoBg }};color:{{ celebNoColor }};transition:all .2s">No, gracias</button>
+                <button onClick="{{ celebSi }}" style="flex:1;height:40px;border-radius:999px;font-size:13px;font-weight:600;border:0;background:{{ celebSiBg }};color:{{ celebSiColor }};transition:all .2s">Sí, cuéntanos</button>
+              </div>
+              <sc-if value="{{ celebOn }}" hint-placeholder-val="{{ false }}">
+                <input value="{{ celebText }}" onChange="{{ setCeleb }}" placeholder="Cumpleaños, aniversario, movilidad limitada…" style="width:100%;height:50px;padding:0 16px;font-size:14px;background:#FFFDF8;border:2px solid rgba(23,26,24,.12);border-radius:16px;outline:none;animation:fadeUp .25s ease both">
+              </sc-if>
+              <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.4">Si alguien presenta embarazo, lesiones, problemas cardiovasculares o movilidad limitada, infórmalo antes de las actividades de aventura.</div>
+            </div>
+          </div>
+        </sc-if>
+        </div>
+
+        <div style="padding:12px 20px 40px;background:linear-gradient(180deg,rgba(246,241,231,0),#F6F1E7 20%);display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="display:flex;flex-direction:column;gap:1px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Total estimado</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ summaryLine }}</div></div>
+            <div key="{{ totalKey }}" style="font-size:22px;font-weight:800;letter-spacing:-.01em;animation:pop .35s ease">{{ totalLabel }}</div>
+          </div>
+          <button onClick="{{ nextStep }}" disabled="{{ nextDisabled }}" style="width:100%;height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;transition:transform .12s,opacity .2s;opacity:{{ nextOpacity }};box-shadow:0 10px 26px rgba(242,106,46,.3)" style-active="transform:scale(.985);background:#d9551c">{{ nextLabel }}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ARMA TU COMBO -->
+    <sc-if value="{{ isCombo }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Arma tu combo" style="flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .35s ease both;position:relative">
+        <div style="padding:64px 20px 0;display:flex;align-items:center;gap:12px">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;border:0;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.12);display:flex;align-items:center;justify-content:center;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div style="display:flex;flex-direction:column"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#b8430f;font-weight:800">Alimentos y bebidas</div><div style="font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1">Arma tu combo</div></div>
+        </div>
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 20px 30px;display:flex;flex-direction:column;gap:16px" class="hs">
+          <button onClick="{{ openMenu }}" style="position:relative;width:100%;height:260px;border:0;padding:0;border-radius:22px;overflow:hidden;background:#2f7a3a;box-shadow:0 10px 26px rgba(23,26,24,.14);transition:transform .15s" style-active="transform:scale(.98)">
+            <img src="img/20-menu.jpg" alt="Menú Cumbre Salvaje" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 12%">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,0) 50%,rgba(11,43,36,.85) 100%)"></div>
+            <div style="position:absolute;left:16px;right:16px;bottom:14px;display:flex;justify-content:space-between;align-items:center;color:#F6F1E7"><div style="text-align:left"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#F6B26B;font-weight:800">Menú del restaurante</div><div style="font-size:15px;font-weight:800">Toca para ver completo</div></div><div style="width:36px;height:36px;border-radius:999px;background:rgba(246,241,231,.18);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div></div>
+          </button>
+          <div style="padding:16px;border:2px solid #F26A2E;border-radius:20px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.05);display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800;line-height:1.15">¿Cuántas personas van a comer?</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ dinersHint }}</div></div>
+              <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
+                <button onClick="{{ dinersDec }}" aria-label="Quitar comensal" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
+                <div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ diners }}</div>
+                <button onClick="{{ dinersInc }}" aria-label="Agregar comensal" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:rgba(23,26,24,.65);line-height:1.45">Precios del menú por unidad. Las cantidades de platillos son independientes del número de comensales: elige exactamente lo que van a pedir.</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="font-size:16px;font-weight:800">Platillos</div>
+            <sc-for list="{{ menuItems }}" as="m" hint-placeholder-count="8">
+              <div style="display:flex;flex-direction:column;gap:10px;padding:14px;border:2px solid {{ m.cardBorder }};border-radius:20px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.05);transition:border-color .2s">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800;line-height:1.1">{{ m.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6);line-height:1.35">{{ m.desc }}</div><div style="font-size:13px;font-weight:800;padding-top:2px">{{ m.priceShort }}</div></div>
+                  <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
+                    <button onClick="{{ m.dec }}" style="width:38px;height:38px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.1)" style-active="transform:scale(.9)">−</button>
+                    <div style="width:36px;text-align:center;font-size:17px;font-weight:800">{{ m.qty }}</div>
+                    <button onClick="{{ m.inc }}" style="width:38px;height:38px;border-radius:999px;border:0;background:{{ m.qtyBg }};color:{{ m.qtyColor }};font-size:20px;font-weight:600;transition:background .2s" style-active="transform:scale(.9)">+</button>
+                  </div>
+                </div>
+                <sc-if value="{{ m.hasPick }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:6px;animation:fadeUp .25s ease both">
+                    <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">{{ m.pickLabel }}</div>
+                    <div style="display:flex;gap:6px;overflow-x:auto;margin:0 -14px;padding:0 14px 2px" class="hs">
+                      <sc-for list="{{ m.opts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.select }}" style="flex:none;height:32px;padding:0 12px;border-radius:999px;border:0;font-size:12px;font-weight:600;background:{{ o.bg }};color:{{ o.color }};white-space:nowrap;transition:all .15s">{{ o.t }}</button></sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ m.hasExtra }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ m.toggleExtra }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:0;border-radius:14px;background:#F6F1E7;color:#171A18;text-align:left;animation:fadeUp .25s ease both"><div style="font-size:13px;font-weight:600">Guiso extra <span style="color:rgba(23,26,24,.6)">{{ guisoExtraLabel }}</span></div><div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ m.extraRing }};background:{{ m.extraFill }};display:flex;align-items:center;justify-content:center;color:#F6F1E7;flex:none"><sc-if value="{{ m.extraOn }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></sc-if></div></button>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;padding-top:4px">
+            <div style="font-size:16px;font-weight:800">Bebidas</div>
+            <button onClick="{{ setDrinksPark }}" style="text-align:left;display:flex;flex-direction:column;gap:10px;padding:14px;border:2px solid {{ drinkPark.border }};border-radius:20px;background:#FFFDF8;color:#171A18;transition:all .2s;box-shadow:0 1px 2px rgba(23,26,24,.05)">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%"><div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800">Solicitar bebidas al parque</div><div style="font-size:12px;color:rgba(23,26,24,.6)">Consultar disponibilidad y precio · no se suma al total</div></div><div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ drinkPark.ring }};background:{{ drinkPark.fill }};flex:none"></div></div>
+            </button>
+            <sc-if value="{{ drinksPark }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:20px;background:#ECE6D9;animation:fadeUp .25s ease both">
+                <div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:14px;font-weight:700">Personas</div><div style="display:flex;align-items:center;border-radius:999px;background:#FFFDF8;padding:3px"><button onClick="{{ decDP }}" style="width:36px;height:36px;border-radius:999px;border:0;background:#F6F1E7;font-size:18px;font-weight:600;color:#171A18">−</button><div style="width:34px;text-align:center;font-size:16px;font-weight:800">{{ drinkPeople }}</div><button onClick="{{ incDP }}" style="width:36px;height:36px;border-radius:999px;border:0;background:#F26A2E;color:#F6F1E7;font-size:18px;font-weight:600">+</button></div></div>
+                <input value="{{ drinkNote }}" onChange="{{ setDrinkNote }}" placeholder="¿Qué bebidas necesitan? (opcional)" style="width:100%;height:46px;padding:0 14px;font-size:14px;background:#FFFDF8;border:2px solid rgba(23,26,24,.08);border-radius:14px;outline:none">
+                <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:rgba(23,26,24,.65)">Bebidas</span><span style="font-weight:800;color:#b8430f">Precio por confirmar</span></div>
+              </div>
+            </sc-if>
+            <button onClick="{{ setDrinksOwn }}" style="text-align:left;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border:2px solid {{ drinkOwn.border }};border-radius:20px;background:#FFFDF8;color:#171A18;transition:all .2s;box-shadow:0 1px 2px rgba(23,26,24,.05)">
+              <div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800">Llevar bebidas propias</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ descorcheBebLabel }}</div></div>
+              <div style="display:flex;align-items:center;gap:10px"><div style="font-size:13px;font-weight:800">{{ descorcheBebShort }}</div><div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ drinkOwn.ring }};background:{{ drinkOwn.fill }};flex:none"></div></div>
+            </button>
+          </div>
+          <div style="padding:16px;border-radius:20px;background:#0B2B24;color:#F6F1E7;display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#F6B26B;font-weight:800">Tu combo</div>
+            <div style="font-size:13px;line-height:1.5;color:rgba(246,241,231,.85)">{{ comboSummary }}</div>
+          </div>
+        </div>
+        <div style="padding:12px 20px 40px;background:linear-gradient(180deg,rgba(246,241,231,0),#F6F1E7 20%);display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="display:flex;flex-direction:column;gap:1px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Subtotal alimentos</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ comboCountLabel }} · bebidas del parque por confirmar</div></div>
+            <div key="{{ comboKey }}" style="font-size:22px;font-weight:800;letter-spacing:-.01em;animation:pop .35s ease">{{ comboTotalLabel }}</div>
+          </div>
+          <button onClick="{{ addCombo }}" disabled="{{ comboDisabled }}" style="width:100%;height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;opacity:{{ comboOpacity }};transition:transform .12s,opacity .2s;box-shadow:0 10px 26px rgba(242,106,46,.3)" style-active="transform:scale(.985);background:#d9551c">{{ comboCta }}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+        <sc-if value="{{ menuZoom }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ closeMenu }}" style="position:absolute;inset:0;background:rgba(5,15,12,.96);display:flex;flex-direction:column;animation:fadeIn .25s ease both;z-index:5">
+            <div style="padding:60px 20px 0;display:flex;justify-content:space-between;align-items:center;color:#F6F1E7"><div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:800">Menú · pellizca para ampliar</div><button onClick="{{ closeMenu }}" style="width:36px;height:36px;border-radius:999px;border:0;background:rgba(246,241,231,.16);color:#F6F1E7;display:flex;align-items:center;justify-content:center;padding:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+            <div style="flex:1;overflow:auto;padding:16px 20px 40px;touch-action:pinch-zoom" class="hs"><img src="img/20-menu.jpg" alt="Menú completo Cumbre Salvaje" style="width:100%;height:auto;display:block;border-radius:14px;animation:frameIn .35s ease both"></div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- CARRITO -->
+    <sc-if value="{{ isCarrito }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Mi aventura" style="flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .35s ease both">
+        <div style="padding:64px 20px 0;display:flex;align-items:center;gap:12px">
+          <button onClick="{{ goHome }}" style="width:40px;height:40px;border-radius:999px;border:0;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.12);display:flex;align-items:center;justify-content:center;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div style="font-size:26px;font-weight:800;letter-spacing:-.02em">Mi aventura</div>
+        </div>
+        <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:0 20px 140px">
+            <div style="width:72px;height:72px;border-radius:24px;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.1);display:flex;align-items:center;justify-content:center;color:#F26A2E"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg></div>
+            <div style="font-size:26px;font-weight:800;line-height:1.05;letter-spacing:-.02em">Aún no has armado nada.</div>
+            <div style="font-size:14px;color:rgba(23,26,24,.65);line-height:1.45">Elige fecha, visitantes y actividades. Verás el total estimado en tiempo real.</div>
+            <button onClick="{{ startBuilder }}" style="height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800">Armar mi aventura<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ cartFull }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 20px 200px;display:flex;flex-direction:column;gap:10px" class="hs">
+            <div style="font-size:14px;color:rgba(23,26,24,.7);padding-bottom:4px">Tu aventura está tomando forma.</div>
+            <sc-for list="{{ cartRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)">
+                <div style="display:flex;flex-direction:column;gap:2px;flex:1"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">{{ r.kicker }}</div><div style="font-size:16px;font-weight:800;line-height:1.15">{{ r.title }}</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ r.sub }}</div></div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none"><div style="font-size:14px;font-weight:800">{{ r.amount }}</div><button onClick="{{ r.edit }}" style="background:none;border:0;padding:0;font-size:12px;font-weight:600;color:#F26A2E">Editar</button></div>
+              </div>
+            </sc-for>
+            <div style="padding:18px;border-radius:22px;background:#0B2B24;color:#F6F1E7;display:flex;flex-direction:column;gap:10px;margin-top:6px">
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span>Total estimado</span><span style="font-weight:800;font-size:18px">{{ totalLabel }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;color:#F6B26B"><span style="font-weight:800">Aparta con el 50%</span><span style="font-weight:800;font-size:18px">{{ depositLabel }}</span></div>
+              <div style="font-size:11px;color:rgba(246,241,231,.65);line-height:1.4">Precios de referencia. El total final y la fecha quedan sujetos a disponibilidad y validación del equipo de reservaciones. El anticipo se descuenta del total.</div>
+            </div>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:100px;padding:0 20px">
+            <button onClick="{{ goDatos }}" style="width:100%;height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 14px 34px rgba(242,106,46,.35)" style-active="transform:scale(.985)">Continuar con mis datos<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- DATOS -->
+    <sc-if value="{{ isDatos }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Tus datos" style="flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .35s ease both">
+        <div style="padding:64px 20px 0;display:flex;align-items:center;gap:12px">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;border:0;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.12);display:flex;align-items:center;justify-content:center;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div style="font-size:12px;font-weight:600;color:rgba(23,26,24,.6)">Sin crear cuenta</div>
+        </div>
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:22px 20px 40px;display:flex;flex-direction:column;gap:18px" class="hs">
+          <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">¿A quién le enviamos la cotización?</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:rgba(23,26,24,.7);font-weight:600">Nombre completo</span><input value="{{ name }}" onChange="{{ setName }}" placeholder="Nombre y apellido" style="height:54px;padding:0 16px;font-size:16px;background:#FFFDF8;border:2px solid {{ nameBorder }};border-radius:16px;outline:none"></label>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:rgba(23,26,24,.7);font-weight:600">WhatsApp</span><input value="{{ phone }}" onChange="{{ setPhone }}" placeholder="10 dígitos" inputMode="tel" style="height:54px;padding:0 16px;font-size:16px;background:#FFFDF8;border:2px solid {{ phoneBorder }};border-radius:16px;outline:none"></label>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:rgba(23,26,24,.7);font-weight:600">Correo (opcional)</span><input value="{{ email }}" onChange="{{ setEmail }}" placeholder="correo@ejemplo.com" inputMode="email" style="height:54px;padding:0 16px;font-size:16px;background:#FFFDF8;border:2px solid rgba(23,26,24,.12);border-radius:16px;outline:none"></label>
+          </div>
+          <sc-if value="{{ hasFormError }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:rgba(242,106,46,.1);animation:fadeUp .25s ease both"><div style="width:8px;height:8px;border-radius:999px;background:#F26A2E;margin-top:5px;flex:none"></div><div style="font-size:13px;line-height:1.4">{{ formError }}</div></div>
+          </sc-if>
+          <div style="font-size:12px;color:rgba(23,26,24,.6);line-height:1.45">Usamos tus datos solo para enviarte la cotización y confirmar disponibilidad por WhatsApp oficial.</div>
+        </div>
+        <div style="padding:12px 20px 40px;background:#F6F1E7">
+          <button onClick="{{ submitDatos }}" style="width:100%;height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 10px 26px rgba(242,106,46,.3)" style-active="transform:scale(.985);background:#d9551c">Ver resumen final<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- RESUMEN -->
+    <sc-if value="{{ isResumen }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Resumen final" style="flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .35s ease both">
+        <div style="padding:64px 20px 0;display:flex;align-items:center;gap:12px">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;border:0;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.12);display:flex;align-items:center;justify-content:center;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div style="font-size:26px;font-weight:800;letter-spacing:-.02em">Resumen final</div>
+        </div>
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 20px 30px;display:flex;flex-direction:column;gap:14px" class="hs">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="padding:14px 16px;border-radius:16px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Fecha solicitada</div><div style="font-size:15px;font-weight:700">{{ dateLabel }}</div></div>
+            <div style="padding:14px 16px;border-radius:16px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Visitantes</div><div style="font-size:15px;font-weight:700">{{ visitorsLabel }}</div></div>
+            <div style="padding:14px 16px;border-radius:16px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Titular</div><div style="font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ name }}</div></div>
+            <div style="padding:14px 16px;border-radius:16px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">WhatsApp</div><div style="font-size:15px;font-weight:700">{{ phone }}</div></div>
+          </div>
+          <div style="padding:16px;border-radius:18px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800;padding-bottom:4px">Servicios</div>
+            <sc-for list="{{ serviceLines }}" as="s" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:7px 0"><span>{{ s.t }}</span><span style="font-weight:700;flex:none">{{ s.a }}</span></div></sc-for>
+          </div>
+          <div style="background:#0B2B24;color:#F6F1E7;padding:18px;border-radius:22px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;font-size:14px"><span>Total estimado</span><span style="font-weight:800;font-size:18px">{{ totalLabel }}</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:14px;color:#F6B26B"><span style="font-weight:800">Anticipo sugerido 50%</span><span style="font-weight:800;font-size:18px">{{ depositLabel }}</span></div>
+            <div style="font-size:11px;color:rgba(246,241,231,.65);line-height:1.4">El anticipo bloquea fecha, personal y servicios; se descuenta del total. Sujeto a disponibilidad.</div>
+          </div>
+          <button onClick="{{ togglePolicies }}" style="text-align:left;display:flex;gap:12px;align-items:flex-start;padding:16px;border:2px solid {{ polBorder }};border-radius:18px;background:#FFFDF8;color:#171A18;transition:all .2s">
+            <div style="width:26px;height:26px;border-radius:999px;border:2px solid {{ polRing }};background:{{ polFill }};flex:none;display:flex;align-items:center;justify-content:center;color:#F6F1E7"><sc-if value="{{ acceptPolicies }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></sc-if></div>
+            <div style="font-size:13px;line-height:1.45">Acepto el <span style="color:#b8430f;font-weight:700">reglamento y políticas</span>: la fecha se reserva solo con confirmación y anticipo; el anticipo no es reembolsable si cancelo; reprogramaciones sujetas a disponibilidad; por clima o seguridad pueden modificarse actividades.</div>
+          </button>
+          <sc-if value="{{ policyError }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#b8430f;font-weight:600;animation:fadeUp .25s ease both">Necesitas aceptar las políticas para generar tu Pase de Aventura.</div></sc-if>
+        </div>
+        <div style="padding:12px 20px 40px;background:#F6F1E7">
+          <button onClick="{{ generate }}" style="width:100%;height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 10px 26px rgba(242,106,46,.3)" style-active="transform:scale(.985);background:#d9551c">Generar mi Pase de Aventura<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- GENERANDO -->
+    <sc-if value="{{ isGenerando }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Generando" style="flex:1;background:#0B2B24;color:#F6F1E7;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:24px;padding:0 36px;animation:fadeIn .3s ease both">
+        <div style="width:44px;height:44px;border-radius:999px;border:3px solid rgba(246,241,231,.2);border-top-color:#F26A2E;animation:spin .9s linear infinite"></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">Tu aventura está tomando forma.</div>
+          <div style="font-size:14px;color:rgba(246,241,231,.7)">Generando folio y Pase de Aventura…</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- PASE DE AVENTURA -->
+    <sc-if value="{{ isPase }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Pase de Aventura" style="flex:1;display:flex;flex-direction:column;min-height:0;background:#0B2B24;animation:fadeUp .4s ease both">
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:0 20px 24px;display:flex;flex-direction:column;gap:16px" class="hs">
+          <div style="position:relative;margin:0 -20px;padding:58px 20px 0;display:flex;flex-direction:column;gap:14px;background:radial-gradient(120% 90% at 50% 0%,#164a3d 0%,#0B2B24 70%)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <img src="img/logo-cumbre-transparente.png" alt="Cumbre Salvaje" style="width:140px;height:auto;display:block">
+              <button onClick="{{ goHome }}" style="height:36px;padding:0 14px;border-radius:999px;border:1px solid rgba(246,241,231,.3);background:rgba(246,241,231,.1);color:#F6F1E7;font-size:12px;font-weight:600">Inicio</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;color:#F6F1E7;padding-bottom:6px">
+              <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#F6B26B;font-weight:800">Pase de Aventura</div>
+              <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">Estamos por confirmar tu fecha.</div>
+            </div>
+          </div>
+          <div style="background:#F6F1E7;color:#171A18;border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.35)">
+            <div style="padding:18px 18px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Folio</div><div style="font-size:24px;font-weight:800;letter-spacing:.02em">{{ folio }}</div></div>
+              <div style="border-radius:12px;background:#ECE6D9;padding:8px 10px;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;line-height:1.35;max-width:168px;text-align:right">Solicitud recibida · pendiente de disponibilidad y anticipo</div>
+            </div>
+            <div style="position:relative;height:2px;margin:0 18px;background:repeating-linear-gradient(90deg,rgba(23,26,24,.3) 0 6px,transparent 6px 12px)"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 18px">
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Fecha solicitada</div><div style="font-size:14px;font-weight:700">{{ dateLabel }}</div></div>
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Visitantes</div><div style="font-size:14px;font-weight:700">{{ visitorsLabel }}</div></div>
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Total estimado</div><div style="font-size:14px;font-weight:700">{{ totalLabel }}</div></div>
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Anticipo sugerido</div><div style="font-size:14px;font-weight:700;color:#b8430f">{{ depositLabel }}</div></div>
+            </div>
+            <div style="padding:0 18px 16px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Servicios solicitados</div>
+              <div style="font-size:13px;line-height:1.5">{{ servicesText }}</div>
+            </div>
+            <div style="position:relative;height:2px;margin:0 18px;background:repeating-linear-gradient(90deg,rgba(23,26,24,.3) 0 6px,transparent 6px 12px)"></div>
+            <div style="padding:18px 18px 20px;display:flex;flex-direction:column;gap:14px;align-items:center">
+              <div style="opacity:.4;filter:grayscale(1)">{{ qrPending }}</div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;line-height:1.4;color:rgba(23,26,24,.7);text-align:center"><div style="display:flex;align-items:center;gap:6px;font-weight:800;color:#171A18;font-size:14px"><div style="width:8px;height:8px;border-radius:999px;background:#F26A2E"></div>QR en espera</div>Se activa como Pase Salvaje cuando el equipo valide disponibilidad y recibamos el anticipo del 50%.</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:rgba(246,241,231,.65);line-height:1.45">Esto no es una reservación confirmada. Envía tu solicitud al WhatsApp oficial (+52 33 3143 6632) para que el equipo de reservaciones valide tu fecha.</div>
+          <div style="border:1px dashed rgba(246,241,231,.3);border-radius:14px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(246,241,231,.6);font-weight:800">Demo · Cumbre OS</div>
+            <button onClick="{{ confirmDemo }}" style="height:32px;padding:0 12px;border-radius:999px;border:1px solid rgba(246,241,231,.4);background:transparent;color:#F6F1E7;font-size:11px;font-weight:600">Simular validación + anticipo</button>
+          </div>
+        </div>
+        <div style="padding:12px 20px 44px;background:#0B2B24;border-top:1px solid rgba(246,241,231,.12)">
+          <button onClick="{{ goWhatsapp }}" style="width:100%;height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 14px 34px rgba(0,0,0,.35)" style-active="transform:scale(.985)">Enviar por WhatsApp<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- WHATSAPP -->
+    <sc-if value="{{ isWhatsapp }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Compartir por WhatsApp" style="flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .35s ease both">
+        <div style="padding:64px 20px 0;display:flex;align-items:center;gap:12px">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;border:0;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.12);display:flex;align-items:center;justify-content:center;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div style="font-size:26px;font-weight:800;letter-spacing:-.02em">Enviar solicitud</div>
+        </div>
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 20px 30px;display:flex;flex-direction:column;gap:14px" class="hs">
+          <div style="font-size:14px;color:rgba(23,26,24,.7);line-height:1.45">Este mensaje se abre precargado en el WhatsApp oficial. El equipo de reservaciones responde con disponibilidad e instrucciones de anticipo.</div>
+          <div style="background:#FFFDF8;border-radius:20px 20px 20px 6px;padding:16px 18px;font-size:13px;line-height:1.55;white-space:pre-line;box-shadow:0 1px 2px rgba(23,26,24,.06);overflow-wrap:anywhere">{{ waMessage }}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="padding:14px 16px;border-radius:16px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Destino</div><div style="font-size:14px;font-weight:700">WhatsApp oficial</div></div>
+            <div style="padding:14px 16px;border-radius:16px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Número</div><div style="font-size:14px;font-weight:700">33 3143 6632</div></div>
+          </div>
+          <button onClick="{{ copyMsg }}" style="height:50px;border-radius:16px;border:2px solid rgba(23,26,24,.12);background:transparent;color:#171A18;font-size:14px;font-weight:800;text-align:left;padding:0 16px;display:flex;align-items:center;justify-content:space-between">{{ copyLabel }}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+        </div>
+        <div style="padding:12px 20px 44px;background:#F6F1E7">
+          <a href="{{ waHref }}" target="_blank" rel="noopener" style="width:100%;height:58px;border-radius:18px;background:#44705A;color:#F6F1E7;text-decoration:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 10px 26px rgba(68,112,90,.35)" style-active="transform:scale(.985)">Abrir WhatsApp oficial<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- PASE SALVAJE -->
+    <sc-if value="{{ isConfirmado }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Pase Salvaje" style="flex:1;display:flex;flex-direction:column;min-height:0;background:#0B2B24;animation:fadeIn .4s ease both">
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:0 20px 24px;display:flex;flex-direction:column;gap:16px" class="hs">
+          <div style="margin:0 -20px;padding:58px 20px 14px;display:flex;justify-content:space-between;align-items:center;background:radial-gradient(120% 90% at 50% 0%,#164a3d 0%,#0B2B24 70%)">
+            <img src="img/logo-cumbre-transparente.png" alt="Cumbre Salvaje" style="width:140px;height:auto;display:block">
+            <div style="border-radius:999px;background:#44705A;color:#F6F1E7;padding:7px 12px;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:right;line-height:1.3;max-width:150px">Pase Salvaje · Reserva confirmada</div>
+          </div>
+          <div style="background:#F6F1E7;color:#171A18;border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.35)">
+            <div style="padding:24px 18px 18px;display:flex;flex-direction:column;align-items:center;gap:14px">
+              {{ qrAnimated }}
+              <div style="display:flex;flex-direction:column;align-items:center;gap:2px;animation:readyIn .6s 1.5s both"><div style="font-size:22px;font-weight:800;letter-spacing:-.015em">Tu aventura está lista.</div><div style="font-size:12px;color:rgba(23,26,24,.6)">Muestra este QR en la entrada</div></div>
+            </div>
+            <div style="position:relative;height:2px;margin:0 18px;background:repeating-linear-gradient(90deg,rgba(23,26,24,.3) 0 6px,transparent 6px 12px)"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 18px">
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Titular</div><div style="font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ name }}</div></div>
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Folio</div><div style="font-size:14px;font-weight:800;letter-spacing:.02em">{{ folio }}</div></div>
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Fecha</div><div style="font-size:14px;font-weight:700">{{ dateLabel }}</div></div>
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Visitantes</div><div style="font-size:14px;font-weight:700">{{ visitorsLabel }}</div></div>
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Anticipo recibido</div><div style="font-size:14px;font-weight:700;color:#44705A">{{ depositLabel }}</div></div>
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Saldo al llegar</div><div style="font-size:14px;font-weight:700">{{ balanceLabel }}</div></div>
+            </div>
+            <div style="padding:0 18px 14px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Servicios</div>
+              <div style="font-size:13px;line-height:1.5">{{ servicesText }}</div>
+            </div>
+            <div style="padding:14px 18px 18px;background:#ECE6D9;border-radius:0 0 24px 24px;display:flex;justify-content:space-between;gap:12px;font-size:12px;line-height:1.4">
+              <div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Ubicación</div>Cumbre Salvaje · Parque eco-turístico</div>
+              <div style="text-align:right;color:rgba(23,26,24,.6)">Llega con anticipación.<br>Saldo según lo acordado.</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:rgba(246,241,231,.65);line-height:1.45">Pase coleccionable. Guarda una captura; el equipo también lo tiene en Cumbre OS.</div>
+        </div>
+        <div style="padding:12px 20px 44px;background:#0B2B24;border-top:1px solid rgba(246,241,231,.12)">
+          <button onClick="{{ goReserva }}" style="width:100%;height:58px;border-radius:18px;background:#F6F1E7;color:#171A18;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 14px 34px rgba(0,0,0,.35)" style-active="transform:scale(.985)">Ver mi reservación<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- RESERVACIONES -->
+    <sc-if value="{{ isReserva }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Mi reservación" style="flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .35s ease both">
+        <div style="padding:64px 20px 0;font-size:26px;font-weight:800;letter-spacing:-.02em">Reservaciones</div>
+        <sc-if value="{{ noPass }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:0 20px 140px">
+            <div style="width:72px;height:72px;border-radius:24px;background:#FFFDF8;box-shadow:0 1px 3px rgba(23,26,24,.1);display:flex;align-items:center;justify-content:center;color:#F26A2E"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></div>
+            <div style="font-size:26px;font-weight:800;line-height:1.05;letter-spacing:-.02em">Sin reservaciones todavía.</div>
+            <div style="font-size:14px;color:rgba(23,26,24,.65);line-height:1.45">Cuando generes un Pase de Aventura aparecerá aquí con su estado.</div>
+            <button onClick="{{ startBuilder }}" style="height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800">Armar mi aventura<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ hasPass }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 20px 130px;display:flex;flex-direction:column;gap:18px" class="hs">
+            <button onClick="{{ openPass }}" style="text-align:left;border:0;padding:18px;border-radius:22px;background:#0B2B24;color:#F6F1E7;display:flex;justify-content:space-between;align-items:center;gap:12px;box-shadow:0 12px 30px rgba(23,26,24,.2)">
+              <div style="display:flex;flex-direction:column;gap:4px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#F6B26B;font-weight:800">{{ passKind }}</div><div style="font-size:20px;font-weight:800">{{ folio }}</div><div style="font-size:12px;color:rgba(246,241,231,.7)">{{ dateLabel }} · {{ visitorsLabel }}</div></div>
+              <div style="border-radius:12px;background:{{ passTagBg }};color:{{ passTagColor }};padding:7px 9px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;max-width:130px;text-align:right;line-height:1.3">{{ passStatus }}</div>
+            </button>
+            <div style="padding:16px;border-radius:20px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column">
+              <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800;padding-bottom:6px">Estado</div>
+              <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+                <div style="display:flex;gap:14px;align-items:flex-start;padding:10px 0">
+                  <div style="width:16px;height:16px;margin-top:2px;flex:none;border-radius:999px;border:2px solid {{ t.ring }};background:{{ t.fill }}"></div>
+                  <div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:{{ t.weight }};color:{{ t.color }}">{{ t.title }}</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ t.sub }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:16px;font-weight:800">Indicaciones de llegada</div>
+              <div style="display:flex;gap:10px;font-size:14px;line-height:1.4"><div style="width:8px;height:8px;border-radius:999px;background:#44705A;flex:none;margin-top:6px"></div>Llega con anticipación; los retrasos pueden reducir el tiempo de tus actividades.</div>
+              <div style="display:flex;gap:10px;font-size:14px;line-height:1.4"><div style="width:8px;height:8px;border-radius:999px;background:#44705A;flex:none;margin-top:6px"></div>Los menores permanecen siempre con un adulto.</div>
+              <div style="display:flex;gap:10px;font-size:14px;line-height:1.4"><div style="width:8px;height:8px;border-radius:999px;background:#44705A;flex:none;margin-top:6px"></div>Lluvia ligera no cancela; por seguridad el equipo puede ajustar horarios o proponer reprogramación.</div>
+            </div>
+            <a href="https://wa.me/523331436632" target="_blank" rel="noopener" style="height:54px;border-radius:16px;border:2px solid rgba(23,26,24,.12);color:#171A18;text-decoration:none;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:14px;font-weight:800">Ayuda por WhatsApp oficial<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- AYUDA -->
+    <sc-if value="{{ isAyuda }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Ayuda" style="flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .35s ease both">
+        <div style="padding:64px 20px 0;font-size:26px;font-weight:800;letter-spacing:-.02em">Ayuda</div>
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 20px 130px;display:flex;flex-direction:column;gap:16px" class="hs">
+          <a href="https://wa.me/523331436632" target="_blank" rel="noopener" style="height:58px;border-radius:18px;background:#44705A;color:#F6F1E7;text-decoration:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 10px 26px rgba(68,112,90,.3)">Escribir al WhatsApp oficial<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+          <div style="font-size:12px;color:rgba(23,26,24,.6)">Equipo de reservaciones · 33 3143 6632</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:16px;font-weight:800">Reglamento y políticas</div>
+            <sc-for list="{{ policies }}" as="p" hint-placeholder-count="6">
+              <div style="display:flex;flex-direction:column;gap:3px;padding:14px 16px;border-radius:16px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)"><div style="font-size:15px;font-weight:800">{{ p.t }}</div><div style="font-size:13px;color:rgba(23,26,24,.7);line-height:1.45">{{ p.d }}</div></div>
+            </sc-for>
+          </div>
+          <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- TAB BAR -->
+    <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:88px;background:rgba(246,241,231,.94);backdrop-filter:blur(14px);border-top:1px solid rgba(23,26,24,.08);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 6px 28px">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+          <button onClick="{{ t.go }}" style="border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:{{ t.color }};padding:0;position:relative;transition:color .2s">{{ t.icon }}<span style="font-size:10px;font-weight:{{ t.weight }};letter-spacing:.02em;white-space:nowrap">{{ t.label }}</span><sc-if value="{{ t.badge }}" hint-placeholder-val="{{ false }}"><div key="{{ t.badgeKey }}" style="position:absolute;top:-2px;right:14px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#F26A2E;color:#F6F1E7;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;animation:badgePop .35s ease">{{ t.count }}</div></sc-if></button>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+  </template>
+<script>
+(function(){
+  const React = window.React = {
+    createRef(){ return {current:null}; },
+    createElement(type, props, ...children){
+      const flat=[]; const add=x=>{ if(Array.isArray(x)) x.forEach(add); else if(x!==null && x!==undefined && x!==false) flat.push(x);}; children.forEach(add);
+      return {__vnode:true,type,props:props||{},children:flat};
+    }
+  };
+  let CURRENT=null;
+  class DCLogic {
+    constructor(props){ this.props=props||{}; }
+    setState(updater, cb){
+      const patch=typeof updater==='function'?updater(this.state,this.props):updater;
+      if(patch && typeof patch==='object') this.state=Object.assign({},this.state,patch);
+      if(CURRENT===this) renderApp();
+      if(typeof cb==='function') cb.call(this);
+    }
+  }
+  window.DCLogic=DCLogic;
+
+  function evalExpr(expr, ctx){
+    try { return Function('ctx','with(ctx){return ('+expr+')}')(ctx); }
+    catch(e){ console.error('Expression failed:',expr,e); return undefined; }
+  }
+  function exactExpr(s){ const m=String(s).match(/^\s*{{\s*([\s\S]*?)\s*}}\s*$/); return m?m[1]:null; }
+  function interpolate(s,ctx){ return String(s).replace(/{{\s*([\s\S]*?)\s*}}/g,(_,e)=>{const v=evalExpr(e,ctx); return v==null?'':String(v);}); }
+  function kebab(k){ return k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()); }
+  function makeVNode(v, ctx){
+    if(v==null || v===false) return document.createDocumentFragment();
+    if(Array.isArray(v)){ const f=document.createDocumentFragment(); v.forEach(x=>f.appendChild(makeVNode(x,ctx))); return f; }
+    if(typeof v==='string'||typeof v==='number') return document.createTextNode(String(v));
+    if(!v.__vnode) return document.createTextNode(String(v));
+    const svgTags=new Set(['svg','path','circle','rect','line','polyline','polygon','ellipse','g']);
+    const el=svgTags.has(v.type)?document.createElementNS('http://www.w3.org/2000/svg',v.type):document.createElement(v.type);
+    const props=v.props||{};
+    for(const [k,val] of Object.entries(props)){
+      if(k==='key'||k==='children'||val==null||val===false) continue;
+      if(k==='style' && typeof val==='object'){ for(const [sk,sv] of Object.entries(val)) { try{el.style[sk]=sv;}catch(_){el.style.setProperty(kebab(sk),sv);} } continue; }
+      if(k.startsWith('on') && typeof val==='function'){ el.addEventListener(k.slice(2).toLowerCase(),val); continue; }
+      const attr=k==='className'?'class':(k==='strokeWidth'?'stroke-width':k==='strokeLinecap'?'stroke-linecap':k==='strokeLinejoin'?'stroke-linejoin':k==='viewBox'?'viewBox':kebab(k));
+      if(val===true) el.setAttribute(attr,''); else el.setAttribute(attr,String(val));
+    }
+    (v.children||[]).forEach(ch=>el.appendChild(makeVNode(ch,ctx)));
+    return el;
+  }
+  function applyActiveStyle(el, css){ if(!css) return; let old=''; const down=()=>{old=el.style.cssText; el.style.cssText += ';'+css;}; const up=()=>{if(old!==null) el.style.cssText=old;}; el.addEventListener('pointerdown',down); el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up); el.addEventListener('pointerleave',up); }
+  function processNode(node, ctx){
+    if(node.nodeType===Node.TEXT_NODE){
+      const raw=node.textContent; const ex=exactExpr(raw);
+      if(ex){ const v=evalExpr(ex,ctx); return makeVNode(v,ctx); }
+      return document.createTextNode(interpolate(raw,ctx));
+    }
+    if(node.nodeType!==Node.ELEMENT_NODE) return document.createDocumentFragment();
+    const tag=node.tagName.toLowerCase();
+    if(tag==='sc-if'){
+      const ex=exactExpr(node.getAttribute('value')||''); const ok=ex?evalExpr(ex,ctx):false;
+      const f=document.createDocumentFragment(); if(ok) [...node.childNodes].forEach(ch=>f.appendChild(processNode(ch,ctx))); return f;
+    }
+    if(tag==='sc-for'){
+      const ex=exactExpr(node.getAttribute('list')||''); const list=(ex?evalExpr(ex,ctx):[])||[]; const as=node.getAttribute('as')||'item';
+      const f=document.createDocumentFragment(); Array.from(list).forEach((item,i)=>{ const sub=Object.assign(Object.create(ctx),{[as]:item,$index:i}); [...node.childNodes].forEach(ch=>f.appendChild(processNode(ch,sub)));}); return f;
+    }
+    if(tag==='x-dc'||tag==='helmet'||tag==='x-import'){
+      const f=document.createDocumentFragment(); [...node.childNodes].forEach(ch=>f.appendChild(processNode(ch,ctx))); return f;
+    }
+    const svgTags=new Set(['svg','path','circle','rect','line','polyline','polygon','ellipse','g']);
+    const el=svgTags.has(tag)?document.createElementNS('http://www.w3.org/2000/svg',tag):document.createElement(tag);
+    let refObj=null, activeCSS='', focusCSS='';
+    for(const a of [...node.attributes]){
+      const name=a.name.toLowerCase(), raw=a.value;
+      if(name.startsWith('hint-')||name==='key') continue;
+      const ex=exactExpr(raw); const value=ex?evalExpr(ex,ctx):interpolate(raw,ctx);
+      if(name==='ref'){ refObj=value; continue; }
+      if(name==='style-active'){ activeCSS=String(value||''); continue; }
+      if(name==='style-focus'){ focusCSS=String(value||''); continue; }
+      if(name==='onclick'||name==='onchange'||name==='onwheel'||name==='ontouchstart'||name==='ontouchend'){
+        if(typeof value==='function'){
+          const evName=name==='onchange'?'input':name.slice(2);
+          el.addEventListener(evName,e=>value(e));
+        }
+        continue;
+      }
+      if(name==='style'){ el.style.cssText=String(value||''); continue; }
+      if(name==='disabled'){ el.disabled=!!value; continue; }
+      if(name==='value' && (tag==='input'||tag==='textarea')){ el.value=value==null?'':String(value); continue; }
+      if(name==='class'){ el.className=String(value||''); continue; }
+      if(value===false||value==null) continue;
+      if(value===true) el.setAttribute(name,''); else el.setAttribute(name,String(value));
+    }
+    if(refObj && typeof refObj==='object') refObj.current=el;
+    if(activeCSS) applyActiveStyle(el,activeCSS);
+    if(focusCSS){ el.addEventListener('focus',()=>{el.dataset.preFocusStyle=el.style.cssText;el.style.cssText+=';'+focusCSS;}); el.addEventListener('blur',()=>{if(el.dataset.preFocusStyle!=null)el.style.cssText=el.dataset.preFocusStyle;}); }
+    [...node.childNodes].forEach(ch=>el.appendChild(processNode(ch,ctx)));
+    return el;
+  }
+  function snapshotUI(){
+    const root=document.getElementById('appRoot'); if(!root) return null;
+    const scrolls=[...root.querySelectorAll('.hs')].map((e,i)=>({i,top:e.scrollTop,left:e.scrollLeft}));
+    const ae=document.activeElement; let focus=null;
+    if(ae && root.contains(ae) && (ae.tagName==='INPUT'||ae.tagName==='TEXTAREA')) focus={placeholder:ae.getAttribute('placeholder')||'',start:ae.selectionStart,end:ae.selectionEnd};
+    return {scrolls,focus};
+  }
+  function restoreUI(snap){ if(!snap) return; requestAnimationFrame(()=>{
+    const root=document.getElementById('appRoot'); if(!root) return;
+    const els=[...root.querySelectorAll('.hs')]; snap.scrolls.forEach(s=>{if(els[s.i]){els[s.i].scrollTop=s.top;els[s.i].scrollLeft=s.left;}});
+    if(snap.focus){ const candidates=[...root.querySelectorAll('input,textarea')]; const e=candidates.find(x=>(x.getAttribute('placeholder')||'')===snap.focus.placeholder); if(e){e.focus();try{e.setSelectionRange(snap.focus.start,snap.focus.end)}catch(_){}} }
+  }); }
+  let mounted=false, rendering=false;
+  window.renderApp=function(){
+    if(rendering) return; rendering=true;
+    try{
+      const snap=snapshotUI();
+      const vals=CURRENT.renderVals();
+      const ctx=Object.assign(Object.create(null),vals);
+      const tpl=document.getElementById('dc-template');
+      const root=document.getElementById('appRoot'); root.innerHTML='';
+      [...tpl.content.childNodes].forEach(ch=>root.appendChild(processNode(ch,ctx)));
+      restoreUI(snap);
+      if(mounted && typeof CURRENT.componentDidUpdate==='function') setTimeout(()=>CURRENT.componentDidUpdate(),0);
+    } finally { rendering=false; }
+  };
+  window.__startDC=function(ComponentClass){
+    CURRENT=new ComponentClass({skeletonMs:900}); window.__cumbreComponent=CURRENT;
+    renderApp(); mounted=true; if(typeof CURRENT.componentDidMount==='function') CURRENT.componentDidMount();
+  };
+})();
+</script>
+<script>
+const MXN = n => '$' + Math.round(n).toLocaleString('es-MX') + ' MXN';
+const ENTRADA = 20;
+const IMG = { entrada:'img/02-entrada.jpg', spot:'img/03-photospot.jpg', tiro:'img/04-tirolesa.jpg', tiro2:'img/05-tirolesa-emocion.jpg', gotcha:'img/06-gotcha.jpg', safari:'img/23-safari-venado-alimentacion.jpg', tigre:'img/22-tigre-parado.jpg', food:'img/09-alimentos.jpg', llama:'img/10-llama.jpg', ranger:'img/13-ranger.jpg', cuatri:'img/14-cuatrimoto.jpg', cueva:'img/15-cuevita-vista.jpg', cueva2:'img/16-cuevita-interior.jpg', caballo:'img/17-caballo-pony.jpg', granja:'img/18-granjita-familia.jpg', aviario:'img/19-aviario.jpg', menu:'img/20-menu.jpg', herp:'img/21-herpetario-cascabel.jpg', ruta:'img/25-recorrido-ruta-sendero.jpg', portada:'img/24-portada-amigos-ranger-puente.jpg', arco:'img/26-arco-con-flecha.jpg', cabalgata:'img/27-cabalgata.jpg', camping:'img/28-camping-noche.jpg', columpio:'img/29-columpio-panoramico.jpg', glamping:'img/30-glamping-triangulo.jpg' };
+const HERP_PHOTO_READY = true; // foto real de la cascabel del Herpetario conectada
+// Encuadre por fotografía (object-position). Las fotos verticales necesitan sesgo para conservar el sujeto.
+const IPOS = { [IMG.herp]:'50% 72%', [IMG.tigre]:'center 22%', [IMG.safari]:'center 32%', [IMG.ruta]:'center 62%', [IMG.arco]:'center 38%', [IMG.cabalgata]:'center 45%', [IMG.camping]:'center 58%', [IMG.columpio]:'center 42%', [IMG.glamping]:'center 55%' };
+const ipos = src => IPOS[src] || 'center';
+// Menú de alimentos (20-menu-alimentos). Precios MXN del menú; bebidas sin precio (por confirmar)
+const GUISOS = ['Lengua','Birria','Papas con chorizo','Bistec','Adobada','Chorizo','Costilla con nopales','Frijoles','Chicharrón','Pierna'];
+const DULCE = ['Azúcar','Lechera','Mermelada de fresa'];
+const MENU = [
+  { id:'taco', name:'Taco', price:30, desc:'Guiso a elegir', pick:'guiso' },
+  { id:'platillo', name:'Platillo con 1 guiso', price:120, extraPrice:30, pick:'guiso', extra:true },
+  { id:'quesadilla', name:'Quesadilla sencilla', price:25, desc:'Tortilla recién hecha con queso mozzarella' },
+  { id:'quesadillaG', name:'Quesadilla con guiso', price:40, desc:'Queso mozzarella y el guiso de tu preferencia', pick:'guiso' },
+  { id:'gringa', name:'Gringa', price:50, desc:'Tortilla de harina, queso y carne' },
+  { id:'maruchan', name:'Maruchan', price:50, desc:'Sopa instantánea' },
+  { id:'molleteS', name:'Mollete salado', price:25, desc:'Mitad de birote con frijoles y queso mozzarella' },
+  { id:'molleteD', name:'Mollete dulce', price:25, desc:'Mitad de birote con mantequilla', pick:'dulce' },
+];
+const INK = '#171A18', ACC = '#F26A2E', PAPER = '#F6F1E7', FOREST = '#0B2B24', GREEN = '#44705A', MUTED = 'rgba(23,26,24,.25)', BORDER = 'rgba(23,26,24,.08)';
+// El platillo declara su propio precio de guiso extra; la descripción se deriva de ahí.
+MENU.forEach(m => { if (m.extraPrice) m.desc = `Guiso a elegir · guiso extra +${MXN(m.extraPrice)}`; });
+// LODG se declara antes de CAT para que la ficha de Hospedaje derive sus precios de aquí
+// y no los repita como texto. per: u = por unidad/noche, an = adulto/niño.
+const LODG = [
+  { id:'cabana', name:'Cabaña estilo cuevita', price:2000, per:'u', img:IMG.cueva2 },
+  { id:'glamping', name:'Glamping', price:3500, per:'u', img:IMG.glamping },
+  { id:'camping', name:'Camping', price:200, kids:150, per:'an', img:IMG.camping },
+];
+const lodgLabel = l => l.per === 'an' ? `${MXN(l.price)} adulto · ${MXN(l.kids)} niño` : `Desde ${MXN(l.price)} por noche`;
+// Catálogo desde 11-tarifario-referencia (MXN, provisional). per: pp = por persona, an = adulto/niño, u = por unidad, q = cotización
+const CAT = [
+  { id:'tirolesa', name:'Tirolesa', group:'Aventura', cat:'aventura', price:300, per:'pp', dur:'45 min aprox.', img:IMG.tiro, gallery:[IMG.tiro, IMG.tiro2], short:'Vuela sobre el bosque de la sierra.', desc:'Vuela sobre el bosque de la sierra con equipo completo y guía.', incl:['Equipo de seguridad y arnés','Guía durante toda la actividad'], restr:'Restricciones de edad, estatura, peso y clima. Informa antes si hay embarazo, lesiones, problemas cardiovasculares o movilidad limitada.' },
+  { id:'puente', name:'Puente colgante', group:'Aventura', cat:'aventura', price:150, per:'pp', dur:'Cruce guiado', icon:'mountain', tile:'#2A2E2B', pending:true, short:'Cruza el puente colgante con vista panorámica.', desc:'Cruza el puente colgante suspendido sobre el bosque, con vista panorámica a la sierra.', incl:['Cruce del puente colgante','Guía durante la actividad'], restr:'Restricciones de edad, estatura, peso y clima. Informa antes si hay embarazo, lesiones, problemas cardiovasculares o movilidad limitada.' },
+  { id:'gotcha', name:'Gotcha', group:'Aventura', cat:'aventura', price:300, per:'pp', dur:'100 balas por persona', img:IMG.gotcha, gallery:[IMG.gotcha], short:'Campo entre árboles y obstáculos para grupos.', desc:'Campo de gotcha entre árboles y obstáculos. Ideal para amigos, empresas y grupos escolares.', incl:['Marcadora y careta','100 balas por persona','Chaleco protector'], restr:'Uso obligatorio de careta. Se puede restringir la participación a personas bajo efectos del alcohol.' },
+  { id:'cuatrimoto', name:'Cuatrimoto', group:'Aventura', cat:'aventura', price:1200, per:'u', seats:2, dur:'Recorrido guiado', img:IMG.cuatri, gallery:[IMG.cuatri], short:'Senderos del parque en cuatrimoto con guía.', desc:'Recorre los senderos del parque en cuatrimoto con guía.', incl:['Cuatrimoto por unidad','Casco','Guía'], restr:'Edad mínima y licencia según indicaciones del personal. Permanece en la ruta señalada.' },
+  { id:'ranger', name:'Ranger', group:'Aventura', cat:'aventura', price:1700, per:'u', seats:5, dur:'Recorrido guiado', img:IMG.ranger, gallery:[IMG.ranger], short:'Todo terreno para recorrer la sierra en grupo.', desc:'Vehículo todo terreno para recorrer la sierra en grupo.', incl:['Ranger por unidad','Casco','Guía'], restr:'Permanece sentado y sigue las instrucciones del operador durante el recorrido.' },
+  { id:'arco', name:'Tiro con arco', group:'Aventura', cat:'aventura', price:100, per:'pp', dur:'Sesión', img:IMG.arco, gallery:[IMG.arco], short:'Sesión supervisada con instructor.', desc:'Sesión de tiro con arco supervisada.', incl:['Equipo','Instructor'], restr:'Supervisión del personal en todo momento.' },
+  { id:'hacha', name:'Tiro con hacha', group:'Aventura', cat:'aventura', price:100, per:'u', dur:'Sesión', icon:'zap', tile:'#2A2E2B', pending:true, short:'Sesión supervisada, solo adultos.', desc:'Sesión de tiro con hacha supervisada.', incl:['Equipo','Instructor'], restr:'Solo mayores de edad, según indicaciones del personal.' },
+  { id:'safari', name:'Safari', group:'Naturaleza y safari', cat:'naturaleza', price:180, kids:100, per:'an', dur:'1 h aprox.', img:IMG.safari, gallery:[IMG.safari, IMG.tigre], video:true, short:'Recorrido en vehículo por los hábitats del parque.', desc:'Recorrido en vehículo por los hábitats del parque. Fauna de cerca, con guía que cuenta la historia de cada especie.', incl:['Recorrido en vehículo','Guía naturalista','Paradas para fotos'], restr:'No alimentar ni molestar a los animales. Respeta distancias de seguridad; su comportamiento puede ser impredecible.' },
+  { id:'granjita', name:'Granjita interactiva', group:'Naturaleza y safari', cat:'naturaleza', price:100, per:'pp', dur:'Libre', img:IMG.granja, gallery:[IMG.granja, IMG.llama], short:'Llamas, ponis y animales de granja para toda la familia.', desc:'Convive con llamas, ponis y animales de granja en un espacio pensado para niños y familias.', incl:['Acceso a la granjita','Personal de apoyo'], restr:'Toca a los animales solo con autorización del personal. Menores siempre con un adulto.' },
+  { id:'aviario', name:'Aviario', group:'Naturaleza y safari', cat:'naturaleza', price:20, per:'pp', dur:'Libre', img:IMG.aviario, gallery:[IMG.aviario], short:'Aves de la región en un espacio abierto.', desc:'Aves de la región en un espacio abierto.', incl:['Acceso al aviario'], restr:'No alimentar a las aves.' },
+  { id:'ruta', name:'Recorrido de ruta', group:'Naturaleza y safari', cat:'naturaleza', price:300, per:'pp', dur:'Tour guiado', img:IMG.ruta, gallery:[IMG.ruta], icon:'mountain', tile:FOREST, short:'Tour guiado por senderos y miradores con vistas impresionantes.', desc:'Tour guiado por senderos y miradores con vistas impresionantes.', incl:['Guía','Ruta señalizada'], restr:'Respeta senderos y zonas delimitadas.' },
+  { id:'caballo', name:'Paseo a caballo', group:'Naturaleza y safari', cat:'naturaleza', price:300, per:'pp', dur:'1 hora', img:IMG.cabalgata, gallery:[IMG.cabalgata], short:'Una hora a caballo por el bosque.', desc:'Paseo a caballo de una hora por el bosque.', incl:['Caballo por persona','Guía'], restr:'Casco obligatorio. Sujeto a peso y experiencia.' },
+  { id:'pony', name:'Paseo en pony', group:'Naturaleza y safari', cat:'naturaleza', price:100, per:'u', dur:'15 min', img:IMG.caballo, gallery:[IMG.caballo], short:'Paseo corto para los más pequeños.', desc:'Paseo corto en pony para los más pequeños.', incl:['Pony por niño','Acompañante'], restr:'Para niños, con supervisión de un adulto.' },
+  { id:'spot', name:'Terraza / Spot VIP', group:'Photo spots', cat:'especiales', price:700, per:'pp', dur:'Día completo', img:IMG.spot, gallery:[IMG.spot], short:'La silla gigante: el spot más fotografiado del parque.', desc:'Terraza panorámica con la silla gigante: el spot más fotografiado del parque. Contenido para compartir garantizado.', incl:['Acceso a terraza VIP','Photo spot silla gigante','Vista a la sierra'], restr:'Espacio limitado, sujeto a disponibilidad.' },
+  { id:'columpio', name:'Columpio panorámico', group:'Photo spots', cat:'especiales', price:50, per:'u', dur:'Por turno', img:IMG.columpio, gallery:[IMG.columpio], short:'Columpio con vista al valle. Foto obligada.', desc:'Columpio con vista al valle. Foto obligada.', incl:['Turno en columpio','Arnés'], restr:'Uso con arnés y supervisión.' },
+  { id:'herpetario', name:'Herpetario', group:'Naturaleza y safari', cat:'naturaleza', cat2:'herpetario', price:45, per:'pp', dur:'Visita guiada', img:IMG.herp, gallery:[IMG.herp], short:'Descubre de cerca a la serpiente de cascabel.', desc:'Conoce de cerca a la serpiente de cascabel y descubre una de las experiencias más singulares de Cumbre Salvaje.', incl:['Recorrido con personal del herpetario','Observación segura de la serpiente de cascabel'], restr:'No tocar ni golpear los cristales. Menores siempre con un adulto. Sigue las indicaciones del personal.' },
+  { id:'hospedaje', name:'Hospedaje · Cuevita', group:'Hospedaje', cat:'hospedaje', price:2000, per:'u', dur:'Cabaña, glamping o camping', img:IMG.cueva, gallery:[IMG.cueva, IMG.cueva2], lodging:true, short:'Cabaña estilo cuevita con vista a la sierra. Glamping y camping disponibles.', desc:'Cabaña estilo cuevita integrada al paisaje, con vista a la sierra e interior acogedor. También hay glamping y zona de camping. Elige tu estancia en el constructor.', incl:LODG.map(l => `${l.name} · ${lodgLabel(l)}`), restr:'Capacidad y disponibilidad por confirmar con el equipo de reservaciones. Fogatas solo en zonas autorizadas.' },
+  { id:'alimentos', name:'Alimentos y bebidas', group:'Alimentos', cat:'alimentos', price:30, per:'menu', dur:'Arma tu combo', img:IMG.food, gallery:[IMG.food], combo:true, short:'Tacos, platillos, quesadillas y molletes. Arma tu combo.', desc:'Menús para grupos, celebraciones y empresas, servidos en el parque. El equipo de reservaciones cotiza según asistentes y menú.', incl:['Servicio de alimentos en sitio','Montaje para grupos'], restr:'Se cotiza por separado. Solo se incluye lo especificado en la cotización confirmada.' },
+];
+const MOMENTS = ['tirolesa','safari','ranger','gotcha','herpetario','spot','granjita','hospedaje','alimentos'];
+const EXTRAS = [
+  { id:'descAlim', name:'Descorche · ingreso de alimentos', meta:'Por grupo', price:180 },
+  { id:'descBeb', name:'Descorche · ingreso de bebidas', meta:'Por grupo', price:180 },
+  { id:'tienda2', name:'Casa de campaña · 2 personas', meta:'Solo con camping', price:300, camping:true },
+  { id:'tienda4', name:'Casa de campaña · 4 personas', meta:'Solo con camping', price:600, camping:true },
+];
+const TYPES = [
+  { id:'pareja', label:'Pareja', hint:'Spot VIP, caballo, tirolesa', reco:['spot','caballo','tirolesa'] },
+  { id:'familia', label:'Familia', hint:'Safari, granjita, tirolesa', reco:['safari','granjita','tirolesa'] },
+  { id:'amigos', label:'Amigos', hint:'Gotcha, tirolesa, cuatrimoto', reco:['gotcha','tirolesa','cuatrimoto'] },
+  { id:'escuela', label:'Escuela', hint:'Safari, granjita, recorrido', reco:['safari','granjita','ruta'] },
+  { id:'empresa', label:'Empresa', hint:'Gotcha, ranger, alimentos', reco:['gotcha','ranger','alimentos'] },
+  { id:'celebracion', label:'Celebración', hint:'Spot VIP, alimentos, safari', reco:['spot','alimentos','safari'] },
+];
+const TITLES = { none:'¿Qué aventura quieres vivir?', pareja:'Una escapada para dos.', familia:'Una aventura para toda la familia.', amigos:'Adrenalina con tu banda.', escuela:'Naturaleza que se aprende viviéndola.', empresa:'Un día fuera de la oficina.', celebracion:'Celebra en la cumbre.' };
+const POLICIES = [
+  { t:'Confirmación', d:'Una fecha solo se considera reservada cuando recibes confirmación de Cumbre Salvaje y, cuando corresponda, se cubre el anticipo.' },
+  { t:'Anticipo', d:'Bloquea fecha, horario, personal, espacios y servicios. Se descuenta del total de la experiencia.' },
+  { t:'Cancelaciones', d:'Los anticipos no son reembolsables si la cancelación es decisión del cliente. Con disponibilidad y aviso anticipado puede evaluarse una reprogramación.' },
+  { t:'Reprogramaciones', d:'Los cambios de fecha están sujetos a disponibilidad y deben solicitarse con anticipación.' },
+  { t:'Clima', d:'La lluvia ligera no necesariamente cancela. Si hay riesgo, se pueden modificar horarios, suspender una actividad o proponer reprogramación.' },
+  { t:'Restricciones', d:'Algunas actividades tienen restricciones de edad, estatura, peso, condición física o clima. El personal puede negar la participación si hay riesgo.' },
+  { t:'Número de asistentes', d:'En grupos, cualquier incremento queda sujeto a disponibilidad y puede ajustar el total.' },
+  { t:'Servicios contratados', d:'Solo se incluye lo especificado en la cotización confirmada; lo adicional tiene costo independiente.' },
+];
+const STEPS = ['fecha','visitantes','estancia','actividades','extras'];
+const STEP_NAMES = { fecha:'Fecha', visitantes:'Visitantes', estancia:'Estancia', actividades:'Actividades', extras:'Extras' };
+const DOW = ['L','M','M','J','V','S','D'];
+const DNAMES = ['dom','lun','mar','mié','jue','vie','sáb'];
+const ICONS = {
+  explorar: ['M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z', 'm16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z'],
+  momentos: ['M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z', 'm10 8 6 4-6 4Z'],
+  aventura: ['M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z', 'M15 5.764v15', 'M9 3.236v15'],
+  reservas: ['M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z', 'M13 5v2', 'M13 17v2', 'M13 11v2'],
+  ayuda: ['M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z', 'M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3', 'M12 17h.01'],
+  car: ['M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2', 'M7 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0', 'M15 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0'],
+  target: ['M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z', 'M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12Z', 'M12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z'],
+  zap: ['M13 2 3 14h9l-1 8 10-12h-9l1-8z'],
+  feather: ['M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z', 'M16 8 2 22', 'M17.5 15H9'],
+  mountain: ['m8 3 4 8 5-5 5 15H2L8 3z'],
+  trees: ['M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z', 'M7 16v6', 'M13 19v3', 'M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7L13 3l-1.4 1.5'],
+  wind: ['M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2', 'M9.6 4.6A2 2 0 1 1 11 8H2', 'M12.6 19.4A2 2 0 1 0 14 16H2'],
+  tent: ['M3.5 21 14 3', 'M20.5 21 10 3', 'M15.5 21 12 15l-3.5 6', 'M2 21h20'],
+  home: ['m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z', 'M9 22V12h6v10'],
+  snake: ['M4 17c0-3 2.5-4 5-4h6c2 0 3-1 3-2.5S16.5 8 15 8H9c-1.5 0-3-.8-3-2.5S7.5 3 9 3h9', 'M4 17c0 2 1.5 3 3.5 3H18', 'M18 21l2-2-2-2'],
+};
+const icon = (name, size = 22, sw = 2) => React.createElement('svg', { key: name + size, width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: sw, strokeLinecap: 'round', strokeLinejoin: 'round' }, (ICONS[name] || ICONS.mountain).map((d, i) => React.createElement('path', { key: i, d })));
+function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function qrMatrix(seed) {
+  const N = 21, m = []; let h = hash(seed);
+  const rnd = () => { h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0; return (h & 0xffff) / 0xffff; };
+  for (let y = 0; y < N; y++) { m[y] = []; for (let x = 0; x < N; x++) m[y][x] = rnd() > 0.52; }
+  const finder = (ox, oy) => { for (let y = -1; y < 8; y++) for (let x = -1; x < 8; x++) { const yy = oy + y, xx = ox + x; if (yy < 0 || xx < 0 || yy >= N || xx >= N) continue; const edge = x === 0 || y === 0 || x === 6 || y === 6, core = x >= 2 && x <= 4 && y >= 2 && y <= 4, out = x < 0 || y < 0 || x > 6 || y > 6; m[yy][xx] = out ? false : (edge || core); } };
+  finder(0, 0); finder(N - 7, 0); finder(0, N - 7);
+  return m;
+}
+
+class Component extends DCLogic {
+  state = {
+    screen: 'splash', prev: [], visitType: 'none', cat: 'aventura', detId: null,
+    day: null, adults: 2, kids: 2, stay: null, lodging: null, acts: {}, extras: {}, celeb: null, celebText: '',
+    // Cantidades independientes por actividad. NUNCA se inicializan con el total del grupo.
+    actQty: {}, actAdults: {}, actKids: {}, units: {}, foodDiners: 1, qtyWarn: '',
+    name: '', phone: '', email: '', formError: '', acceptPolicies: false, policyError: false,
+    folio: null, confirmed: false, loadingExplore: false, copied: false, qrKey: 0,
+    momentIdx: 0, frameIdx: 0, saved: {}, toast: '', toastKey: 0, badgeKey: 0, totalKey: 0,
+    menuQty: {}, menuPick: {}, menuExtra: {}, drinks: null, drinkPeople: 4, drinkNote: '', comboAdded: false, menuOpen: false, menuZoom: false,
+  };
+  comboTotal() { const s = this.state; let t = 0; MENU.forEach(m => { const q = s.menuQty[m.id] || 0; t += q * m.price; if (m.extra && s.menuExtra[m.id]) t += q * (m.extraPrice || 0); }); return t; }
+  comboItems() { const s = this.state; return MENU.filter(m => (s.menuQty[m.id] || 0) > 0).map(m => { const q = s.menuQty[m.id]; const pick = s.menuPick[m.id]; const ex = m.extra && s.menuExtra[m.id]; return `${q} ${m.name}${q > 1 && m.id === 'taco' ? 's' : ''}${pick ? ' (' + pick.toLowerCase() + ')' : ''}${ex ? ' + guiso extra' : ''}`; }); }
+  componentDidMount() { this._t = setTimeout(() => { if (this.state.screen === 'splash') this.go('home'); }, 2400); this.attachChips(); }
+  componentDidUpdate() { this.attachChips(); this.purgeCampingExtras(); }
+  // Nivel 2 de defensa: al dejar camping, las casas de campaña salen del estado para que no
+  // reaparezcan seleccionadas si el visitante vuelve a camping más tarde.
+  purgeCampingExtras() {
+    if (this.state.lodging === 'camping') return;
+    const stuck = EXTRAS.filter(x => x.camping && this.state.extras[x.id]);
+    if (!stuck.length) return;
+    this.setState(st => { const extras = { ...st.extras }; stuck.forEach(x => { delete extras[x.id]; }); return { extras, totalKey: st.totalKey + 1 }; });
+  }
+  componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._t2); clearTimeout(this._t3); this.detachChips(); }
+  // ---- Controlador de carril horizontal reutilizable -------------------------------
+  // Gestos con listeners nativos: pointer events + wheel no pasivo (React no permite
+  // un wheel cancelable). Se re-engancha desde componentDidUpdate cuando cambia el nodo.
+  // opts: { edgeEscape, keyboard, onSync }
+  attachRail(key, ref, opts) {
+    const o = opts || {};
+    this._rails = this._rails || {};
+    const prev = this._rails[key], el = ref.current;
+    if (prev && prev.el === el) return;
+    this.detachRail(key);
+    if (!el) return;
+    const st = { el, down: false, moved: false, suppress: false, x0: 0, sl: 0, pid: null };
+    const step = () => { const k = el.children; if (!k.length) return el.clientWidth; return k[1] ? k[1].offsetLeft - k[0].offsetLeft : k[0].offsetWidth; };
+    const max = () => Math.max(0, el.scrollWidth - el.clientWidth);
+    const down = e => { if (e.pointerType === 'touch') return; st.down = true; st.moved = false; st.x0 = e.clientX; st.sl = el.scrollLeft; st.pid = e.pointerId; el.style.cursor = 'grabbing'; };
+    const move = e => { if (!st.down) return; const dx = e.clientX - st.x0; if (!st.moved && Math.abs(dx) > 6) { st.moved = true; try { el.setPointerCapture(st.pid); } catch (err) {} } if (st.moved) { el.scrollLeft = st.sl - dx; e.preventDefault(); } };
+    const up = () => { if (!st.down) return; st.down = false; el.style.cursor = 'grab'; try { el.releasePointerCapture(st.pid); } catch (err) {} if (st.moved) { st.suppress = true; setTimeout(() => { st.suppress = false; st.moved = false; }, 0); } if (st.bump) st.bump(); };
+    // Solo se anula el clic si de verdad hubo arrastre; un clic limpio pasa intacto.
+    const click = e => { if (st.suppress || st.moved) { e.stopPropagation(); e.preventDefault(); } };
+    const wheel = e => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // el dispositivo ya da horizontal
+      const d = e.deltaY; if (!d) return;
+      if (o.edgeEscape) { // en los extremos se devuelve el gesto a la página (sin trampa de scroll)
+        const m = max();
+        if ((d < 0 && el.scrollLeft <= 0) || (d > 0 && el.scrollLeft >= m - 1)) return;
+      }
+      el.scrollLeft += d; e.preventDefault();
+      if (st.bump) st.bump();
+    };
+    // scrollTo({behavior:'smooth'}) no se aplica en este entorno con scroll-snap activo,
+    // así que la animación se hace a mano sobre scrollLeft (también respeta el snap al terminar).
+    const glide = to => {
+      const from = el.scrollLeft, target = Math.max(0, Math.min(max(), to)), d = target - from;
+      if (Math.abs(d) < 1) return;
+      clearInterval(st.raf);
+      // El snap se suspende durante la animación: si no, cada frame intermedio se devuelve
+      // al punto de anclaje y el carril nunca avanza. Al quitar la propiedad inline vuelve
+      // a mandar la regla .rail-snap, así que nunca queda apagado de forma permanente.
+      el.style.scrollSnapType = 'none';
+      // Con temporizador y no con requestAnimationFrame: rAF se pausa cuando el panel de
+      // vista previa no está en primer plano y la animación se quedaba a medias.
+      const t0 = Date.now(), ms = 320;
+      st.raf = setInterval(() => {
+        const p = Math.min(1, (Date.now() - t0) / ms);
+        el.scrollLeft = from + d * (1 - Math.pow(1 - p, 3));
+        if (p >= 1) { clearInterval(st.raf); el.style.removeProperty('scroll-snap-type'); if (st.bump) st.bump(); }
+      }, 16);
+    };
+    const key$ = e => {
+      if (!o.keyboard) return;
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return; // no bloquea otras teclas
+      const dir = e.key === 'ArrowRight' ? 1 : -1;
+      glide((st.index() + dir) * step());
+      e.preventDefault();
+    };
+    // Índice = tarjeta cuyo borde izquierdo está más cerca del inicio visible. Dividir por el
+    // paso falla en el extremo derecho, donde el scroll queda recortado por el ancho del carril.
+    // El último anclaje solo cuenta si hay desborde real: con max() = 0 la comparación
+    // se cumplía siempre y marcaba la última tarjeta como activa sin haber movido nada.
+    st.index = () => { const k = [...el.children]; if (!k.length) return 0; if (max() > 1 && el.scrollLeft >= max() - 1) return k.length - 1; const x = el.scrollLeft; let bi = 0, bd = Infinity; k.forEach((c, i) => { const d = Math.abs(c.offsetLeft - el.offsetLeft - x); if (d < bd) { bd = d; bi = i; } }); return bi; };
+    // Un sync con el carril aún sin medir (clientWidth 0) daría overflow false y dejaría
+    // los controles ocultos para siempre: en ese caso no se sincroniza nada.
+    const sync = () => { if (!o.onSync || !el.clientWidth) return; const m = max(); o.onSync({ index: st.index(), overflow: m > 1, atStart: el.scrollLeft <= 1, atEnd: m > 1 && el.scrollLeft >= m - 1 }); };
+    el.addEventListener('pointerdown', down);
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointercancel', up);
+    el.addEventListener('click', click, true);
+    el.addEventListener('wheel', wheel, { passive: false });
+    el.addEventListener('scroll', sync, { passive: true });
+    el.addEventListener('keydown', key$);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    st.goTo = i => glide(i * step());
+    st.off = () => {
+      el.removeEventListener('pointerdown', down);
+      el.removeEventListener('pointermove', move);
+      el.removeEventListener('pointerup', up);
+      el.removeEventListener('pointercancel', up);
+      el.removeEventListener('click', click, true);
+      el.removeEventListener('wheel', wheel);
+      el.removeEventListener('scroll', sync);
+      el.removeEventListener('keydown', key$);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+    };
+    this._rails[key] = st;
+    // El desborde solo se conoce cuando las tarjetas ya tienen layout: se re-mide con
+    // ResizeObserver (dispara también al observar) y con un reintento diferido.
+    if (o.onSync) {
+      // Reintentos escalonados hasta que el carril tenga ancho: en carga en frío el layout
+      // no está listo en el primer tick, y aquí no hay ni evento scroll ni ResizeObserver
+      // que avise después. Sin esto los controles nunca aparecían en la primera visita.
+      let tries = 0;
+      const settle = () => { sync(); if (++tries < 14) st.retry = setTimeout(settle, tries < 6 ? 120 : 400); };
+      settle();
+      if (typeof ResizeObserver === 'function') { st.ro = new ResizeObserver(sync); st.ro.observe(el); [...el.children].forEach(c => st.ro.observe(c)); }
+      // El evento scroll no se emite en este entorno, así que la posición se sincroniza en
+      // cada gesto que puede moverla: fin de arrastre, rueda, teclado, fin de animación y
+      // touchend (el swipe táctil es scroll nativo y no emite ningún evento propio).
+      st.sync = sync;
+      const bump = () => { sync(); setTimeout(sync, 120); setTimeout(sync, 400); };
+      el.addEventListener('touchend', bump, { passive: true });
+      el.addEventListener('touchmove', bump, { passive: true });
+      st.bump = bump;
+      const off2 = st.off;
+      st.off = () => { el.removeEventListener('touchend', bump); el.removeEventListener('touchmove', bump); off2(); };
+      const off = st.off;
+      st.off = () => { clearTimeout(st.retry); clearInterval(st.raf); clearInterval(st.poll); el.style.removeProperty('scroll-snap-type'); if (st.ro) st.ro.disconnect(); off(); };
+    }
+  }
+  detachRail(key) { const r = this._rails && this._rails[key]; if (r) { r.off(); delete this._rails[key]; } }
+  railGoTo(key, i) { const r = this._rails && this._rails[key]; if (r) r.goTo(i); }
+  // Avanza/retrocede leyendo la posición real del carril, no un índice guardado en el estado.
+  railStep(key, dir) { const r = this._rails && this._rails[key]; if (r) r.goTo(r.index() + dir); }
+  // Explorar: edgeEscape apagado para conservar exactamente el comportamiento ya aprobado.
+  chipsCtl() { return this._chips || (this._chips = { ref: React.createRef() }); }
+  howCtl() { return this._how || (this._how = { ref: React.createRef() }); }
+  attachChips() {
+    this.attachRail('chips', this.chipsCtl().ref, { edgeEscape: false, keyboard: false });
+    this.attachRail('how', this.howCtl().ref, { edgeEscape: true, keyboard: true, onSync: r => {
+      // La posición activa se pinta directamente sobre los nodos: pasar por setState en cada
+      // sondeo se pierde con el ciclo de render y el indicador se quedaba congelado.
+      const host = this.howCtl().ref.current; if (!host) return;
+      const sec = host.parentElement; if (!sec) return;
+      sec.querySelectorAll('[data-how-dot]').forEach(d => {
+        const on = Number(d.getAttribute('data-how-dot')) === r.index;
+        d.style.width = (on ? 16 : 6) + 'px';
+        d.style.background = on ? INK : 'rgba(23,26,24,.22)';
+      });
+      const arrow = k => sec.querySelector('[data-how-arrow="' + k + '"]');
+      const p = arrow('prev'), n = arrow('next');
+      if (p) { p.style.opacity = r.atStart ? 0.35 : 1; p.disabled = r.atStart; }
+      if (n) { n.style.opacity = r.atEnd ? 0.35 : 1; n.disabled = r.atEnd; }
+      if (this.state.howOverflow !== r.overflow) this.setState({ howOverflow: r.overflow });
+    } });
+  }
+  detachChips() { this.detachRail('chips'); this.detachRail('how'); }
+  go(screen, extra = {}) {
+    this.setState(s => ({ screen, prev: [...s.prev, s.screen].slice(-12), ...extra }));
+    if (screen === 'explorar' && (this.props.skeletonMs ?? 900) > 0) {
+      this.setState({ loadingExplore: true });
+      clearTimeout(this._t2); this._t2 = setTimeout(() => this.setState({ loadingExplore: false }), this.props.skeletonMs ?? 900);
+    }
+  }
+  back() { this.setState(s => { const p = [...s.prev]; let screen = p.pop() || 'home'; if (screen === 'generando' || screen === 'splash') screen = 'home'; return { screen, prev: p, menuZoom: false }; }); }
+  groupTotal() { return this.state.adults + this.state.kids; }
+  // Unidad real de cada servicio. groupTotal SOLO multiplica automáticamente la entrada general.
+  unitOf(c) { return c.seats ? 'unit' : c.per === 'pp' ? 'person' : c.per === 'an' ? 'an' : c.per === 'u' ? 'qty' : 'other'; }
+  toggleAct(id, withToast) {
+    const was = !!this.state.acts[id];
+    const c = CAT.find(x => x.id === id) || {};
+    const u = this.unitOf(c);
+    this.setState(s => {
+      const st = { acts: { ...s.acts, [id]: !was }, badgeKey: s.badgeKey + 1, totalKey: s.totalKey + 1 };
+      if (was) { // al quitar, las cantidades vuelven a cero
+        st.actQty = { ...s.actQty, [id]: 0 }; st.actAdults = { ...s.actAdults, [id]: 0 };
+        st.actKids = { ...s.actKids, [id]: 0 }; st.units = { ...s.units, [id]: 0 };
+      } else { // al activar, cantidad inicial 1 — nunca el total del grupo
+        if (u === 'person' || u === 'qty') st.actQty = { ...s.actQty, [id]: 1 };
+        if (u === 'an') { st.actAdults = { ...s.actAdults, [id]: 1 }; st.actKids = { ...s.actKids, [id]: 0 }; }
+        if (u === 'unit') { st.actQty = { ...s.actQty, [id]: 1 }; st.units = { ...s.units, [id]: 1 }; }
+      }
+      return st;
+    });
+    if (withToast) this.showToast(was ? 'Quitado de tu aventura' : '¡Agregado a tu aventura!');
+  }
+  // Participantes / unidades / comensales, siempre acotados por el tamaño del grupo.
+  setActQty(id, d) {
+    const c = CAT.find(x => x.id === id) || {};
+    this.setState(s => {
+      const max = c.per === 'pp' || c.seats ? s.adults + s.kids : 99;
+      const q = Math.max(1, Math.min(max, (s.actQty[id] || 0) + d));
+      const st = { actQty: { ...s.actQty, [id]: q }, totalKey: s.totalKey + 1, qtyWarn: '' };
+      if (c.seats) { const need = Math.ceil(q / c.seats); const selected = s.units[id] || 1; if (selected < need) st.qtyWarn = `${c.name}: ${q} participantes requieren mínimo ${need} ${need === 1 ? 'unidad' : 'unidades'} (máximo ${c.seats} por unidad). Agrega una unidad o reduce participantes.`; }
+      return st;
+    });
+  }
+  setActAN(id, kind, d) {
+    this.setState(s => {
+      const cap = kind === 'a' ? s.adults : s.kids;
+      void 0;
+      const key = kind === 'a' ? 'actAdults' : 'actKids';
+      const v = Math.max(0, Math.min(cap, (s[key][id] || 0) + d));
+      const other = kind === 'a' ? (s.actKids[id] || 0) : (s.actAdults[id] || 0);
+      if (v + other < 1) return { qtyWarn: 'Debe participar al menos una persona.' };
+      return { [key]: { ...s[key], [id]: v }, totalKey: s.totalKey + 1, qtyWarn: '' };
+    });
+  }
+  setUnits(id, d) {
+    const c = CAT.find(x => x.id === id) || {};
+    this.setState(s => {
+      const q = s.actQty[id] || 1;
+      const min = Math.ceil(q / (c.seats || 1));
+      const u = Math.max(1, Math.min(20, (s.units[id] || 1) + d));
+      if (u < min) return { qtyWarn: `${q} participantes necesitan al menos ${min} ${min === 1 ? 'unidad' : 'unidades'} (máximo ${c.seats} por unidad).` };
+      return { units: { ...s.units, [id]: u }, totalKey: s.totalKey + 1, qtyWarn: q > u * (c.seats || 1) ? `${c.name}: ${q} participantes requieren más unidades.` : '' };
+    });
+  }
+  setDiners(d) { this.setState(s => ({ foodDiners: Math.max(1, Math.min(s.adults + s.kids, s.foodDiners + d)), qtyWarn: '' })); }
+  // Si el grupo se reduce, ninguna cantidad puede quedar por encima del nuevo total.
+  clampToGroup() {
+    const s = this.state, g = s.adults + s.kids;
+    let changed = false;
+    const actQty = { ...s.actQty }, actAdults = { ...s.actAdults }, actKids = { ...s.actKids }, units = { ...s.units };
+    CAT.forEach(c => {
+      const u = this.unitOf(c);
+      if ((u === 'person' || u === 'unit') && actQty[c.id] > g) { actQty[c.id] = g; changed = true; if (c.seats) units[c.id] = Math.max(1, Math.ceil(g / c.seats)); }
+      if (u === 'an') {
+        if (actAdults[c.id] > s.adults) { actAdults[c.id] = s.adults; changed = true; }
+        if (actKids[c.id] > s.kids) { actKids[c.id] = s.kids; changed = true; }
+        if (s.acts[c.id] && !(actAdults[c.id] || 0) && !(actKids[c.id] || 0)) { actAdults[c.id] = 1; changed = true; }
+      }
+    });
+    // El hospedaje por persona (camping) también se acota al grupo.
+    LODG.forEach(l => { if (l.per !== 'an') return;
+      if (actAdults[l.id] > s.adults) { actAdults[l.id] = s.adults; changed = true; }
+      if (actKids[l.id] > s.kids) { actKids[l.id] = s.kids; changed = true; }
+      if (s.lodging === l.id && !(actAdults[l.id] || 0) && !(actKids[l.id] || 0)) { actAdults[l.id] = 1; changed = true; }
+    });
+    const diners = Math.min(g, s.foodDiners);
+    if (changed || diners !== s.foodDiners) this.setState({ actQty, actAdults, actKids, units, foodDiners: diners, qtyWarn: 'Ajustamos las cantidades al nuevo tamaño del grupo.', totalKey: s.totalKey + 1 });
+  }
+  showToast(t) { this.setState(s => ({ toast: t, toastKey: s.toastKey + 1 })); clearTimeout(this._t3); this._t3 = setTimeout(() => this.setState({ toast: '' }), 1600); }
+  moveMoment(dir) { const n = MOMENTS.length; this.setState(s => ({ momentIdx: Math.max(0, Math.min(n - 1, s.momentIdx + dir)), frameIdx: 0 })); }
+  totals() {
+    const { adults, kids, stay, lodging, acts, extras } = this.state;
+    const n = adults + kids; const lines = [];
+    const { actQty, actAdults, actKids, units } = this.state;
+    lines.push({ id:'entrada', kicker:'Acceso', title:'Entrada general', sub:`${n} × ${MXN(ENTRADA)}`, amount: ENTRADA * n, step:'visitantes' });
+    // El hospedaje por persona (camping) usa SUS propias cantidades: quiénes pernoctan,
+    // no el grupo completo. Único lugar donde el grupo multiplica sigue siendo la entrada.
+    if (stay === 'noche' && lodging) { const l = LODG.find(x => x.id === lodging); let a, sub;
+      if (l.per === 'an') { const qa = actAdults[l.id] || 0, qk = actKids[l.id] || 0; a = l.price * qa + l.kids * qk; sub = `${qa} adulto${qa !== 1 ? 's' : ''}${qk ? ` · ${qk} niño${qk !== 1 ? 's' : ''}` : ''}`; }
+      else { a = l.price; sub = 'Desde · 1 noche'; }
+      lines.push({ id:'lodg', kicker:'Hospedaje', title:l.name, sub, amount:a, step:'estancia' }); }
+    // Cada actividad usa SU propia cantidad (actQty / actAdults / actKids / units).
+    // Ninguna se multiplica por el total del grupo.
+    CAT.forEach(c => { if (!acts[c.id] || c.combo || c.lodging) return; let a = 0, sub = '';
+      const u = this.unitOf(c);
+      if (u === 'unit') { const q = actQty[c.id] || 1, un = units[c.id] || 1; a = c.price * un; sub = `${un} ${un === 1 ? 'unidad' : 'unidades'} · ${q} ${q === 1 ? 'participante' : 'participantes'}`; }
+      else if (u === 'person') { const q = actQty[c.id] || 1; a = c.price * q; sub = `${q} × ${MXN(c.price)}`; }
+      else if (u === 'an') { const qa = actAdults[c.id] || 0, qk = actKids[c.id] || 0; a = c.price * qa + c.kids * qk; sub = `${qa} adulto${qa !== 1 ? 's' : ''}${qk ? ` · ${qk} niño${qk !== 1 ? 's' : ''}` : ''}`; }
+      else if (u === 'qty') { const q = actQty[c.id] || 1; a = c.price * q; sub = `${q} × ${MXN(c.price)}`; }
+      else { a = 0; sub = 'Cotización con el equipo'; }
+      lines.push({ id:c.id, kicker:c.group, title:c.name, sub, amount:a, quote: c.per === 'q', step:'actividades' }); });
+    // Los extras exclusivos de camping solo cuentan si el hospedaje elegido es camping (nivel 1 de defensa)
+    // descBeb tiene un único estado (extras.descBeb) que escriben tanto Extras como el combo,
+    // así que aquí no hace falta ninguna exclusión condicional.
+    EXTRAS.forEach(x => { if (x.camping && lodging !== 'camping') return; if (extras[x.id]) lines.push({ id:x.id, kicker:'Extras', title:x.name, sub:x.meta, amount:x.price, step:'extras' }); });
+    // Un combo sin platillos ni bebidas no genera línea (evita un "$0 MXN" fantasma).
+    const comboHas = MENU.some(m => (this.state.menuQty[m.id] || 0) > 0) || !!this.state.drinks;
+    if (this.state.comboAdded && comboHas) { const items = this.comboItems(); const d = this.state.drinks; const drinkTxt = d === 'park' ? ` · bebidas para ${this.state.drinkPeople} (precio por confirmar)` : d === 'own' ? ' · bebidas propias' : ''; lines.push({ id:'combo', kicker:'Alimentos y bebidas', title:'Combo de alimentos', sub: `${this.state.foodDiners} ${this.state.foodDiners === 1 ? 'comensal' : 'comensales'} · ` + (items.join(', ') || 'Sin platillos') + drinkTxt, amount: this.comboTotal(), step:'combo', combo:true }); }
+    const total = lines.reduce((s, l) => s + l.amount, 0);
+    return { lines, total, deposit: total / 2, n };
+  }
+  dateLabel() { const d = this.state.day; if (!d) return 'Sin fecha'; const dt = new Date(2026, 9, d); return `${DNAMES[dt.getDay()]} ${d} oct 2026`; }
+  visitorsLabel() { const { adults, kids } = this.state; return `${adults} adulto${adults !== 1 ? 's' : ''}${kids ? ` · ${kids} niño${kids !== 1 ? 's' : ''}` : ''}`; }
+  servicesText(lines) { return lines.filter(l => l.id !== 'entrada').map(l => l.combo ? `Combo de alimentos (${l.sub})` : l.title).join(' · ') || 'Entrada general'; }
+  qr(seed, animated) {
+    const m = qrMatrix(seed), N = m.length, cell = 8, size = N * cell;
+    const cells = []; m.forEach((row, y) => row.forEach((v, x) => { if (v) cells.push(React.createElement('div', { key: x + '-' + y, style: { position:'absolute', left: x * cell, top: y * cell, width: cell, height: cell, background: INK } })); }));
+    const grid = React.createElement('div', { style: { position:'relative', width:size, height:size, animation: animated ? 'qrIn .7s 1.15s cubic-bezier(.2,.8,.2,1) both' : 'none' } }, cells);
+    if (!animated) return React.createElement('div', { style: { padding: 16, background: '#FFFFFF', border: '1px solid ' + MUTED, flex: 'none' } }, grid);
+    const topo = React.createElement('svg', { width: size, height: size, viewBox: '0 0 168 168', style: { position:'absolute', inset:0, overflow:'visible' } },
+      React.createElement('path', { d: 'M4 120 C 30 100, 40 130, 70 110 S 110 60, 130 80 S 160 40, 164 30', fill:'none', stroke: ACC, strokeWidth: 3, strokeLinecap:'round', strokeDasharray: 900, style: { animation: 'topoDraw 1.5s cubic-bezier(.4,0,.2,1) both' } }),
+      React.createElement('path', { d: 'M4 140 C 40 120, 60 150, 90 128 S 130 90, 164 100', fill:'none', stroke: GREEN, strokeWidth: 2, strokeLinecap:'round', strokeDasharray: 900, style: { animation: 'topoDraw 1.5s .15s cubic-bezier(.4,0,.2,1) both' } }));
+    return React.createElement('div', { key: this.state.qrKey, style: { position:'relative', padding: 16, background: '#FFFFFF', border: '2px solid ' + INK } }, topo, grid);
+  }
+  renderVals() {
+    const s = this.state, T = this.totals();
+    const sc = s.screen;
+    const isBuilder = STEPS.includes(sc);
+    const stepIdx = STEPS.indexOf(sc);
+    const showTabs = ['home','explorar','carrito','reserva','ayuda','momentos'].includes(sc);
+    const openDetailOrCombo = id => () => { if (id === 'alimentos') this.go('combo'); else if (id === 'hospedaje') this.go('detalle', { detId: id }); else this.go('detalle', { detId: id }); };
+    const cur = TYPES.find(t => t.id === s.visitType);
+    const openItem = id => openDetailOrCombo(id);
+    const det = CAT.find(c => c.id === s.detId) || CAT[0];
+    const tacoPrice = (MENU.find(m => m.id === 'taco') || {}).price || 0;
+    const priceLabel = c => c.per === 'menu' ? `Desde ${MXN(tacoPrice)} por taco · arma tu combo` : c.herp ? 'Consultar disponibilidad' : c.per === 'q' ? 'Cotización con el equipo' : c.per === 'an' ? `Desde ${MXN(c.price)} adulto · ${MXN(c.kids)} niño` : `Desde ${MXN(c.price)} ${c.per === 'pp' ? 'por persona' : c.lodging ? 'por noche' : 'por unidad'}`;
+    const priceShort = c => c.herp ? 'Consultar' : c.per === 'q' ? 'Cotizar' : 'desde ' + MXN(c.price);
+    const perLabel = c => c.per === 'menu' ? 'por taco' : c.herp ? 'precio por confirmar' : c.per === 'q' ? 'con el equipo' : c.per === 'pp' ? 'por persona' : c.per === 'an' ? 'adulto · niños ' + MXN(c.kids) : c.lodging ? 'por noche' : 'por unidad';
+    const isOn = c => c.combo ? s.comboAdded : c.lodging ? !!s.lodging : !!s.acts[c.id];
+    const mk = c => { const on = isOn(c); return { ...c, open: openItem(c.id), toggle: () => c.combo ? this.go('combo') : c.lodging ? this.go('estancia') : this.toggleAct(c.id, false), selected: on, priceLabel: priceLabel(c), priceShort: priceShort(c), perLabel: perLabel(c), meta: `${c.dur} · ${perLabel(c)}`, shortDesc: c.short, ipos: ipos(c.img), hasImg: !!c.img && !(c.herp && !HERP_PHOTO_READY), noImg: !c.img || (c.herp && !HERP_PHOTO_READY), pending: !!c.pending || (c.herp && !HERP_PHOTO_READY), icon: c.icon || (c.herp ? 'snake' : undefined), tile: c.tile || FOREST, iconEl: icon(c.icon || (c.herp ? 'snake' : 'mountain'), 26), iconElLg: icon(c.icon || (c.herp ? 'snake' : 'mountain'), 36, 1.8), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; };
+    const catDefs = [{ id:'todos', name:'Todos' }, { id:'aventura', name:'Aventura' }, { id:'naturaleza', name:'Naturaleza y safari' }, { id:'especiales', name:'Photo spots' }, { id:'hospedaje', name:'Hospedaje' }, { id:'alimentos', name:'Alimentos y bebidas' }, { id:'herpetario', name:'Herpetario' }];
+    // Carril de categorías: los gestos viven en attachChips(); aquí solo el centrado del activo
+    const chips = this.chipsCtl();
+    const centerChip = id => { const el = chips.ref.current; if (!el) return; const b = el.querySelector(`[data-chip="${id}"]`); if (!b) return; const left = b.offsetLeft - (el.clientWidth - b.offsetWidth) / 2; const max = Math.max(0, el.scrollWidth - el.clientWidth); el.scrollTo({ left: Math.max(0, Math.min(left, max)), behavior: 'smooth' }); };
+    // Combo
+    const setQty = (id, d) => this.setState(st => ({ menuQty: { ...st.menuQty, [id]: Math.max(0, Math.min(99, (st.menuQty[id] || 0) + d)) }, totalKey: st.totalKey + 1 }));
+    const menuItems = MENU.map(m => { const q = s.menuQty[m.id] || 0; const opts = m.pick === 'guiso' ? GUISOS : m.pick === 'dulce' ? DULCE : []; const pick = s.menuPick[m.id] || (opts[0] || ''); return { ...m, qty: q, hasQty: q > 0, priceShort: MXN(m.price), inc: () => setQty(m.id, 1), dec: () => setQty(m.id, -1), hasPick: !!m.pick && q > 0, pickLabel: m.pick === 'dulce' ? 'Elige el dulce' : 'Elige el guiso', opts: opts.map(o => ({ t: o, select: () => this.setState(st => ({ menuPick: { ...st.menuPick, [m.id]: o } })), bg: pick === o ? INK : '#F6F1E7', color: pick === o ? PAPER : INK })), hasExtra: !!m.extra && q > 0, extraOn: !!s.menuExtra[m.id], extraRing: s.menuExtra[m.id] ? ACC : MUTED, extraFill: s.menuExtra[m.id] ? ACC : 'transparent', toggleExtra: () => this.setState(st => ({ menuExtra: { ...st.menuExtra, [m.id]: !st.menuExtra[m.id] }, totalKey: st.totalKey + 1 })), qtyBg: q > 0 ? ACC : '#F6F1E7', qtyColor: q > 0 ? PAPER : INK, cardBorder: q > 0 ? ACC : BORDER }; });
+    // Etiquetas del combo derivadas de la misma fuente que usa comboTotal(): el precio
+    // visible y el cobrado no pueden divergir.
+    const extraPrice = (MENU.find(m => m.extraPrice) || {}).extraPrice || 0;
+    const descBebPrice = (EXTRAS.find(x => x.id === 'descBeb') || {}).price || 0;
+    const guisoExtraLabel = `+${MXN(extraPrice)} por platillo`;
+    const descorcheBebLabel = `Descorche ${MXN(descBebPrice)} por grupo`;
+    const descorcheBebShort = MXN(descBebPrice);
+    const comboTotal = this.comboTotal(); const comboCount = MENU.reduce((n, m) => n + (s.menuQty[m.id] || 0), 0);
+    const comboItemsArr = this.comboItems();
+    const drinkOpt = (id) => ({ border: s.drinks === id ? ACC : BORDER, ring: s.drinks === id ? ACC : MUTED, fill: s.drinks === id ? ACC : 'transparent' });
+    const goCat = id => () => this.go('explorar', { cat: id });
+    const days = []; for (let i = 0; i < 3; i++) days.push({ blank: true, label: '', bg: 'transparent', color: 'transparent', select: () => {} });
+    for (let d = 1; d <= 31; d++) { const sel = s.day === d; days.push({ blank: false, label: String(d), bg: sel ? ACC : '#F6F1E7', color: sel ? PAPER : INK, select: () => this.setState({ day: d }) }); }
+    const capacityInvalid = CAT.some(c => c.seats && s.acts[c.id] && (s.actQty[c.id] || 1) > (s.units[c.id] || 1) * c.seats);
+    const nextDisabled = (sc === 'fecha' && !s.day) || (sc === 'estancia' && (!s.stay || (s.stay === 'noche' && !s.lodging))) || (sc === 'actividades' && capacityInvalid);
+    const nextStep = () => { if (nextDisabled) return; if (stepIdx < STEPS.length - 1) this.go(STEPS[stepIdx + 1]); else this.go('carrito'); };
+    const lodgings = LODG.map(l => { const on = s.lodging === l.id; const qa = s.actAdults[l.id] || 0, qk = s.actKids[l.id] || 0; return { ...l, priceLabel: lodgLabel(l),
+      showSel: on && l.per === 'an', qAdults: qa, qKids: qk,
+      aDec: () => this.setActAN(l.id, 'a', -1), aInc: () => this.setActAN(l.id, 'a', 1),
+      kDec: () => this.setActAN(l.id, 'k', -1), kInc: () => this.setActAN(l.id, 'k', 1),
+      subLabel: MXN(l.price * qa + (l.kids || 0) * qk), selBorder: on ? ACC : BORDER, hasImg: !!l.img, noImg: !l.img, iconEl: l.icon ? icon(l.icon, 24) : null, select: () => this.setState(st => { const o = { lodging: l.id, totalKey: st.totalKey + 1 }; // cantidad inicial 1, nunca el grupo completo
+        if (l.per === 'an' && !(st.actAdults[l.id] || 0) && !(st.actKids[l.id] || 0)) { o.actAdults = { ...st.actAdults, [l.id]: 1 }; o.actKids = { ...st.actKids, [l.id]: 0 }; }
+        return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
+    // Selector inline de cantidad por actividad: aparece solo cuando la actividad está activa.
+    const withQty = it => {
+      const u = this.unitOf(it);
+      const qty = s.actQty[it.id] || 1, un = it.seats ? (s.units[it.id] || 1) : 1;
+      const qa = s.actAdults[it.id] || 0, qk = s.actKids[it.id] || 0;
+      const amount = u === 'unit' ? it.price * un : u === 'an' ? it.price * qa + it.kids * qk : u === 'other' ? 0 : it.price * qty;
+      return { ...it,
+        showSel: it.selected && u !== 'other', isPerson: it.selected && (u === 'person' || u === 'qty'), isUnit: it.selected && u === 'unit', isAN: it.selected && u === 'an',
+        qtyLabel: u === 'qty' ? (it.id === 'columpio' ? 'Turnos' : 'Unidades') : 'Participantes',
+        qty, qtyDec: () => this.setActQty(it.id, -1), qtyInc: () => this.setActQty(it.id, 1),
+        unitsVal: un, unitsDec: () => this.setUnits(it.id, -1), unitsInc: () => this.setUnits(it.id, 1),
+        seatsNote: it.seats ? `Máximo ${it.seats} por unidad` : '',
+        qAdults: qa, qKids: qk,
+        aDec: () => this.setActAN(it.id, 'a', -1), aInc: () => this.setActAN(it.id, 'a', 1),
+        kDec: () => this.setActAN(it.id, 'k', -1), kInc: () => this.setActAN(it.id, 'k', 1),
+        subLabel: MXN(amount), selBorder: it.selected ? ACC : BORDER };
+    };
+    const groups = ['Aventura', 'Naturaleza y safari', 'Photo spots'].map(g => ({ name: g, items: CAT.filter(c => c.group === g && !c.lodging).map(mk).map(withQty) }));
+    const extrasList = EXTRAS.filter(x => !x.camping || s.lodging === 'camping').map(x => { const on = !!s.extras[x.id]; return { ...x, priceShort: MXN(x.price), selected: on, toggle: () => this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1 }; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
+    const cartRows = T.lines.map(l => ({ kicker: l.kicker, title: l.title, sub: l.sub, amount: l.quote ? 'Por cotizar' : MXN(l.amount), edit: () => this.go(l.step) }));
+    const selCount = Object.values(s.acts).filter(Boolean).length + Object.values(s.extras).filter(Boolean).length + (s.lodging ? 1 : 0) + (s.comboAdded ? 1 : 0);
+    const hasSel = selCount > 0 || !!s.day;
+    // Una línea por servicio con su precio: el equipo de reservaciones recibe el mismo
+    // desglose que ve el visitante, sin agrupar experiencias distintas en un solo importe.
+    const waLine = l => l.quote
+      ? `- ${l.title} · por cotizar`
+      : `- ${l.combo ? 'Combo de alimentos' : l.title}${l.sub ? ` · ${l.sub}` : ''} = ${MXN(l.amount)}`;
+    const waHasQuote = T.lines.some(l => l.quote);
+    const waFood = s.comboAdded ? `\nComensales: ${s.foodDiners}` : '';
+    const waMessage = `Hola, equipo de reservaciones. Solicito cotizar mi aventura en Cumbre Salvaje.\nFolio: ${s.folio || 'CS-—'}\nFecha solicitada: ${this.dateLabel()}\nVisitantes: ${this.visitorsLabel()}${waFood}\n\nServicios:\n${T.lines.map(waLine).join('\n')}\n\nSubtotal: ${MXN(T.total)}\nTotal estimado: ${MXN(T.total)}\nAnticipo sugerido 50%: ${MXN(T.deposit)}${waHasQuote ? '\nIncluye servicios por cotizar; el total puede variar.' : ''}\nQuedo pendiente de disponibilidad y anticipo.${s.celeb && s.celebText ? `\nNota: ${s.celebText}` : ''}`;
+    const tabDefs = [{ id:'explorar', label:'Explorar', screen:'home' }, { id:'momentos', label:'Momentos', screen:'momentos' }, { id:'aventura', label:'Mi aventura', screen:'carrito' }, { id:'reservas', label:'Reservaciones', screen:'reserva' }, { id:'ayuda', label:'Ayuda', screen:'ayuda' }];
+    const activeTab = { home:'explorar', explorar:'explorar', momentos:'momentos', carrito:'aventura', reserva:'reservas', ayuda:'ayuda' }[sc];
+    const onDark = sc === 'momentos';
+    const tabs = tabDefs.map(t => { const on = activeTab === t.id; return { ...t, go: () => this.go(t.screen), color: on ? ACC : (onDark ? 'rgba(246,241,231,.7)' : 'rgba(23,26,24,.5)'), weight: on ? 800 : 600, badge: t.id === 'aventura' && selCount > 0, count: selCount, badgeKey: s.badgeKey, icon: icon(t.id, 22, on ? 2.4 : 1.8) }; });
+    const screensNav = [['splash','Splash'],['home','Inicio'],['tipo','Tipo de visita'],['explorar','Explorar'],['momentos','Momentos Salvajes'],['detalle','Ficha'],['combo','Arma tu combo'],['fecha','Fecha'],['visitantes','Visitantes'],['estancia','Estancia'],['actividades','Actividades'],['extras','Extras'],['carrito','Mi aventura'],['datos','Datos'],['resumen','Resumen'],['pase','Pase de Aventura'],['whatsapp','WhatsApp'],['confirmado','Pase Salvaje'],['reserva','Mi reservación'],['ayuda','Ayuda']];
+    const ensureFolio = () => s.folio || ('CS-' + (2600 + (hash(s.name + s.phone + s.day) % 7000)));
+    const timelineDone = s.confirmed ? 3 : 1;
+    const tl = [['Solicitud recibida', 'Pase de Aventura generado'], ['Disponibilidad validada', 'Equipo de reservaciones'], ['Anticipo del 50% recibido', 'Se descuenta del total'], ['Día de la aventura', this.dateLabel()]].map((t, i) => ({ title: t[0], sub: t[1], ring: i < timelineDone ? GREEN : MUTED, fill: i < timelineDone ? GREEN : 'transparent', weight: i < timelineDone ? 800 : 600, color: i < timelineDone ? INK : 'rgba(23,26,24,.55)' }));
+    // Momentos
+    const mItem = CAT.find(c => c.id === MOMENTS[s.momentIdx]);
+    const frames = mItem.gallery; const fi = Math.min(s.frameIdx, frames.length - 1);
+    const mOn = isOn(mItem);
+    // Un frame = sin barras de progreso; dos o más = exactamente una barra por frame.
+    const hasBars = frames.length > 1;
+    // El badge de video se activa solo con medio de video real; hoy ningún Momento lo tiene.
+    const hasVideoMedia = Array.isArray(mItem.media) && mItem.media.some(m => m.type === 'video');
+    const mom = { ...mk(mItem), frame: frames[fi], framePos: ipos(frames[fi]), hasBars, bars: hasBars ? frames.map((_, i) => ({ bg: i <= fi ? PAPER : 'rgba(246,241,231,.35)' })) : [], counter: `${s.momentIdx + 1} / ${MOMENTS.length}`, isVideo: hasVideoMedia && frames[fi] && frames[fi].type === 'video', saveFill: s.saved[mItem.id] ? PAPER : 'none', saveLabel: s.saved[mItem.id] ? 'Guardado' : 'Guardar', priceShortFull: priceShort(mItem) + ' ' + perLabel(mItem), cta: mOn ? (mItem.combo ? 'Combo en mi aventura' : 'En mi aventura') : (mItem.combo ? 'Arma tu combo' : mItem.lodging ? 'Elegir hospedaje' : 'Agregar a mi aventura'), ctaBg: mOn ? PAPER : ACC, ctaColor: mOn ? FOREST : PAPER, ctaIcon: mOn ? 'M20 6 9 17l-5-5' : 'M12 5v14M5 12h14' };
+    const dark = ['splash','generando','pase','confirmado','home','detalle','momentos','menuview'].includes(sc);
+    return {
+      statusDark: dark,
+      isSplash: sc === 'splash', isHome: sc === 'home', isTipo: sc === 'tipo', isExplorar: sc === 'explorar', isMomentos: sc === 'momentos', isDetalle: sc === 'detalle', isBuilder, isCombo: sc === 'combo',
+      menuZoom: s.menuZoom, openMenu: () => this.setState({ menuZoom: true }), closeMenu: () => this.setState({ menuZoom: false }),
+      menuItems, comboTotalLabel: MXN(comboTotal), comboCount, comboCountLabel: comboCount === 1 ? '1 producto' : comboCount + ' productos', comboHasItems: comboCount > 0 || !!s.drinks, comboOpacity: (comboCount > 0 || !!s.drinks) ? 1 : 0.45, comboDisabled: !(comboCount > 0 || !!s.drinks), comboCta: s.comboAdded ? 'Actualizar combo en mi aventura' : 'Agregar combo a mi aventura', comboKey: 'c' + s.totalKey,
+      comboSummary: comboItemsArr.length ? comboItemsArr.join(' · ') : 'Aún no has elegido platillos.',
+      drinksPark: s.drinks === 'park', drinksOwn: s.drinks === 'own', drinkPark: drinkOpt('park'), drinkOwn: drinkOpt('own'),       // Las dos pantallas escriben el MISMO estado: extras.descBeb es el único descorche de bebidas.
+      setDrinksPark: () => this.setState(st => { const on = st.drinks === 'park'; return { drinks: on ? null : 'park', extras: { ...st.extras, descBeb: false }, totalKey: st.totalKey + 1 }; }),
+      setDrinksOwn: () => this.setState(st => { const on = st.drinks === 'own'; return { drinks: on ? null : 'own', extras: { ...st.extras, descBeb: !on }, totalKey: st.totalKey + 1 }; }),
+      drinkPeople: s.drinkPeople, incDP: () => this.setState(st => ({ drinkPeople: Math.min(99, st.drinkPeople + 1) })), decDP: () => this.setState(st => ({ drinkPeople: Math.max(1, st.drinkPeople - 1) })), drinkNote: s.drinkNote, setDrinkNote: e => this.setState({ drinkNote: e.target.value }),
+      addCombo: () => { if (!(comboCount > 0 || !!s.drinks)) return; this.setState(st => ({ comboAdded: true, badgeKey: st.badgeKey + 1, totalKey: st.totalKey + 1 })); this.showToast('Combo agregado a tu aventura'); this.go(s.day ? 'carrito' : 'fecha'); },
+      removeCombo: () => { this.setState(st => ({ comboAdded: false, totalKey: st.totalKey + 1 })); },
+      comboAdded: s.comboAdded,
+      isFecha: sc === 'fecha', isVisitantes: sc === 'visitantes', isEstancia: sc === 'estancia', isActividades: sc === 'actividades', isExtras: sc === 'extras',
+      isCarrito: sc === 'carrito', isDatos: sc === 'datos', isResumen: sc === 'resumen', isGenerando: sc === 'generando', isPase: sc === 'pase', isWhatsapp: sc === 'whatsapp', isConfirmado: sc === 'confirmado', isReserva: sc === 'reserva', isAyuda: sc === 'ayuda',
+      showTabs, tabs,
+      screenList: screensNav.map(([id, label]) => ({ label, bg: sc === id ? INK : '#FFFDF8', color: sc === id ? PAPER : INK, go: () => { if (id === 'pase' || id === 'confirmado' || id === 'whatsapp') this.setState({ folio: ensureFolio(), name: s.name || 'Familia visitante', phone: s.phone || '33 0000 0000', day: s.day || 17, confirmed: id === 'confirmado' ? true : s.confirmed, qrKey: s.qrKey + 1 }); if (id === 'detalle' && !s.detId) this.setState({ detId: 'ranger' }); this.go(id); } })),
+      goHome: () => this.go('home'), goTipo: () => this.go('tipo'), goExplorarTodo: () => this.go('explorar'), goMomentos: () => this.go('momentos'), goEstancia: () => this.go('estancia'), goDatos: () => this.go('datos'), goWhatsapp: () => this.go('whatsapp'), goReserva: () => this.go('reserva'), back: () => this.back(),
+      startBuilder: () => this.go('fecha'),
+      visitLabel: cur ? cur.label : 'Tipo de visita', homeKicker: cur ? `Inicio para ${cur.label.toLowerCase()}` : 'Cumbre GO', homeTitle: TITLES[s.visitType],
+      recoKicker: cur ? `Para ${cur.label.toLowerCase()}` : 'Lo más pedido',
+      recos: (cur ? cur.reco : ['tirolesa','safari','spot']).map(id => mk(CAT.find(c => c.id === id))),
+      homeCats: [ { name:'Aventura', img:IMG.tiro2, pos:'center 25%', span:'span 2', go: goCat('aventura') }, { name:'Safari y fauna', img:IMG.tigre, pos:'center 22%', span:'auto', go: goCat('naturaleza') }, { name:'Granjita', img:IMG.granja, pos:'center 30%', span:'auto', go: goCat('naturaleza') }, { name:'Photo spots', img:IMG.spot, pos:'center 40%', span:'auto', go: goCat('especiales') }, { name:'Alimentos y bebidas', img:IMG.food, pos:'center 40%', span:'auto', go: goCat('alimentos') }, { name:'Hospedaje', img:IMG.cueva, pos:'center 40%', span:'auto', go: goCat('hospedaje') }, { name:'Herpetario', img:IMG.herp, pos:'50% 72%', span:'auto', sub:'Descubre de cerca a la serpiente de cascabel', hasSub:true, go: () => this.go('detalle', { detId: 'herpetario' }) } ],
+      visitTypes: TYPES.map(t => { const on = s.visitType === t.id; return { ...t, select: () => this.go('home', { visitType: t.id }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER, bg: '#FFFDF8' }; }),
+      cats: catDefs.map(c => ({ ...c, select: () => this.setState({ cat: c.id }, () => centerChip(c.id)), bg: s.cat === c.id ? INK : '#FFFDF8', color: s.cat === c.id ? PAPER : INK })),
+      chipsRef: chips.ref,
+      howRef: this.howCtl().ref,
+      howShowArrows: !!s.howOverflow,
+      howPrev: () => this.railStep('how', -1),
+      howNext: () => this.railStep('how', 1),
+      howDots: [0, 1, 2].map(i => ({ i, go: () => this.railGoTo('how', i) })),
+      loadingExplore: s.loadingExplore, showExplore: !s.loadingExplore,
+      exploreItems: CAT.filter(c => s.cat === 'todos' || c.cat === s.cat || c.cat2 === s.cat).map(mk),
+      det: { ...mk(det), cta: det.lodging ? (s.lodging ? 'Cambiar hospedaje' : 'Elegir mi estancia') : (isOn(det) ? 'Quitar de mi aventura' : 'Agregar a mi aventura'), ctaBg: isOn(det) && !det.lodging ? INK : ACC },
+      detGallery: (det.gallery || []).map((src, i) => ({ src, alt: det.name + ' ' + (i + 1), pos: ipos(src) })), detIncl: det.incl.map(t => ({ t })),
+      addDetail: () => { if (det.lodging) return this.go('estancia'); const was = !!s.acts[det.id]; this.toggleAct(det.id, false); if (!was) this.go(s.day ? 'carrito' : 'fecha'); },
+      // Momentos
+      mom, momentKey: 'm' + s.momentIdx, frameKey: 'f' + s.momentIdx + '-' + fi,
+      prevOpacity: s.momentIdx === 0 ? 0.35 : 1, nextOpacity: s.momentIdx === MOMENTS.length - 1 ? 0.35 : 1,
+      nextFrame: () => { if (fi < frames.length - 1) this.setState({ frameIdx: fi + 1 }); else this.moveMoment(1); },
+      prevFrame: () => { if (fi > 0) this.setState({ frameIdx: fi - 1 }); else this.moveMoment(-1); },
+      nextMoment: () => this.moveMoment(1), prevMoment: () => this.moveMoment(-1),
+      momTouchStart: e => { this._ty = e.touches[0].clientY; }, momTouchEnd: e => { if (this._ty == null) return; const dy = e.changedTouches[0].clientY - this._ty; this._ty = null; if (dy < -50) this.moveMoment(1); else if (dy > 50) this.moveMoment(-1); },
+      momWheel: e => { const now = Date.now(); if (this._wl && now - this._wl < 650) return; if (Math.abs(e.deltaY) < 25) return; this._wl = now; this.moveMoment(e.deltaY > 0 ? 1 : -1); },
+      addMoment: () => { if (mItem.combo) return this.go('combo'); if (mItem.lodging) return this.go('estancia'); this.toggleAct(mItem.id, true); },
+      openMoment: openItem(mItem.id),
+      saveMoment: () => { const was = !!s.saved[mItem.id]; this.setState(st => ({ saved: { ...st.saved, [mItem.id]: !was } })); this.showToast(was ? 'Quitado de guardados' : 'Guardado para después'); },
+      shareMoment: () => { try { navigator.clipboard && navigator.clipboard.writeText('https://cumbresalvaje.mx/momentos/' + mItem.id); } catch (e) {} this.showToast('Enlace copiado'); },
+      hasToast: !!s.toast, toast: s.toast, toastKey: 't' + s.toastKey,
+      stepLabel: `Paso ${stepIdx + 1} de ${STEPS.length}`, stepName: STEP_NAMES[sc] || '', stepSegs: STEPS.map((_, i) => ({ bg: i <= stepIdx ? ACC : 'rgba(23,26,24,.12)' })),
+      dows: DOW.map(t => ({ t })), days, dateHint: s.day ? `Solicitarás el ${this.dateLabel()}. El equipo confirma disponibilidad por WhatsApp.` : 'Elige un día. Reprogramaciones sujetas a disponibilidad.',
+      entradaLabel: `Entrada general ${MXN(ENTRADA)} p/p`,
+      guisoExtraLabel, descorcheBebLabel, descorcheBebShort,
+      comboTeaserLabel: `Tacos desde ${MXN(tacoPrice)} · platillos, quesadillas y molletes`,
+      diners: s.foodDiners, dinersDec: () => this.setDiners(-1), dinersInc: () => this.setDiners(1),
+      dinersHint: `Máximo ${s.adults + s.kids} (tu grupo). No todos tienen que comer.`,
+      qtyWarn: s.qtyWarn, hasQtyWarn: !!s.qtyWarn,
+      adults: s.adults, kids: s.kids, incA: () => this.setState(st => ({ adults: Math.min(60, st.adults + 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), decA: () => this.setState(st => ({ adults: Math.max(1, st.adults - 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), incK: () => this.setState(st => ({ kids: Math.min(60, st.kids + 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), decK: () => this.setState(st => ({ kids: Math.max(0, st.kids - 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()),
+      setDia: () => this.setState(st => ({ stay: 'dia', lodging: null, totalKey: st.totalKey + 1 })), setNoche: () => this.setState({ stay: 'noche' }), isNoche: s.stay === 'noche',
+      diaBorder: s.stay === 'dia' ? INK : BORDER, diaBg: s.stay === 'dia' ? INK : '#FFFDF8', diaColor: s.stay === 'dia' ? PAPER : INK,
+      nocheBorder: s.stay === 'noche' ? INK : BORDER, nocheBg: s.stay === 'noche' ? INK : '#FFFDF8', nocheColor: s.stay === 'noche' ? PAPER : INK,
+      lodgings, actGroups: groups, extrasList,
+      celebOn: s.celeb === true, celebNo: () => this.setState({ celeb: false }), celebSi: () => this.setState({ celeb: true }), celebText: s.celebText, setCeleb: e => this.setState({ celebText: e.target.value }),
+      celebNoBg: s.celeb === false ? INK : 'transparent', celebNoColor: s.celeb === false ? PAPER : INK, celebSiBg: s.celeb === true ? INK : 'transparent', celebSiColor: s.celeb === true ? PAPER : INK,
+      summaryLine: `${this.visitorsLabel()}${s.day ? ' · ' + this.dateLabel() : ''}`, totalLabel: MXN(T.total), depositLabel: MXN(T.deposit), balanceLabel: MXN(T.total - T.deposit), totalKey: 'k' + s.totalKey,
+      nextStep, nextDisabled, nextOpacity: nextDisabled ? 0.45 : 1, nextLabel: stepIdx === STEPS.length - 1 ? 'Ver mi aventura' : 'Continuar',
+      cartEmpty: !hasSel, cartFull: hasSel, cartRows,
+      name: s.name, phone: s.phone, email: s.email, setName: e => this.setState({ name: e.target.value, formError: '' }), setPhone: e => this.setState({ phone: e.target.value, formError: '' }), setEmail: e => this.setState({ email: e.target.value }),
+      nameBorder: s.formError && !s.name.trim() ? ACC : 'rgba(23,26,24,.12)', phoneBorder: s.formError && s.phone.replace(/\D/g, '').length < 10 ? ACC : 'rgba(23,26,24,.12)',
+      hasFormError: !!s.formError, formError: s.formError,
+      submitDatos: () => { if (!s.name.trim()) return this.setState({ formError: 'Escribe tu nombre para poder enviarte la cotización.' }); if (s.phone.replace(/\D/g, '').length < 10) return this.setState({ formError: 'Necesitamos un WhatsApp de 10 dígitos para confirmar disponibilidad.' }); this.go('resumen'); },
+      dateLabel: this.dateLabel(), visitorsLabel: this.visitorsLabel(), serviceLines: T.lines.map(l => ({ t: l.title, a: l.quote ? 'Por cotizar' : MXN(l.amount) })), servicesText: this.servicesText(T.lines),
+      acceptPolicies: s.acceptPolicies, togglePolicies: () => this.setState(st => ({ acceptPolicies: !st.acceptPolicies, policyError: false })), polRing: s.acceptPolicies ? ACC : MUTED, polFill: s.acceptPolicies ? ACC : 'transparent', polBorder: s.acceptPolicies ? ACC : BORDER, policyError: s.policyError,
+      goCombo: () => this.go('combo'),
+      generate: () => { if (!s.acceptPolicies) return this.setState({ policyError: true }); const folio = ensureFolio(); this.go('generando', { folio }); clearTimeout(this._t2); this._t2 = setTimeout(() => this.go('pase'), 1700); },
+      folio: s.folio || 'CS-—', qrPending: this.qr(s.folio || 'pending', false), qrAnimated: this.qr(s.folio || 'pending', true),
+      confirmDemo: () => { this.setState({ confirmed: true, qrKey: s.qrKey + 1 }); this.go('confirmado'); },
+      waMessage, waHref: 'https://wa.me/523331436632?text=' + encodeURIComponent(waMessage),
+      copyLabel: s.copied ? 'Mensaje copiado' : 'Copiar mensaje', copyMsg: () => { try { navigator.clipboard && navigator.clipboard.writeText(waMessage); } catch (e) {} this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
+      noPass: !s.folio, hasPass: !!s.folio, passKind: s.confirmed ? 'Pase Salvaje' : 'Pase de Aventura', passStatus: s.confirmed ? 'Reserva confirmada' : 'Pendiente de disponibilidad y anticipo', passTagBg: s.confirmed ? GREEN : PAPER, passTagColor: s.confirmed ? PAPER : INK,
+      openPass: () => { this.setState({ qrKey: s.qrKey + 1 }); this.go(s.confirmed ? 'confirmado' : 'pase'); }, timeline: tl,
+      policies: POLICIES,
+    };
+  }
+}
+
+window.__startDC(Component);</script></body></html>

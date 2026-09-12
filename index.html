@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260908-1.2.0">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260908-1.2.1">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -764,7 +764,7 @@ small,.small{font-size:12px;line-height:1.4}
 <sc-if hint-placeholder-val="{{ false }}" value="{{ policyError }}"><div style="font-size:13px;color:#b8430f;font-weight:600;animation:fadeUp .25s ease both">Necesitas aceptar las políticas para generar tu Pase de Aventura.</div></sc-if>
 </div>
 <div style="padding:12px 20px 40px;background:#F6F1E7">
-<button onclick="{{ generate }}" style="width:100%;height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 10px 26px rgba(242,106,46,.3)" style-active="transform:scale(.985);background:#d9551c">Generar mi Pase de Aventura<svg fill="none" height="20" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24" width="20"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+<sc-if value="{{ hasSaveError }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#b8430f;font-weight:700;line-height:1.4;padding:0 2px 10px">{{ saveError }}</div></sc-if><button onclick="{{ generate }}" disabled="{{ generateDisabled }}" style="width:100%;height:58px;border-radius:18px;background:#F26A2E;color:#F6F1E7;border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 10px 26px rgba(242,106,46,.3);opacity:{{ generateOpacity }}" style-active="transform:scale(.985);background:#d9551c">{{ generateLabel }}<svg fill="none" height="20" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24" width="20"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
 </div>
 </div>
 </sc-if>
@@ -839,7 +839,7 @@ small,.small{font-size:12px;line-height:1.4}
 <button onclick="{{ copyMsg }}" style="height:50px;border-radius:16px;border:2px solid rgba(23,26,24,.12);background:transparent;color:#171A18;font-size:14px;font-weight:800;text-align:left;padding:0 16px;display:flex;align-items:center;justify-content:space-between">{{ copyLabel }}<svg fill="none" height="18" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="18"><rect height="13" rx="2" width="13" x="9" y="9"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
 </div>
 <div style="padding:12px 20px 44px;background:#F6F1E7">
-<a href="{{ waHref }}" rel="noopener" style="width:100%;height:58px;border-radius:18px;background:#44705A;color:#F6F1E7;text-decoration:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 10px 26px rgba(68,112,90,.35)" style-active="transform:scale(.985)" target="_blank">Abrir WhatsApp oficial<svg fill="none" height="20" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24" width="20"><path d="M7 17 17 7M8 7h9v9"></path></svg></a>
+<a href="{{ waHref }}" onclick="{{ trackWhatsApp }}" rel="noopener" style="width:100%;height:58px;border-radius:18px;background:#44705A;color:#F6F1E7;text-decoration:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 10px 26px rgba(68,112,90,.35)" style-active="transform:scale(.985)" target="_blank">Abrir WhatsApp oficial<svg fill="none" height="20" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24" width="20"><path d="M7 17 17 7M8 7h9v9"></path></svg></a>
 </div>
 </div>
 </sc-if>
@@ -898,7 +898,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260908-1.2.0 · Cotizador · Confirmación por WhatsApp</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260911-1.3.0 · Supabase · Folios reales · WhatsApp</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2423,7 +2423,7 @@ module.exports = QRCode;
       if(patch && typeof patch==='object'){
         const fields=['day','adults','kids','stay','lodging','acts','extras','actQty','actAdults','actKids','units','foodDiners','lodgingGuests','spotStart','spotEnd','spotGuests','tacoQty','menuQty','menuPick','menuExtra','drinks','drinkPeople','drinkNote','comboAdded','name','phone','email','celebText'];
         const edited=this.state.folio&&fields.some(k=>Object.prototype.hasOwnProperty.call(patch,k)&&JSON.stringify(patch[k])!==JSON.stringify(this.state[k]));
-        this.state=Object.assign({},this.state,patch,edited?{folio:null,confirmed:false}:{});
+        this.state=Object.assign({},this.state,patch,edited?{folio:null,quoteId:null,confirmed:false}:{});
       }
       if(CURRENT===this) renderApp();
       if(typeof cb==='function') cb.call(this);
@@ -2554,10 +2554,10 @@ module.exports = QRCode;
 })();
 </script>
 <script>
-const BUILD_ID = 'CSG-20260908-1.2.0';
+const BUILD_ID = 'CSG-20260908-1.2.1';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
-const SPOT_RATE_BASIS = 'pending';
+const SPOT_RATE_BASIS = 'stay';
 const toCents = n => Math.round(Number(n) * 100);
 const MXN = n => {
   const value=toCents(n)/100;
@@ -2566,6 +2566,45 @@ const MXN = n => {
 const integer = (n,min,max) => Math.max(min,Math.min(max,Number.isFinite(Number(n))?Math.trunc(Number(n)):min));
 const timeMinutes = t => /^([01]\d|2[0-3]):[0-5]\d$/.test(t||'') ? Number(t.slice(0,2))*60+Number(t.slice(3)) : NaN;
 const qrRequestURL = folio => 'https://wa.me/523331436632?text='+encodeURIComponent('Consulta de folio '+folio+'. Solicitud pendiente; no es comprobante de pago.');
+const SUPABASE_URL = 'https://xnztlanptbdgpdjhbnzv.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_JcKnBtzboji75Em1M0wa8w_3_fb0LB3';
+async function supabaseRpc(name, payload){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY},
+    body:JSON.stringify(payload||{}),
+    keepalive:true
+  });
+  const text=await r.text();
+  if(!r.ok) throw new Error(text||`Supabase ${r.status}`);
+  if(!text) return null;
+  try{return JSON.parse(text);}catch(_){return text;}
+}
+function newUUID(){
+  if(crypto.randomUUID) return crypto.randomUUID();
+  const b=new Uint8Array(16); crypto.getRandomValues(b); b[6]=(b[6]&15)|64; b[8]=(b[8]&63)|128;
+  const h=Array.from(b,x=>x.toString(16).padStart(2,'0')).join('');
+  return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+}
+function getSessionId(){
+  const k='csg_session_id';
+  try{ let v=localStorage.getItem(k); if(!v){v=newUUID(); localStorage.setItem(k,v);} return v; }
+  catch(_){ return newUUID(); }
+}
+function trafficMeta(){
+  const q=new URLSearchParams(location.search);
+  return {
+    path:location.pathname,
+    host:location.host,
+    referrer:document.referrer||null,
+    utm_source:q.get('utm_source'),
+    utm_medium:q.get('utm_medium'),
+    utm_campaign:q.get('utm_campaign'),
+    source:q.get('utm_source')||q.get('source')||q.get('src')||'direct',
+    user_agent:navigator.userAgent,
+    build:'CSG-20260911-1.3.0'
+  };
+}
 function newQuoteFolio(){
   const b=new Uint8Array(8); crypto.getRandomValues(b);
   return 'CSG-'+Array.from(b,v=>v.toString(16).padStart(2,'0')).join('').toUpperCase();
@@ -2595,8 +2634,8 @@ MENU.forEach(m => { if (m.extraPrice) m.desc = `Guiso a elegir · guiso extra +$
 // LODG se declara antes de CAT para que la ficha de Hospedaje derive sus precios de aquí
 // y no los repita como texto. per: u = por unidad/noche, an = adulto/niño.
 const LODG = [
-  { id:'cabana', name:'Cabaña estilo cuevita', price:2000, per:'u', maxGuests:2, img:IMG.cueva2 },
-  { id:'glamping', name:'Glamping', price:3500, per:'u', maxGuests:4, img:IMG.glamping },
+  { id:'cabana', name:'Cabaña estilo cuevita', price:2000, per:'u', minGuests:1, maxGuests:2, img:IMG.cueva2 },
+  { id:'glamping', name:'Glamping', price:3500, per:'u', minGuests:2, maxGuests:4, img:IMG.glamping },
   { id:'camping', name:'Camping', price:200, kids:150, per:'an', img:IMG.camping },
 ];
 const lodgLabel = l => l.per === 'an' ? `${MXN(l.price)} adulto · ${MXN(l.kids)} niño` : `${MXN(l.price)} por noche`;
@@ -2677,9 +2716,9 @@ class Component extends DCLogic {
     day: null, adults: 2, kids: 2, stay: null, lodging: null, acts: {}, extras: {}, celeb: null, celebText: '',
     // Cantidades independientes por actividad. NUNCA se inicializan con el total del grupo.
     actQty: {}, actAdults: {}, actKids: {}, units: {}, foodDiners: 1, qtyWarn: '',
-    lodgingGuests: {cabana:1,glamping:1}, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
+    lodgingGuests: {cabana:1,glamping:2}, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
     name: '', phone: '', email: '', formError: '', acceptPolicies: false, policyError: false,
-    folio: null, confirmed: false, loadingExplore: false, copied: false, qrKey: 0,
+    folio: null, quoteId: null, sessionId: getSessionId(), savingQuote: false, saveError: '', confirmed: false, loadingExplore: false, copied: false, qrKey: 0,
     momentIdx: 0, frameIdx: 0, saved: {}, toast: '', toastKey: 0, badgeKey: 0, totalKey: 0,
     menuQty: {}, menuPick: {}, menuExtra: {}, drinks: null, drinkPeople: 1, drinkNote: '', comboAdded: false, menuOpen: false, menuZoom: false,
   };
@@ -2710,7 +2749,7 @@ class Component extends DCLogic {
   }
   setLodgingGuests(id,delta){
     const l=LODG.find(l=>l.id===id); if(!l || !l.maxGuests) return;
-    this.setState(s=>({lodgingGuests:{...s.lodgingGuests,[id]:integer((s.lodgingGuests[id]||1)+delta,1,Math.min(l.maxGuests,s.adults+s.kids))},totalKey:s.totalKey+1,qtyWarn:''}));
+    this.setState(s=>{ const min=l.minGuests||1, next=integer((s.lodgingGuests[id]||min)+delta,min,l.maxGuests); const warn=next>(s.adults+s.kids)?`${l.name}: seleccionaste ${next} huéspedes, pero tu grupo actual tiene ${s.adults+s.kids}. Aumenta Visitantes para continuar.`:''; return {lodgingGuests:{...s.lodgingGuests,[id]:next},totalKey:s.totalKey+1,qtyWarn:warn}; });
   }
   setSpotTime(key,value){
     if(!['spotStart','spotEnd'].includes(key)) return;
@@ -2739,11 +2778,79 @@ class Component extends DCLogic {
     if(!s.stay || (s.stay==='noche' && !s.lodging)) return {screen:'estancia',message:'Selecciona la modalidad de estancia.'};
     if(s.stay==='noche'){
       const l=LODG.find(l=>l.id===s.lodging);
-      if(l && l.maxGuests){ const q=s.lodgingGuests[l.id]; if(!Number.isInteger(q)||q<1||q>l.maxGuests||q>this.groupTotal()) return {screen:'estancia',message:l.name+': revisa los huéspedes; máximo '+l.maxGuests+'.'}; }
+      if(l && l.maxGuests){ const q=s.lodgingGuests[l.id], min=l.minGuests||1; if(!Number.isInteger(q)||q<min||q>l.maxGuests) return {screen:'estancia',message:l.name+': selecciona entre '+min+' y '+l.maxGuests+' huéspedes.'}; if(q>this.groupTotal()) return {screen:'estancia',message:l.name+': seleccionaste '+q+' huéspedes, pero tu grupo actual tiene '+this.groupTotal()+'. Aumenta Visitantes antes de continuar.'}; }
     }
     for(const c of CAT.filter(c=>c.seats)){const error=this.vehicleIssue(c); if(error) return {screen:'actividades',message:error};}
     const error=this.spotIssue(); if(error) return {screen:'actividades',message:error};
     return null;
+  }
+  visitDateISO(){ return this.state.day ? `2026-10-${String(this.state.day).padStart(2,'0')}` : null; }
+  quoteItems(){
+    const s=this.state, T=this.totals(), items=[];
+    T.lines.forEach(l=>{
+      if(l.id==='combo' || l.id==='bebidasParque') return;
+      if(l.id==='entrada'){
+        items.push({item_code:'entrada',item_name:'Entrada general',category:'acceso',quantity:T.n,participants:null,units:null,adults:s.adults,children:s.kids,unit_price:ENTRADA,line_total:l.amount,details:{}}); return;
+      }
+      if(l.id==='lodg'){
+        const ld=LODG.find(x=>x.id===s.lodging), qa=s.actAdults[s.lodging]||0, qk=s.actKids[s.lodging]||0;
+        items.push({item_code:s.lodging||'hospedaje',item_name:l.title,category:'hospedaje',quantity:1,participants:ld&&ld.maxGuests?(s.lodgingGuests[ld.id]||ld.minGuests||1):qa+qk,units:1,adults:ld&&ld.per==='an'?qa:null,children:ld&&ld.per==='an'?qk:null,unit_price:ld?ld.price:l.amount,line_total:l.amount,details:{stay:s.stay,nights:1,guests:ld&&ld.maxGuests?(s.lodgingGuests[ld.id]||null):null}}); return;
+      }
+      const c=CAT.find(x=>x.id===l.id);
+      if(c){
+        const u=this.unitOf(c), q=s.actQty[c.id]||1, un=s.units[c.id]||1, qa=s.actAdults[c.id]||0, qk=s.actKids[c.id]||0;
+        const details={};
+        if(u==='stay'){details.start_time=s.spotStart;details.end_time=s.spotEnd;details.shared_people=s.spotGuests;}
+        items.push({item_code:c.id,item_name:c.name,category:c.group,quantity:u==='unit'?un:1,participants:u==='an'?qa+qk:u==='stay'?s.spotGuests:q,units:u==='unit'?un:u==='stay'?1:null,adults:u==='an'?qa:null,children:u==='an'?qk:null,unit_price:c.price||0,line_total:l.amount,details}); return;
+      }
+      const x=EXTRAS.find(x=>x.id===l.id);
+      if(x){items.push({item_code:x.id,item_name:x.name,category:'extras',quantity:1,participants:null,units:null,adults:null,children:null,unit_price:x.price,line_total:l.amount,details:{}}); return;}
+    });
+    if(s.comboAdded){
+      this.foodLines().forEach(f=>items.push({item_code:f.id,item_name:f.name,category:'alimentos',quantity:f.qty,participants:null,units:null,adults:null,children:null,unit_price:f.unitPrice,line_total:f.amount,details:{diners:s.foodDiners}}));
+      if(s.drinks==='park') items.push({item_code:'bebidas_parque',item_name:'Bebidas del parque',category:'alimentos',quantity:1,participants:s.drinkPeople,units:null,adults:null,children:null,unit_price:0,line_total:0,details:{diners:s.foodDiners,note:s.drinkNote||'',price_status:'pending'}});
+    }
+    return items;
+  }
+  async trackEvent(name,payload){
+    try{return await supabaseRpc('track_event',{p_session_id:this.state.sessionId,p_quote_id:this.state.quoteId||null,p_event_name:name,p_payload:payload||{}});}
+    catch(e){console.warn('track_event failed',name,e);return null;}
+  }
+  async saveQuote(){
+    const s=this.state, T=this.totals(), meta=trafficMeta();
+    const result=await supabaseRpc('submit_quote',{
+      p_session_id:s.sessionId,
+      p_visit_date:this.visitDateISO(),
+      p_adults:s.adults,
+      p_children:s.kids,
+      p_diners:s.comboAdded?s.foodDiners:null,
+      p_full_name:s.name,
+      p_phone:s.phone,
+      p_email:s.email,
+      p_total_estimated:T.total,
+      p_source:meta.source,
+      p_meta:{...meta,visit_type:s.visitType,stay:s.stay,lodging:s.lodging,celebration:s.celeb? s.celebText||true:false,has_pending_quote:T.hasQuote},
+      p_items:this.quoteItems()
+    });
+    const row=Array.isArray(result)?result[0]:result;
+    if(!row || !row.folio || !row.quote_id) throw new Error('Supabase no devolvió folio');
+    return row;
+  }
+  async generateQuote(){
+    if(!this.state.acceptPolicies){this.setState({policyError:true});return;}
+    if(this.state.savingQuote) return;
+    const issue=this.selectionIssue(); if(issue){this.setState({qtyWarn:issue.message});this.go(issue.screen);return;}
+    this.setState({savingQuote:true,saveError:''});
+    try{
+      const row=await this.saveQuote();
+      this.setState(st=>({folio:row.folio,quoteId:row.quote_id,savingQuote:false,saveError:'',qrKey:st.qrKey+1}));
+      this.trackEvent('quote_generated',{folio:row.folio,total:this.totals().total});
+      this.go('generando',{folio:row.folio,quoteId:row.quote_id,savingQuote:false});
+      clearTimeout(this._t2); this._t2=setTimeout(()=>this.go('pase'),900);
+    }catch(e){
+      console.error('submit_quote failed',e);
+      this.setState({savingQuote:false,saveError:'No pudimos registrar tu cotización. Revisa tu conexión e inténtalo de nuevo.'});
+    }
   }
   componentDidMount() { this._t = setTimeout(() => { if (this.state.screen === 'splash') this.go('home'); }, 2400); this.attachChips(); }
   componentDidUpdate() { this.attachChips(); this.purgeCampingExtras(); }
@@ -2984,7 +3091,7 @@ class Component extends DCLogic {
     });
     const diners = Math.min(g, s.foodDiners);
     const lodgingGuests={...s.lodgingGuests};
-    LODG.filter(l=>l.maxGuests).forEach(l=>{const q=integer(lodgingGuests[l.id]||1,1,Math.min(g,l.maxGuests)); if(q!==lodgingGuests[l.id]){lodgingGuests[l.id]=q;changed=true;}});
+    LODG.filter(l=>l.maxGuests).forEach(l=>{const min=l.minGuests||1, q=integer(lodgingGuests[l.id]||min,min,l.maxGuests); if(q!==lodgingGuests[l.id]){lodgingGuests[l.id]=q;changed=true;}});
     const spotGuests=integer(s.spotGuests,1,g), drinkPeople=integer(s.drinkPeople,1,g);
     if(spotGuests!==s.spotGuests||drinkPeople!==s.drinkPeople) changed=true;
     if (changed || diners !== s.foodDiners) this.setState({ actQty, actAdults, actKids, units, lodgingGuests, spotGuests, drinkPeople, foodDiners: diners, qtyWarn: 'Ajustamos las cantidades al nuevo tamaño del grupo.', totalKey: s.totalKey + 1 });
@@ -3090,10 +3197,10 @@ class Component extends DCLogic {
     const nextStep = () => { if (nextDisabled) return; if (stepIdx < STEPS.length - 1) this.go(STEPS[stepIdx + 1]); else this.go('carrito'); };
     const lodgings = LODG.map(l => { const on = s.lodging === l.id; const qa = s.actAdults[l.id] || 0, qk = s.actKids[l.id] || 0; return { ...l, priceLabel: lodgLabel(l),
       showSel: on && l.per === 'an', showCapacity:on&&!!l.maxGuests,
-      capacityText:l.id==='glamping'?'Capacidad: 2 a 4 personas. Máximo 4 por cabaña.':'Capacidad: máximo 2 personas por cabaña.',
-      guestCount:s.lodgingGuests[l.id]||1,
+      capacityText:l.id==='glamping'?`Capacidad: 2 a 4 personas por cabaña. Máximo 4. Tu grupo actual: ${this.groupTotal()}.`:`Capacidad: máximo 2 personas por cabaña. Tu grupo actual: ${this.groupTotal()}.`,
+      guestCount:s.lodgingGuests[l.id]||(l.minGuests||1),
       guestDec:()=>this.setLodgingGuests(l.id,-1), guestInc:()=>this.setLodgingGuests(l.id,1),
-      guestDecDisabled:(s.lodgingGuests[l.id]||1)<=1, guestIncDisabled:(s.lodgingGuests[l.id]||1)>=Math.min(l.maxGuests||1,this.groupTotal()),
+      guestDecDisabled:(s.lodgingGuests[l.id]||(l.minGuests||1))<=(l.minGuests||1), guestIncDisabled:(s.lodgingGuests[l.id]||(l.minGuests||1))>=(l.maxGuests||1),
       qAdults: qa, qKids: qk,
       aDec: () => this.setActAN(l.id, 'a', -1), aInc: () => this.setActAN(l.id, 'a', 1),
       kDec: () => this.setActAN(l.id, 'k', -1), kInc: () => this.setActAN(l.id, 'k', 1),
@@ -3111,7 +3218,7 @@ class Component extends DCLogic {
         qtyLabel: u === 'qty' ? (it.id === 'columpio' ? 'Turnos' : 'Unidades') : 'Participantes',
         qty, qtyDec: () => this.setActQty(it.id, -1), qtyInc: () => this.setActQty(it.id, 1),
         unitsVal: un, unitsDec: () => this.setUnits(it.id, -1), unitsInc: () => this.setUnits(it.id, 1),
-        seatsNote: it.seats ? `Máximo ${it.seats} por unidad` : '',
+        seatsNote: it.id==='cuatrimoto' ? '1–2 personas por unidad. Agrega unidades para incluir más participantes.' : it.id==='ranger' ? 'Máximo 5 personas por unidad. Agrega unidades para incluir más participantes.' : it.seats ? `Máximo ${it.seats} por unidad` : '',
         qAdults: qa, qKids: qk,
         aDec: () => this.setActAN(it.id, 'a', -1), aInc: () => this.setActAN(it.id, 'a', 1),
         kDec: () => this.setActAN(it.id, 'k', -1), kInc: () => this.setActAN(it.id, 'k', 1),
@@ -3135,7 +3242,7 @@ class Component extends DCLogic {
     const onDark = sc === 'momentos';
     const tabs = tabDefs.map(t => { const on = activeTab === t.id; return { ...t, go: () => this.go(t.screen), color: on ? ACC : (onDark ? 'rgba(246,241,231,.7)' : 'rgba(23,26,24,.5)'), weight: on ? 800 : 600, badge: t.id === 'aventura' && selCount > 0, count: selCount, badgeKey: s.badgeKey, icon: icon(t.id, 22, on ? 2.4 : 1.8) }; });
     const screensNav = [['splash','Splash'],['home','Inicio'],['tipo','Tipo de visita'],['explorar','Explorar'],['momentos','Momentos Salvajes'],['detalle','Ficha'],['combo','Arma tu combo'],['fecha','Fecha'],['visitantes','Visitantes'],['estancia','Estancia'],['actividades','Actividades'],['extras','Extras'],['carrito','Mi aventura'],['datos','Datos'],['resumen','Resumen'],['pase','Pase de Aventura'],['whatsapp','WhatsApp'],['reserva','Mi reservación'],['ayuda','Ayuda']];
-    const ensureFolio = () => s.folio || newQuoteFolio();
+    const ensureFolio = () => s.folio || 'CS-—';
     const timelineDone = 1;
     const tl = [['Solicitud preparada', 'Envíala por WhatsApp; recepción aún no verificada'], ['Disponibilidad por validar', 'El equipo de reservaciones la confirma por WhatsApp'], ['Pago por validar', 'No se ha verificado ningún pago en esta aplicación'], ['Día de la aventura', this.dateLabel()]].map((t, i) => ({ title: t[0], sub: t[1], ring: i < timelineDone ? GREEN : MUTED, fill: i < timelineDone ? GREEN : 'transparent', weight: i < timelineDone ? 800 : 600, color: i < timelineDone ? INK : 'rgba(23,26,24,.55)' }));
     // Momentos
@@ -3226,10 +3333,10 @@ class Component extends DCLogic {
       dateLabel: this.dateLabel(), visitorsLabel: this.visitorsLabel(), serviceLines: T.lines.map(l => ({ t: l.title+(l.sub?' · '+l.sub:''), a: l.quote ? 'Por cotizar' : MXN(l.amount) })), servicesText: this.servicesText(T.lines),
       acceptPolicies: s.acceptPolicies, togglePolicies: () => this.setState(st => ({ acceptPolicies: !st.acceptPolicies, policyError: false })), polRing: s.acceptPolicies ? ACC : MUTED, polFill: s.acceptPolicies ? ACC : 'transparent', polBorder: s.acceptPolicies ? ACC : BORDER, policyError: s.policyError,
       goCombo: () => this.go('combo'),
-      generate: () => { if (!s.acceptPolicies) return this.setState({ policyError: true }); const folio = ensureFolio(); this.go('generando', { folio }); clearTimeout(this._t2); this._t2 = setTimeout(() => this.go('pase'), 1700); },
+      generate: () => this.generateQuote(), generateDisabled:s.savingQuote, generateOpacity:s.savingQuote?0.6:1, generateLabel:s.savingQuote?'Guardando cotización…':'Generar mi Pase de Aventura', hasSaveError:!!s.saveError, saveError:s.saveError,
       folio: s.folio || 'CS-—', qrPending: this.qr(s.folio || 'pending', false), qrAnimated: this.qr(s.folio || 'pending', true),
       // No client-side payment or reservation confirmation. Only a future trusted backend may confirm.
-      waMessage, waHref: 'https://wa.me/523331436632?text=' + encodeURIComponent(waMessage),
+      waMessage, waHref: 'https://wa.me/523331436632?text=' + encodeURIComponent(waMessage), trackWhatsApp:()=>this.trackEvent('whatsapp_clicked',{folio:s.folio||null,total:T.total}),
       copyLabel: s.copied ? 'Mensaje copiado' : 'Copiar mensaje', copyMsg: () => { try { navigator.clipboard && navigator.clipboard.writeText(waMessage); } catch (e) {} this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
       noPass: !s.folio, hasPass: !!s.folio, passKind:'Pase de Aventura',passStatus:'Solicitud pendiente de confirmar',passTagBg:PAPER,passTagColor:INK,
       openPass: () => { this.setState({ qrKey: s.qrKey + 1 }); this.go('pase'); }, timeline: tl,

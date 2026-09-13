@@ -555,6 +555,10 @@ small,.small{font-size:12px;line-height:1.4}
 <div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800;line-height:1.1">{{ x.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ x.meta }}</div></div>
 <div style="display:flex;align-items:center;gap:12px;flex:none"><div style="font-size:13px;font-weight:800">{{ x.priceShort }}</div><div style="width:26px;height:26px;border-radius:999px;border:2px solid {{ x.ring }};background:{{ x.fill }};display:flex;align-items:center;justify-content:center;color:#F6F1E7"><sc-if hint-placeholder-val="{{ false }}" value="{{ x.selected }}"><svg fill="none" height="14" stroke="currentColor" stroke-width="3.5" style="animation:pop .3s ease" viewbox="0 0 24 24" width="14"><path d="M20 6 9 17l-5-5"></path></svg></sc-if></div></div>
 </button>
+<sc-if value="{{ x.showQty }}"><div style="margin:-2px 4px 4px;padding:12px 14px;border:2px solid #F26A2E;border-top:0;border-radius:0 0 18px 18px;background:#FFFDF8;display:flex;flex-direction:column;gap:8px;animation:fadeUp .2s ease both">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><div style="font-size:13px;font-weight:800">Cantidad de casas</div><div style="font-size:11px;color:rgba(23,26,24,.58)">{{ x.qtyHint }}</div></div><div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none"><button aria-label="Quitar casa de campaña" onclick="{{ x.decQty }}" style="width:38px;height:38px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18">−</button><div style="min-width:36px;text-align:center;font-size:17px;font-weight:800">{{ x.qty }}</div><button aria-label="Agregar casa de campaña" onclick="{{ x.incQty }}" style="width:38px;height:38px;border-radius:999px;border:0;background:#F26A2E;color:#F6F1E7;font-size:20px;font-weight:700">+</button></div></div>
+<div style="display:flex;justify-content:space-between;font-size:12px;border-top:1px solid rgba(23,26,24,.08);padding-top:8px"><span style="color:rgba(23,26,24,.6)">Subtotal</span><b>{{ x.qtySubtotal }}</b></div>
+</div></sc-if>
 </sc-for>
 </div>
 <div style="display:flex;flex-direction:column;gap:10px;padding-top:6px">
@@ -613,7 +617,15 @@ small,.small{font-size:12px;line-height:1.4}
 <button aria-expanded="{{ tacosOpen }}" class="secondary-action" onclick="{{ toggleTacos }}" type="button">Elegir / editar guisos</button>
 <sc-if value="{{ tacosOpen }}"><div class="taco-variants"><sc-for as="t" list="{{ tacoRows }}"><div class="variant-row" data-taco="{{ t.name }}">
 <div class="field-copy"><b>{{ t.name }}</b><small>{{ t.priceLabel }} cada uno<sc-if value="{{ t.hasQty }}"> · {{ t.subtotal }}</sc-if></small></div><div class="stepper"><button aria-label="Quitar taco de {{ t.name }}" disabled="{{ t.decDisabled }}" onclick="{{ t.dec }}">−</button><strong>{{ t.qty }}</strong><button aria-label="Agregar taco de {{ t.name }}" class="plus" disabled="{{ t.incDisabled }}" onclick="{{ t.inc }}">+</button></div>
-</div></sc-for></div></sc-if></div></sc-if><sc-if value="{{ m.notTaco }}">
+</div></sc-for></div></sc-if></div></sc-if>
+<sc-if value="{{ m.isQuesadillaG }}"><div data-quesadillas-panel="">
+<div class="field-row"><div><b style="font-size:17px">Quesadillas con guiso</b><small class="block">{{ m.priceShort }} por quesadilla</small></div><strong>{{ quesadillaQtyLabel }}</strong></div>
+<p class="muted small">Elige cuántas quesadillas quieres de cada guiso. Puedes combinar varios guisos en el mismo pedido.</p>
+<button aria-expanded="{{ quesadillaOpen }}" class="secondary-action" onclick="{{ toggleQuesadillas }}" type="button">Elegir / editar guisos</button>
+<sc-if value="{{ quesadillaOpen }}"><div class="taco-variants"><sc-for as="t" list="{{ quesadillaRows }}"><div class="variant-row" data-quesadilla="{{ t.name }}">
+<div class="field-copy"><b>{{ t.name }}</b><small>{{ t.priceLabel }} cada una<sc-if value="{{ t.hasQty }}"> · {{ t.subtotal }}</sc-if></small></div><div class="stepper"><button aria-label="Quitar quesadilla de {{ t.name }}" disabled="{{ t.decDisabled }}" onclick="{{ t.dec }}">−</button><strong>{{ t.qty }}</strong><button aria-label="Agregar quesadilla de {{ t.name }}" class="plus" disabled="{{ t.incDisabled }}" onclick="{{ t.inc }}">+</button></div>
+</div></sc-for></div></sc-if></div></sc-if>
+<sc-if value="{{ m.notTaco }}">
 <div style="display:flex;align-items:center;gap:12px">
 <div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800;line-height:1.1">{{ m.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6);line-height:1.35">{{ m.desc }}</div><div style="font-size:13px;font-weight:800;padding-top:2px">{{ m.priceShort }}</div></div>
 <div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
@@ -2421,7 +2433,7 @@ module.exports = QRCode;
     setState(updater, cb){
       const patch=typeof updater==='function'?updater(this.state,this.props):updater;
       if(patch && typeof patch==='object'){
-        const fields=['day','adults','kids','stay','lodging','acts','extras','actQty','actAdults','actKids','units','foodDiners','lodgingGuests','spotStart','spotEnd','spotGuests','tacoQty','menuQty','menuPick','menuExtra','drinks','drinkPeople','drinkNote','comboAdded','name','phone','email','celebText'];
+        const fields=['day','adults','kids','stay','lodging','acts','extras','extraQty','actQty','actAdults','actKids','units','foodDiners','lodgingGuests','spotStart','spotEnd','spotGuests','tacoQty','quesadillaGQty','menuQty','menuPick','menuExtra','drinks','drinkPeople','drinkNote','comboAdded','name','phone','email','celebText'];
         const edited=this.state.folio&&fields.some(k=>Object.prototype.hasOwnProperty.call(patch,k)&&JSON.stringify(patch[k])!==JSON.stringify(this.state[k]));
         this.state=Object.assign({},this.state,patch,edited?{folio:null,quoteId:null,confirmed:false}:{});
       }
@@ -2554,7 +2566,7 @@ module.exports = QRCode;
 })();
 </script>
 <script>
-const BUILD_ID = 'CSG-20260908-1.2.1';
+const BUILD_ID = 'CSG-20260913-1.4.0';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2602,7 +2614,7 @@ function trafficMeta(){
     utm_campaign:q.get('utm_campaign'),
     source:q.get('utm_source')||q.get('source')||q.get('src')||'direct',
     user_agent:navigator.userAgent,
-    build:'CSG-20260911-1.3.0'
+    build:'CSG-20260913-1.4.0'
   };
 }
 function newQuoteFolio(){
@@ -2622,7 +2634,7 @@ const MENU = [
   { id:'taco', name:'Taco', price:30, desc:'Guiso a elegir', pick:'guiso' },
   { id:'platillo', name:'Platillo con 1 guiso', price:120, extraPrice:30, pick:'guiso', extra:true },
   { id:'quesadilla', name:'Quesadilla sencilla', price:25, desc:'Tortilla recién hecha con queso mozzarella' },
-  { id:'quesadillaG', name:'Quesadilla con guiso', price:40, desc:'Queso mozzarella y el guiso de tu preferencia', pick:'guiso' },
+  { id:'quesadillaG', name:'Quesadilla con guiso', price:40, desc:'Queso mozzarella y el guiso de tu preferencia', pick:'guiso', splitGuiso:true },
   { id:'gringa', name:'Gringa', price:50, desc:'Tortilla de harina, queso y carne' },
   { id:'maruchan', name:'Maruchan', price:50, desc:'Sopa instantánea' },
   { id:'molleteS', name:'Mollete salado', price:25, desc:'Mitad de birote con frijoles y queso mozzarella' },
@@ -2647,7 +2659,6 @@ const CAT = [
   { id:'cuatrimoto', name:'Cuatrimoto', group:'Aventura', cat:'aventura', price:1200, per:'u', seats:2, dur:'Recorrido guiado', img:IMG.cuatri, gallery:[IMG.cuatri], short:'Senderos del parque en cuatrimoto con guía.', desc:'Recorre los senderos del parque en cuatrimoto con guía.', incl:['Cuatrimoto por unidad','Casco','Guía'], restr:'Edad mínima y licencia según indicaciones del personal. Permanece en la ruta señalada.' },
   { id:'ranger', name:'Ranger', group:'Aventura', cat:'aventura', price:1700, per:'u', seats:5, dur:'Recorrido guiado', img:IMG.ranger, gallery:[IMG.ranger], short:'Todo terreno para recorrer la sierra en grupo.', desc:'Vehículo todo terreno para recorrer la sierra en grupo.', incl:['Ranger por unidad','Casco','Guía'], restr:'Permanece sentado y sigue las instrucciones del operador durante el recorrido.' },
   { id:'arco', name:'Tiro con arco', group:'Aventura', cat:'aventura', price:100, per:'pp', dur:'Sesión', img:IMG.arco, gallery:[IMG.arco], short:'Sesión supervisada con instructor.', desc:'Sesión de tiro con arco supervisada.', incl:['Equipo','Instructor'], restr:'Supervisión del personal en todo momento.' },
-  { id:'hacha', name:'Tiro con hacha', group:'Aventura', cat:'aventura', price:100, per:'u', dur:'Sesión', icon:'zap', tile:'#2A2E2B', pending:true, short:'Sesión supervisada, solo adultos.', desc:'Sesión de tiro con hacha supervisada.', incl:['Equipo','Instructor'], restr:'Solo mayores de edad, según indicaciones del personal.' },
   { id:'safari', name:'Safari', group:'Naturaleza y safari', cat:'naturaleza', price:180, kids:100, per:'an', dur:'1 h aprox.', img:IMG.safari, gallery:[IMG.safari, IMG.tigre], video:true, short:'Recorrido en vehículo por los hábitats del parque.', desc:'Recorrido en vehículo por los hábitats del parque. Fauna de cerca, con guía que cuenta la historia de cada especie.', incl:['Recorrido en vehículo','Guía naturalista','Paradas para fotos'], restr:'No alimentar ni molestar a los animales. Respeta distancias de seguridad; su comportamiento puede ser impredecible.' },
   { id:'granjita', name:'Granjita interactiva', group:'Naturaleza y safari', cat:'naturaleza', price:100, per:'pp', dur:'Libre', img:IMG.granja, gallery:[IMG.granja, IMG.llama], short:'Llamas, ponis y animales de granja para toda la familia.', desc:'Convive con llamas, ponis y animales de granja en un espacio pensado para niños y familias.', incl:['Acceso a la granjita','Personal de apoyo'], restr:'Toca a los animales solo con autorización del personal. Menores siempre con un adulto.' },
   { id:'aviario', name:'Aviario', group:'Naturaleza y safari', cat:'naturaleza', price:20, per:'pp', dur:'Libre', img:IMG.aviario, gallery:[IMG.aviario], short:'Aves de la región en un espacio abierto.', desc:'Aves de la región en un espacio abierto.', incl:['Acceso al aviario'], restr:'No alimentar a las aves.' },
@@ -2664,8 +2675,8 @@ const MOMENTS = ['tirolesa','safari','ranger','gotcha','herpetario','spot','gran
 const EXTRAS = [
   { id:'descAlim', name:'Descorche · ingreso de alimentos', meta:'Por grupo', price:180 },
   { id:'descBeb', name:'Descorche · ingreso de bebidas', meta:'Por grupo', price:180 },
-  { id:'tienda2', name:'Casa de campaña · 2 personas', meta:'Solo con camping', price:300, camping:true },
-  { id:'tienda4', name:'Casa de campaña · 4 personas', meta:'Solo con camping', price:600, camping:true },
+  { id:'tienda2', name:'Casa de campaña · 2 personas', meta:'Solo con camping', price:300, camping:true, multi:true },
+  { id:'tienda4', name:'Casa de campaña · 4 personas', meta:'Solo con camping', price:600, camping:true, multi:true },
 ];
 const TYPES = [
   { id:'pareja', label:'Pareja', hint:'Spot VIP, caballo, tirolesa', reco:['spot','caballo','tirolesa'] },
@@ -2715,18 +2726,20 @@ class Component extends DCLogic {
     screen: 'splash', prev: [], visitType: 'none', cat: 'aventura', detId: null,
     day: null, adults: 2, kids: 2, stay: null, lodging: null, acts: {}, extras: {}, celeb: null, celebText: '',
     // Cantidades independientes por actividad. NUNCA se inicializan con el total del grupo.
-    actQty: {}, actAdults: {}, actKids: {}, units: {}, foodDiners: 1, qtyWarn: '',
+    actQty: {}, actAdults: {}, actKids: {}, units: {}, extraQty: {}, foodDiners: 1, qtyWarn: '',
     lodgingGuests: {cabana:1,glamping:2}, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
     name: '', phone: '', email: '', formError: '', acceptPolicies: false, policyError: false,
     folio: null, quoteId: null, sessionId: getSessionId(), savingQuote: false, saveError: '', confirmed: false, loadingExplore: false, copied: false, qrKey: 0,
     momentIdx: 0, frameIdx: 0, saved: {}, toast: '', toastKey: 0, badgeKey: 0, totalKey: 0,
-    menuQty: {}, menuPick: {}, menuExtra: {}, drinks: null, drinkPeople: 1, drinkNote: '', comboAdded: false, menuOpen: false, menuZoom: false,
+    menuQty: {}, menuPick: {}, menuExtra: {}, quesadillaGQty: {}, quesadillaOpen: false, drinks: null, drinkPeople: 1, drinkNote: '', comboAdded: false, menuOpen: false, menuZoom: false,
   };
   tacoCount(){ return GUISOS.reduce((n,g)=>n+integer(this.state.tacoQty[g]||0,0,99),0); }
+  quesadillaGCount(){ return GUISOS.reduce((n,g)=>n+integer(this.state.quesadillaGQty[g]||0,0,99),0); }
   foodLines(){
-    const s=this.state, out=[], taco=MENU.find(m=>m.id==='taco');
+    const s=this.state, out=[], taco=MENU.find(m=>m.id==='taco'), qg=MENU.find(m=>m.id==='quesadillaG');
     GUISOS.forEach(g=>{const q=integer(s.tacoQty[g]||0,0,99); if(q) out.push({id:'taco:'+g,name:'Taco de '+g.toLowerCase(),qty:q,unitPrice:taco.price,amount:q*taco.price});});
-    MENU.filter(m=>m.id!=='taco').forEach(m=>{
+    GUISOS.forEach(g=>{const q=integer(s.quesadillaGQty[g]||0,0,99); if(q) out.push({id:'quesadillaG:'+g,name:'Quesadilla con guiso de '+g.toLowerCase(),qty:q,unitPrice:qg.price,amount:q*qg.price});});
+    MENU.filter(m=>m.id!=='taco'&&m.id!=='quesadillaG').forEach(m=>{
       const q=integer(s.menuQty[m.id]||0,0,99); if(!q) return;
       const choices=m.pick==='guiso'?GUISOS:m.pick==='dulce'?DULCE:[];
       const pick=s.menuPick[m.id]||(choices[0]||'');
@@ -2745,6 +2758,24 @@ class Component extends DCLogic {
       const value=integer(old+delta,0,99-total+old);
       const tacoQty={...s.tacoQty,[g]:value};
       return {tacoQty,menuQty:{...s.menuQty,taco:total-old+value},totalKey:s.totalKey+1};
+    });
+  }
+  setQuesadillaGQty(g,delta){
+    if(!GUISOS.includes(g)) return;
+    this.setState(s=>{
+      const old=integer(s.quesadillaGQty[g]||0,0,99), total=this.quesadillaGCount();
+      const value=integer(old+delta,0,99-total+old);
+      const quesadillaGQty={...s.quesadillaGQty,[g]:value};
+      return {quesadillaGQty,menuQty:{...s.menuQty,quesadillaG:total-old+value},totalKey:s.totalKey+1};
+    });
+  }
+  setExtraQty(id,delta){
+    const x=EXTRAS.find(x=>x.id===id); if(!x || !x.multi) return;
+    this.setState(s=>{
+      if(!s.extras[id]) return {};
+      const max=Math.max(1,Math.min(99,this.groupTotal()));
+      const q=integer((s.extraQty[id]||1)+delta,1,max);
+      return {extraQty:{...s.extraQty,[id]:q},totalKey:s.totalKey+1};
     });
   }
   setLodgingGuests(id,delta){
@@ -2804,7 +2835,7 @@ class Component extends DCLogic {
         items.push({item_code:c.id,item_name:c.name,category:c.group,quantity:u==='unit'?un:1,participants:u==='an'?qa+qk:u==='stay'?s.spotGuests:q,units:u==='unit'?un:u==='stay'?1:null,adults:u==='an'?qa:null,children:u==='an'?qk:null,unit_price:c.price||0,line_total:l.amount,details}); return;
       }
       const x=EXTRAS.find(x=>x.id===l.id);
-      if(x){items.push({item_code:x.id,item_name:x.name,category:'extras',quantity:1,participants:null,units:null,adults:null,children:null,unit_price:x.price,line_total:l.amount,details:{}}); return;}
+      if(x){const q=x.multi?integer(s.extraQty[x.id]||1,1,99):1; items.push({item_code:x.id,item_name:x.name,category:'extras',quantity:q,participants:null,units:null,adults:null,children:null,unit_price:x.price,line_total:l.amount,details:x.multi?{capacity_per_tent:x.id==='tienda4'?4:2}:{}}); return;}
     });
     if(s.comboAdded){
       this.foodLines().forEach(f=>items.push({item_code:f.id,item_name:f.name,category:'alimentos',quantity:f.qty,participants:null,units:null,adults:null,children:null,unit_price:f.unitPrice,line_total:f.amount,details:{diners:s.foodDiners}}));
@@ -3126,7 +3157,7 @@ class Component extends DCLogic {
     // Los extras exclusivos de camping solo cuentan si el hospedaje elegido es camping (nivel 1 de defensa)
     // descBeb tiene un único estado (extras.descBeb) que escriben tanto Extras como el combo,
     // así que aquí no hace falta ninguna exclusión condicional.
-    EXTRAS.forEach(x => { if (x.camping && lodging !== 'camping') return; if (extras[x.id]) lines.push({ id:x.id, kicker:'Extras', title:x.name, sub:x.meta, amount:x.price, step:'extras' }); });
+    EXTRAS.forEach(x => { if (x.camping && lodging !== 'camping') return; if (extras[x.id]) { const q=x.multi?integer(this.state.extraQty[x.id]||1,1,99):1; lines.push({ id:x.id, kicker:'Extras', title:x.name, sub:x.multi?`${q} × ${MXN(x.price)}`:x.meta, amount:x.price*q, step:'extras' }); } });
     // Known food, corkage, and requested park drinks are separate accounting lines.
     // Corkage is already in EXTRAS above: it is NEVER added a second time here.
     if(this.state.comboAdded){
@@ -3176,7 +3207,7 @@ class Component extends DCLogic {
     const centerChip = id => { const el = chips.ref.current; if (!el) return; const b = el.querySelector(`[data-chip="${id}"]`); if (!b) return; const left = b.offsetLeft - (el.clientWidth - b.offsetWidth) / 2; const max = Math.max(0, el.scrollWidth - el.clientWidth); el.scrollTo({ left: Math.max(0, Math.min(left, max)), behavior: 'smooth' }); };
     // Combo
     const setQty = (id, d) => this.setState(st => ({ menuQty: { ...st.menuQty, [id]: Math.max(0, Math.min(99, (st.menuQty[id] || 0) + d)) }, totalKey: st.totalKey + 1 }));
-    const menuItems = MENU.map(m => { const q = m.id==='taco'?this.tacoCount():(s.menuQty[m.id] || 0); const opts = m.pick === 'guiso' ? GUISOS : m.pick === 'dulce' ? DULCE : []; const pick = s.menuPick[m.id] || (opts[0] || ''); return { ...m, isTaco:m.id==='taco', notTaco:m.id!=='taco', qty: q, hasQty: q > 0, priceShort: MXN(m.price), inc: () => setQty(m.id, 1), dec: () => setQty(m.id, -1), hasPick: !!m.pick && q > 0, pickLabel: m.pick === 'dulce' ? 'Elige el dulce' : 'Elige el guiso', opts: opts.map(o => ({ t: o, select: () => this.setState(st => ({ menuPick: { ...st.menuPick, [m.id]: o } })), bg: pick === o ? INK : '#F6F1E7', color: pick === o ? PAPER : INK })), hasExtra: !!m.extra && q > 0, extraOn: !!s.menuExtra[m.id], extraRing: s.menuExtra[m.id] ? ACC : MUTED, extraFill: s.menuExtra[m.id] ? ACC : 'transparent', toggleExtra: () => this.setState(st => ({ menuExtra: { ...st.menuExtra, [m.id]: !st.menuExtra[m.id] }, totalKey: st.totalKey + 1 })), qtyBg: q > 0 ? ACC : '#F6F1E7', qtyColor: q > 0 ? PAPER : INK, cardBorder: q > 0 ? ACC : BORDER }; });
+    const menuItems = MENU.map(m => { const q = m.id==='taco'?this.tacoCount():m.id==='quesadillaG'?this.quesadillaGCount():(s.menuQty[m.id] || 0); const opts = m.pick === 'guiso' ? GUISOS : m.pick === 'dulce' ? DULCE : []; const pick = s.menuPick[m.id] || (opts[0] || ''); return { ...m, isTaco:m.id==='taco', isQuesadillaG:m.id==='quesadillaG', notTaco:m.id!=='taco'&&m.id!=='quesadillaG', qty: q, hasQty: q > 0, priceShort: MXN(m.price), inc: () => setQty(m.id, 1), dec: () => setQty(m.id, -1), hasPick: !!m.pick && q > 0, pickLabel: m.pick === 'dulce' ? 'Elige el dulce' : 'Elige el guiso', opts: opts.map(o => ({ t: o, select: () => this.setState(st => ({ menuPick: { ...st.menuPick, [m.id]: o } })), bg: pick === o ? INK : '#F6F1E7', color: pick === o ? PAPER : INK })), hasExtra: !!m.extra && q > 0, extraOn: !!s.menuExtra[m.id], extraRing: s.menuExtra[m.id] ? ACC : MUTED, extraFill: s.menuExtra[m.id] ? ACC : 'transparent', toggleExtra: () => this.setState(st => ({ menuExtra: { ...st.menuExtra, [m.id]: !st.menuExtra[m.id] }, totalKey: st.totalKey + 1 })), qtyBg: q > 0 ? ACC : '#F6F1E7', qtyColor: q > 0 ? PAPER : INK, cardBorder: q > 0 ? ACC : BORDER }; });
     // Etiquetas del combo derivadas de la misma fuente que usa comboTotal(): el precio
     // visible y el cobrado no pueden divergir.
     const extraPrice = (MENU.find(m => m.extraPrice) || {}).extraPrice || 0;
@@ -3225,7 +3256,7 @@ class Component extends DCLogic {
         subtotalTitle:it.id==='spot'?'Subtotal estancia':'Subtotal actividad',subLabel:it.id==='spot'&&SPOT_RATE_BASIS==='pending'?'Por cotizar':MXN(amount), selBorder: it.selected ? ACC : BORDER };
     };
     const groups = ['Aventura', 'Naturaleza y safari', 'Photo spots'].map(g => ({ name: g, items: CAT.filter(c => c.group === g && !c.lodging).map(mk).map(withQty) }));
-    const extrasList = EXTRAS.filter(x => !x.camping || s.lodging === 'camping').map(x => { const on = !!s.extras[x.id]; return { ...x, priceShort: MXN(x.price), selected: on, toggle: () => this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1 }; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
+    const extrasList = EXTRAS.filter(x => !x.camping || s.lodging === 'camping').map(x => { const on = !!s.extras[x.id], q=x.multi?integer(s.extraQty[x.id]||(on?1:0),0,99):1; return { ...x, priceShort: MXN(x.price), selected: on, showQty:!!x.multi&&on, qty:q, qtySubtotal:x.multi?MXN(x.price*Math.max(1,q)):MXN(x.price), qtyHint:x.id==='tienda4'?'Capacidad: hasta 4 personas por casa':'Capacidad: hasta 2 personas por casa', decQty:()=>this.setExtraQty(x.id,-1), incQty:()=>this.setExtraQty(x.id,1), toggle: () => this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1 }; if(x.multi) o.extraQty={...st.extraQty,[x.id]:next?Math.max(1,st.extraQty[x.id]||1):0}; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
     const cartRows = T.lines.map(l => ({ kicker: l.kicker, title: l.title, sub: l.sub, amount: l.quote ? 'Por cotizar' : MXN(l.amount), edit: () => this.go(l.step) }));
     const selCount = Object.values(s.acts).filter(Boolean).length + Object.values(s.extras).filter(Boolean).length + (s.lodging ? 1 : 0) + (s.comboAdded ? 1 : 0);
     const hasSel = selCount > 0 || !!s.day;
@@ -3259,8 +3290,9 @@ class Component extends DCLogic {
       statusDark: dark,
       isSplash: sc === 'splash', isHome: sc === 'home', isTipo: sc === 'tipo', isExplorar: sc === 'explorar', isMomentos: sc === 'momentos', isDetalle: sc === 'detalle', isBuilder, isCombo: sc === 'combo',
       menuZoom: s.menuZoom, openMenu: () => this.setState({ menuZoom: true }), closeMenu: () => this.setState({ menuZoom: false }),
-      menuItems, tacosOpen:s.tacosOpen, toggleTacos:()=>this.setState(st=>({tacosOpen:!st.tacosOpen})),
+      menuItems, tacosOpen:s.tacosOpen, toggleTacos:()=>this.setState(st=>({tacosOpen:!st.tacosOpen})), quesadillaOpen:s.quesadillaOpen, toggleQuesadillas:()=>this.setState(st=>({quesadillaOpen:!st.quesadillaOpen})),
       tacoQtyLabel:this.tacoCount()+(this.tacoCount()===1?' taco':' tacos'), tacoRows:GUISOS.map(g=>({name:g,qty:s.tacoQty[g]||0,priceLabel:MXN(tacoPrice),subtotal:MXN((s.tacoQty[g]||0)*tacoPrice),hasQty:(s.tacoQty[g]||0)>0,decDisabled:!(s.tacoQty[g]||0),incDisabled:this.tacoCount()>=99,inc:()=>this.setTacoQty(g,1),dec:()=>this.setTacoQty(g,-1)})),
+      quesadillaQtyLabel:this.quesadillaGCount()+(this.quesadillaGCount()===1?' quesadilla':' quesadillas'), quesadillaRows:GUISOS.map(g=>{const q=s.quesadillaGQty[g]||0,p=(MENU.find(m=>m.id==='quesadillaG')||{}).price||0;return{name:g,qty:q,priceLabel:MXN(p),subtotal:MXN(q*p),hasQty:q>0,decDisabled:!q,incDisabled:this.quesadillaGCount()>=99,inc:()=>this.setQuesadillaGQty(g,1),dec:()=>this.setQuesadillaGQty(g,-1)}}),
       comboFoodTotalLabel:MXN(comboFoodTotal), comboCorkageLabel:MXN(comboCorkage), comboHasCorkage:comboCorkage>0,
       comboNote:s.drinks==='park'?'Bebidas del parque: precio por confirmar':s.extras.descBeb?'Descorche incluido una sola vez':'Sin bebidas del parque solicitadas',
       comboTotalLabel: MXN(comboTotal), comboCount, comboCountLabel: comboCount === 1 ? '1 producto' : comboCount + ' productos', comboHasItems: comboCount > 0 || !!s.drinks, comboOpacity: (comboCount > 0 || !!s.drinks) ? 1 : 0.45, comboDisabled: !(comboCount > 0 || !!s.drinks), comboCta: s.comboAdded ? 'Actualizar combo en mi aventura' : 'Agregar combo a mi aventura', comboKey: 'c' + s.totalKey,
@@ -3326,7 +3358,10 @@ class Component extends DCLogic {
       summaryLine: `${this.visitorsLabel()}${s.day ? ' · ' + this.dateLabel() : ''}`, totalTitle:T.hasQuote?'Total parcial estimado':'Total estimado',hasKnownTotal:!T.hasQuote,totalPending:T.hasQuote,totalPendingNote:T.hasQuote?'Incluye servicios por cotizar. El equipo confirmará el total y el anticipo.':'Importes estimados; sujetos a disponibilidad y confirmación del equipo.',totalLabel:MXN(T.total),depositLabel:T.deposit==null?'Por confirmar':MXN(T.deposit),balanceLabel:T.balance==null?'Por confirmar':MXN(T.balance), totalKey: 'k' + s.totalKey,
       nextStep, nextDisabled, nextOpacity: nextDisabled ? 0.45 : 1, nextLabel: stepIdx === STEPS.length - 1 ? 'Ver mi aventura' : 'Continuar',
       cartEmpty: !hasSel, cartFull: hasSel, cartRows,
-      name: s.name, phone: s.phone, email: s.email, setName: e => this.setState({ name: e.target.value, formError: '' }), setPhone: e => this.setState({ phone: e.target.value, formError: '' }), setEmail: e => this.setState({ email: e.target.value }),
+      name: s.name, phone: s.phone, email: s.email,
+      setName: e => { s.name=e.target.value; s.formError=''; s.folio=null; s.quoteId=null; s.confirmed=false; },
+      setPhone: e => { s.phone=e.target.value; s.formError=''; s.folio=null; s.quoteId=null; s.confirmed=false; },
+      setEmail: e => { s.email=e.target.value; s.folio=null; s.quoteId=null; s.confirmed=false; },
       nameBorder: s.formError && !s.name.trim() ? ACC : 'rgba(23,26,24,.12)', phoneBorder: s.formError && s.phone.replace(/\D/g, '').length < 10 ? ACC : 'rgba(23,26,24,.12)',
       hasFormError: !!s.formError, formError: s.formError,
       submitDatos: () => { if (!s.name.trim()) return this.setState({ formError: 'Escribe tu nombre para poder enviarte la cotización.' }); if (s.phone.replace(/\D/g, '').length < 10) return this.setState({ formError: 'Necesitamos un WhatsApp de 10 dígitos para confirmar disponibilidad.' }); this.go('resumen'); },

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260908-1.2.1">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.4.1">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -556,7 +556,8 @@ small,.small{font-size:12px;line-height:1.4}
 <div style="display:flex;align-items:center;gap:12px;flex:none"><div style="font-size:13px;font-weight:800">{{ x.priceShort }}</div><div style="width:26px;height:26px;border-radius:999px;border:2px solid {{ x.ring }};background:{{ x.fill }};display:flex;align-items:center;justify-content:center;color:#F6F1E7"><sc-if hint-placeholder-val="{{ false }}" value="{{ x.selected }}"><svg fill="none" height="14" stroke="currentColor" stroke-width="3.5" style="animation:pop .3s ease" viewbox="0 0 24 24" width="14"><path d="M20 6 9 17l-5-5"></path></svg></sc-if></div></div>
 </button>
 <sc-if value="{{ x.showQty }}"><div style="margin:-2px 4px 4px;padding:12px 14px;border:2px solid #F26A2E;border-top:0;border-radius:0 0 18px 18px;background:#FFFDF8;display:flex;flex-direction:column;gap:8px;animation:fadeUp .2s ease both">
-<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><div style="font-size:13px;font-weight:800">Cantidad de casas</div><div style="font-size:11px;color:rgba(23,26,24,.58)">{{ x.qtyHint }}</div></div><div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none"><button aria-label="Quitar casa de campaña" onclick="{{ x.decQty }}" style="width:38px;height:38px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18">−</button><div style="min-width:36px;text-align:center;font-size:17px;font-weight:800">{{ x.qty }}</div><button aria-label="Agregar casa de campaña" onclick="{{ x.incQty }}" style="width:38px;height:38px;border-radius:999px;border:0;background:#F26A2E;color:#F6F1E7;font-size:20px;font-weight:700">+</button></div></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><div style="font-size:13px;font-weight:800">Cantidad de casas</div><div style="font-size:11px;color:rgba(23,26,24,.58)">{{ x.qtyHint }}</div></div><div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none"><button aria-label="Quitar casa de campaña" onclick="{{ x.decQty }}" style="width:38px;height:38px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18">−</button><div style="min-width:36px;text-align:center;font-size:17px;font-weight:800">{{ x.qty }}</div><button aria-label="Agregar casa de campaña" disabled="{{ x.incDisabled }}" onclick="{{ x.incQty }}" style="width:38px;height:38px;border-radius:999px;border:0;background:#F26A2E;color:#F6F1E7;font-size:20px;font-weight:700;opacity:{{ x.incDisabled ? .35 : 1 }}">+</button></div></div>
+<div style="font-size:11px;line-height:1.4;color:rgba(23,26,24,.62)">{{ x.capacitySummary }}<br/>{{ x.maxQtyLabel }}</div>
 <div style="display:flex;justify-content:space-between;font-size:12px;border-top:1px solid rgba(23,26,24,.08);padding-top:8px"><span style="color:rgba(23,26,24,.6)">Subtotal</span><b>{{ x.qtySubtotal }}</b></div>
 </div></sc-if>
 </sc-for>
@@ -2769,13 +2770,45 @@ class Component extends DCLogic {
       return {quesadillaGQty,menuQty:{...s.menuQty,quesadillaG:total-old+value},totalKey:s.totalKey+1};
     });
   }
+  campingGuests(state){
+    const s=state||this.state;
+    return Math.max(0,(s.actAdults.camping||0)+(s.actKids.camping||0));
+  }
+  tentCapacity(id){ return id==='tienda4'?4:id==='tienda2'?2:0; }
+  tentStats(state, overrideId, overrideQty){
+    const s=state||this.state;
+    const q2=overrideId==='tienda2'?overrideQty:integer(s.extraQty.tienda2||0,0,99);
+    const q4=overrideId==='tienda4'?overrideQty:integer(s.extraQty.tienda4||0,0,99);
+    const cap=q2*2+q4*4;
+    const campers=this.campingGuests(s);
+    const largest=q4>0?4:q2>0?2:0;
+    const maxUseful=campers>0?campers+Math.max(0,largest-1):0;
+    return {q2,q4,cap,campers,largest,maxUseful,valid:cap<=maxUseful};
+  }
+  maxTentQty(id,state){
+    const s=state||this.state, cap=this.tentCapacity(id);
+    if(!cap) return 0;
+    const campers=this.campingGuests(s);
+    if(!campers) return 0;
+    let max=0;
+    for(let q=1;q<=99;q++){
+      const st=this.tentStats(s,id,q);
+      if(st.valid) max=q; else break;
+    }
+    return max;
+  }
   setExtraQty(id,delta){
     const x=EXTRAS.find(x=>x.id===id); if(!x || !x.multi) return;
     this.setState(s=>{
       if(!s.extras[id]) return {};
-      const max=Math.max(1,Math.min(99,this.groupTotal()));
-      const q=integer((s.extraQty[id]||1)+delta,1,max);
-      return {extraQty:{...s.extraQty,[id]:q},totalKey:s.totalKey+1};
+      const current=integer(s.extraQty[id]||1,1,99);
+      const max=x.camping?this.maxTentQty(id,s):Math.max(1,Math.min(99,this.groupTotal()));
+      const q=integer(current+delta,1,Math.max(1,max));
+      if(delta>0 && current>=max){
+        const campers=this.campingGuests(s), cap=this.tentCapacity(id);
+        return {qtyWarn:`Con ${campers} campista${campers===1?'':'s'}, ya alcanzaste la cantidad útil de casas de ${cap} personas. Reduce casas o ajusta quiénes pernoctan.`};
+      }
+      return {extraQty:{...s.extraQty,[id]:q},totalKey:s.totalKey+1,qtyWarn:''};
     });
   }
   setLodgingGuests(id,delta){
@@ -2810,6 +2843,12 @@ class Component extends DCLogic {
     if(s.stay==='noche'){
       const l=LODG.find(l=>l.id===s.lodging);
       if(l && l.maxGuests){ const q=s.lodgingGuests[l.id], min=l.minGuests||1; if(!Number.isInteger(q)||q<min||q>l.maxGuests) return {screen:'estancia',message:l.name+': selecciona entre '+min+' y '+l.maxGuests+' huéspedes.'}; if(q>this.groupTotal()) return {screen:'estancia',message:l.name+': seleccionaste '+q+' huéspedes, pero tu grupo actual tiene '+this.groupTotal()+'. Aumenta Visitantes antes de continuar.'}; }
+      if(s.lodging==='camping'){
+        const campers=this.campingGuests(s);
+        const ts=this.tentStats(s);
+        if((s.extras.tienda2||s.extras.tienda4) && campers<1) return {screen:'estancia',message:'Indica quiénes van a acampar antes de rentar casas de campaña.'};
+        if(!ts.valid) return {screen:'extras',message:`Las casas seleccionadas ofrecen capacidad para ${ts.cap} personas, pero solo ${campers} van a acampar. Reduce la cantidad de casas.`};
+      }
     }
     for(const c of CAT.filter(c=>c.seats)){const error=this.vehicleIssue(c); if(error) return {screen:'actividades',message:error};}
     const error=this.spotIssue(); if(error) return {screen:'actividades',message:error};
@@ -2835,7 +2874,7 @@ class Component extends DCLogic {
         items.push({item_code:c.id,item_name:c.name,category:c.group,quantity:u==='unit'?un:1,participants:u==='an'?qa+qk:u==='stay'?s.spotGuests:q,units:u==='unit'?un:u==='stay'?1:null,adults:u==='an'?qa:null,children:u==='an'?qk:null,unit_price:c.price||0,line_total:l.amount,details}); return;
       }
       const x=EXTRAS.find(x=>x.id===l.id);
-      if(x){const q=x.multi?integer(s.extraQty[x.id]||1,1,99):1; items.push({item_code:x.id,item_name:x.name,category:'extras',quantity:q,participants:null,units:null,adults:null,children:null,unit_price:x.price,line_total:l.amount,details:x.multi?{capacity_per_tent:x.id==='tienda4'?4:2}:{}}); return;}
+      if(x){const q=x.multi?integer(s.extraQty[x.id]||1,1,99):1; const ts=x.camping?this.tentStats(s):null; items.push({item_code:x.id,item_name:x.name,category:'extras',quantity:q,participants:null,units:null,adults:null,children:null,unit_price:x.price,line_total:l.amount,details:x.multi?{capacity_per_tent:x.id==='tienda4'?4:2,camping_guests:ts?ts.campers:null,rented_capacity_total:ts?ts.cap:null}:{}}); return;}
     });
     if(s.comboAdded){
       this.foodLines().forEach(f=>items.push({item_code:f.id,item_name:f.name,category:'alimentos',quantity:f.qty,participants:null,units:null,adults:null,children:null,unit_price:f.unitPrice,line_total:f.amount,details:{diners:s.foodDiners}}));
@@ -3256,7 +3295,8 @@ class Component extends DCLogic {
         subtotalTitle:it.id==='spot'?'Subtotal estancia':'Subtotal actividad',subLabel:it.id==='spot'&&SPOT_RATE_BASIS==='pending'?'Por cotizar':MXN(amount), selBorder: it.selected ? ACC : BORDER };
     };
     const groups = ['Aventura', 'Naturaleza y safari', 'Photo spots'].map(g => ({ name: g, items: CAT.filter(c => c.group === g && !c.lodging).map(mk).map(withQty) }));
-    const extrasList = EXTRAS.filter(x => !x.camping || s.lodging === 'camping').map(x => { const on = !!s.extras[x.id], q=x.multi?integer(s.extraQty[x.id]||(on?1:0),0,99):1; return { ...x, priceShort: MXN(x.price), selected: on, showQty:!!x.multi&&on, qty:q, qtySubtotal:x.multi?MXN(x.price*Math.max(1,q)):MXN(x.price), qtyHint:x.id==='tienda4'?'Capacidad: hasta 4 personas por casa':'Capacidad: hasta 2 personas por casa', decQty:()=>this.setExtraQty(x.id,-1), incQty:()=>this.setExtraQty(x.id,1), toggle: () => this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1 }; if(x.multi) o.extraQty={...st.extraQty,[x.id]:next?Math.max(1,st.extraQty[x.id]||1):0}; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
+    const tentStats=this.tentStats(s);
+    const extrasList = EXTRAS.filter(x => !x.camping || s.lodging === 'camping').map(x => { const on = !!s.extras[x.id], q=x.multi?integer(s.extraQty[x.id]||(on?1:0),0,99):1; const maxQty=x.camping?this.maxTentQty(x.id,s):99; const capPer=x.camping?this.tentCapacity(x.id):0; const capSelected=x.camping?tentStats.cap:0; const campers=x.camping?tentStats.campers:0; return { ...x, priceShort: MXN(x.price), selected: on, showQty:!!x.multi&&on, qty:q, qtySubtotal:x.multi?MXN(x.price*Math.max(1,q)):MXN(x.price), qtyHint:x.id==='tienda4'?'Capacidad: hasta 4 personas por casa':'Capacidad: hasta 2 personas por casa', capacitySummary:x.camping?`Capacidad rentada: ${capSelected} persona${capSelected===1?'':'s'} · Campistas: ${campers}`:'', maxQtyLabel:x.camping?`Máximo útil para este tamaño: ${maxQty} casa${maxQty===1?'':'s'}`:'', incDisabled:!!x.camping&&q>=maxQty, decQty:()=>this.setExtraQty(x.id,-1), incQty:()=>this.setExtraQty(x.id,1), toggle: () => this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1, qtyWarn:'' }; if(x.multi) o.extraQty={...st.extraQty,[x.id]:next?Math.max(1,st.extraQty[x.id]||1):0}; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
     const cartRows = T.lines.map(l => ({ kicker: l.kicker, title: l.title, sub: l.sub, amount: l.quote ? 'Por cotizar' : MXN(l.amount), edit: () => this.go(l.step) }));
     const selCount = Object.values(s.acts).filter(Boolean).length + Object.values(s.extras).filter(Boolean).length + (s.lodging ? 1 : 0) + (s.comboAdded ? 1 : 0);
     const hasSel = selCount > 0 || !!s.day;

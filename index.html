@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.9.0">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260914-1.9.1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -776,7 +776,15 @@ small,.small{font-size:12px;line-height:1.4}
 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:none"><div style="font-size:14px;font-weight:800">{{ r.amount }}</div><div style="display:flex;align-items:center;gap:8px"><button onclick="{{ r.edit }}" style="background:none;border:0;padding:0;font-size:12px;font-weight:600;color:#F26A2E">Editar</button><sc-if value="{{ r.canRemove }}"><button aria-label="Eliminar {{ r.title }} de mi aventura" onclick="{{ r.remove }}" title="Eliminar" style="width:34px;height:34px;border-radius:10px;border:1px solid rgba(180,52,52,.14);background:rgba(180,52,52,.08);color:#A83A32;padding:0;display:flex;align-items:center;justify-content:center;transition:transform .12s,background .2s" style-active="transform:scale(.92);background:rgba(180,52,52,.15)"><svg fill="none" height="17" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="17"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v5M14 11v5"></path></svg></button></sc-if></div></div>
 </div>
 </sc-for>
+<div class="promo-card {{ promoClass }}" style="margin-top:6px">
+<button class="promo-head" onclick="{{ togglePromo }}"><div class="promo-gift">{{ promoIcon }}</div><div class="promo-copy"><strong>{{ promoTitle }}</strong><span>{{ promoSubtitle }}</span></div><div class="promo-chevron">⌄</div></button>
+<sc-if value="{{ promoOpen }}"><div class="promo-body">
+<sc-if value="{{ promoCanApply }}"><div class="promo-row"><input aria-label="Código de descuento" autocomplete="off" onchange="{{ setPromoInput }}" placeholder="Escribe tu código" value="{{ promoInput }}"/><button disabled="{{ promoBusy }}" onclick="{{ applyPromo }}">{{ promoButtonLabel }}</button></div></sc-if>
+<sc-if value="{{ promoApplied }}"><div class="promo-applied"><div><strong>🎉 {{ promoAppliedLabel }}</strong><br/><span>{{ promoAppliedSavings }}</span></div><button class="promo-remove" onclick="{{ removePromo }}">Quitar</button></div></sc-if>
+<sc-if value="{{ hasPromoMessage }}"><div class="promo-message {{ promoMessageClass }}">{{ promoMessage }}</div></sc-if>
+</div></sc-if></div>
 <div style="padding:18px;border-radius:22px;background:#0B2B24;color:#F6F1E7;display:flex;flex-direction:column;gap:10px;margin-top:6px">
+<sc-if value="{{ hasPromoDiscount }}"><div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(246,241,231,.78)"><span>Subtotal</span><span style="font-weight:700">{{ subtotalLabel }}</span></div><div style="display:flex;justify-content:space-between;font-size:13px;color:#9FD4A8"><span>Descuento · {{ promoCodeLabel }}</span><span style="font-weight:800">−{{ discountLabel }}</span></div></sc-if>
 <div style="display:flex;justify-content:space-between;font-size:14px"><span>{{ totalTitle }}</span><span style="font-weight:800;font-size:18px">{{ totalLabel }}</span></div><sc-if value="{{ totalPending }}"><div class="notice warning">{{ totalPendingNote }}</div></sc-if>
 <sc-if value="{{ hasKnownTotal }}"><div style="display:flex;justify-content:space-between;font-size:14px;color:#F6B26B"><span style="font-weight:800">Aparta con el 50%</span><span style="font-weight:800;font-size:18px">{{ depositLabel }}</span></div></sc-if>
 <div style="font-size:11px;color:rgba(246,241,231,.65);line-height:1.4">Precios de referencia. El total final y la fecha quedan sujetos a disponibilidad y validación del equipo de reservaciones. El anticipo se descuenta del total.</div>
@@ -984,7 +992,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.9.0 · Supabase · Personalización · Launch Candidate</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260914-1.9.1.0 · Supabase · Personalización · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2787,7 +2795,7 @@ module.exports = QRCode;
 
 </script>
 <script>
-const BUILD_ID = 'CSG-20260913-1.9.0';
+const BUILD_ID = 'CSG-20260914-1.9.1.0';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2835,7 +2843,7 @@ function trafficMeta(){
     utm_campaign:q.get('utm_campaign'),
     source:q.get('utm_source')||q.get('source')||q.get('src')||'direct',
     user_agent:navigator.userAgent,
-    build:'CSG-20260913-1.9.0'
+    build:'CSG-20260914-1.9.1.0'
   };
 }
 function newQuoteFolio(){

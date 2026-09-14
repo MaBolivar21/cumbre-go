@@ -366,8 +366,9 @@ small,.small{font-size:12px;line-height:1.4}
 <input id="visit-start" type="date" min="{{ minDate }}" value="{{ startDate }}" onchange="{{ setStartDate }}" style="height:52px;border:2px solid rgba(23,26,24,.10);border-radius:15px;background:#F6F1E7;padding:0 14px;font-size:16px;color:#171A18;outline:none"/>
 </label>
 <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700">Salida (opcional si es solo un día)
-<input id="visit-end" type="date" min="{{ endMinDate }}" value="{{ endDate }}" onchange="{{ setEndDate }}" style="height:52px;border:2px solid rgba(23,26,24,.10);border-radius:15px;background:#F6F1E7;padding:0 14px;font-size:16px;color:#171A18;outline:none"/>
+<input id="visit-end" type="date" min="{{ endMinDate }}" value="{{ endDate }}" onchange="{{ setEndDate }}" onclick="{{ openEndDatePicker }}" style="height:52px;border:2px solid rgba(23,26,24,.10);border-radius:15px;background:#F6F1E7;padding:0 14px;font-size:16px;color:#171A18;outline:none;cursor:pointer"/>
 </label>
+<button type="button" onclick="{{ openEndDatePicker }}" style="height:44px;border-radius:14px;border:1.5px solid rgba(244,98,37,.35);background:#FFF8F1;color:#B84A1B;font-size:13px;font-weight:800">Elegir / cambiar fecha de salida</button>
 <sc-if value="{{ hasDateRange }}"><div style="padding:12px 14px;border-radius:15px;background:rgba(68,112,90,.10);color:#315542;font-size:12px;line-height:1.4;font-weight:650">{{ dateRangeSummary }}</div></sc-if>
 </div>
 <div style="font-size:13px;color:rgba(23,26,24,.7);line-height:1.45">{{ dateHint }}</div>
@@ -905,7 +906,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.6.0 · Supabase · Folios reales · Launch Candidate</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.6.1 · Supabase · Folios reales · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2509,7 +2510,10 @@ module.exports = QRCode;
       if(name==='style-focus'){ focusCSS=String(value||''); continue; }
       if(name==='onclick'||name==='onchange'||name==='onwheel'||name==='ontouchstart'||name==='ontouchend'){
         if(typeof value==='function'){
-          const evName=name==='onchange'?'input':name.slice(2);
+          // Text inputs need live `input` updates, but native date pickers on iOS Safari
+          // are more stable when state is committed on the real `change` event.
+          const isDateInput = tag==='input' && String(node.getAttribute('type')||'').toLowerCase()==='date';
+          const evName=name==='onchange' ? (isDateInput?'change':'input') : name.slice(2);
           el.addEventListener(evName,e=>value(e));
         }
         continue;
@@ -2561,7 +2565,7 @@ module.exports = QRCode;
 })();
 </script>
 <script>
-const BUILD_ID = 'CSG-20260913-1.6.0';
+const BUILD_ID = 'CSG-20260913-1.6.1';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2740,6 +2744,11 @@ class Component extends DCLogic {
   dateRangeIssue(){ const s=this.state; if(!s.startDate) return 'Selecciona la fecha de llegada o visita.'; if(s.endDate && s.endDate<s.startDate) return 'La fecha de salida no puede ser anterior a la fecha de llegada.'; return ''; }
   setStartDateValue(value){ this.setState(s=>({startDate:value,endDate:s.endDate&&s.endDate<value?'':s.endDate,day:null,totalKey:s.totalKey+1,qtyWarn:''})); }
   setEndDateValue(value){ this.setState(s=>({endDate:value&&s.startDate&&value<s.startDate?'':value,day:null,totalKey:s.totalKey+1,qtyWarn:value&&s.startDate&&value<s.startDate?'La salida no puede ser anterior a la llegada.':''})); }
+  openNativeDatePicker(id){
+    const el=document.getElementById(id); if(!el) return;
+    try{ if(typeof el.showPicker==='function') el.showPicker(); else { el.focus({preventScroll:true}); el.click(); } }
+    catch(_){ try{ el.focus({preventScroll:true}); el.click(); }catch(__){} }
+  }
   selectedLodgingIds(state){ const s=state||this.state; return LODG.filter(l=>(s.lodgingQty&&s.lodgingQty[l.id]||0)>0).map(l=>l.id); }
   lodgingAssignedGuests(state,excludeId){ const s=state||this.state; let n=0; LODG.forEach(l=>{if(l.id===excludeId) return; const q=(s.lodgingQty&&s.lodgingQty[l.id]||0); if(!q) return; if(l.per==='an') n+=(s.actAdults[l.id]||0)+(s.actKids[l.id]||0); else n+=s.lodgingGuests[l.id]||0;}); return n; }
   minGuestsPerUnit(l){ return l.id==='glamping'?2:1; }
@@ -3422,7 +3431,7 @@ class Component extends DCLogic {
       shareMoment: () => { try { navigator.clipboard && navigator.clipboard.writeText('https://cumbresalvaje.mx/momentos/' + mItem.id); } catch (e) {} this.showToast('Enlace copiado'); },
       hasToast: !!s.toast, toast: s.toast, toastKey: 't' + s.toastKey,
       stepLabel: `Paso ${stepIdx + 1} de ${STEPS.length}`, stepName: STEP_NAMES[sc] || '', stepSegs: STEPS.map((_, i) => ({ bg: i <= stepIdx ? ACC : 'rgba(23,26,24,.12)' })),
-      minDate:this.todayISO(),startDate:s.startDate,endDate:s.endDate,endMinDate:s.startDate||this.todayISO(),setStartDate:e=>this.setStartDateValue(e.target.value),setEndDate:e=>this.setEndDateValue(e.target.value),hasDateRange:!!s.startDate,dateRangeSummary:s.endDate&&s.endDate>s.startDate?`${this.dateLabel()} · ${this.nightsCount()} noche${this.nightsCount()!==1?'s':''}`:`${this.dateLabel()} · visita de un día`,dateHint:dateIssue|| (s.startDate?`Solicitarás ${this.dateLabel()}. El equipo confirma disponibilidad por WhatsApp.`:'Selecciona una fecha de llegada o visita. Puedes añadir salida para varias noches.'),
+      minDate:this.todayISO(),startDate:s.startDate,endDate:s.endDate,endMinDate:s.startDate||this.todayISO(),setStartDate:e=>this.setStartDateValue(e.target.value),setEndDate:e=>this.setEndDateValue(e.target.value),openEndDatePicker:()=>this.openNativeDatePicker('visit-end'),hasDateRange:!!s.startDate,dateRangeSummary:s.endDate&&s.endDate>s.startDate?`${this.dateLabel()} · ${this.nightsCount()} noche${this.nightsCount()!==1?'s':''}`:`${this.dateLabel()} · visita de un día`,dateHint:dateIssue|| (s.startDate?`Solicitarás ${this.dateLabel()}. El equipo confirma disponibilidad por WhatsApp.`:'Selecciona una fecha de llegada o visita. Puedes añadir salida para varias noches.'),
       entradaLabel: `Entrada general ${MXN(ENTRADA)} p/p`,
       guisoExtraLabel, descorcheBebLabel, descorcheBebShort,
       comboTeaserLabel: `Tacos ${MXN(tacoPrice)} · platillos, quesadillas y molletes`,

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.6.0">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.6.2">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -72,6 +72,43 @@ small,.small{font-size:12px;line-height:1.4}
 .combo-breakdown small{font-size:11px;color:rgba(23,26,24,.6)}
 @media(max-width:380px){.field-row{flex-wrap:wrap}.time-row{gap:6px}.capacity-box{padding:10px}.stepper button{width:40px;height:40px}.stepper strong{min-width:22px}.combo-grand{font-size:11px}.combo-grand strong{font-size:18px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important}}
+
+/* Calendar stays outside #appRoot so rendering totals cannot destroy its controls. */
+.date-field{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;min-width:0}
+.date-trigger{min-height:54px;width:100%;padding:12px 14px;border:2px solid rgba(23,26,24,.12);border-radius:15px;background:#F6F1E7;color:#171A18;font-size:16px;font-weight:600;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.date-trigger::after{content:'▦';font-size:23px;color:#B84A1B;flex:none}
+.date-trigger:disabled{opacity:.55}
+.date-clear{border:0;background:transparent;color:#853a13;font-size:13px;text-decoration:underline;text-align:left;min-height:40px;padding:0}
+.csg-calendar{width:min(410px,calc(100vw - 24px));max-height:calc(100dvh - 24px);margin:auto;padding:18px 16px 14px;border:0;border-radius:24px;background:#FFFDF8;color:#171A18;box-shadow:0 20px 70px rgba(0,0,0,.28);overflow-y:auto;overscroll-behavior:contain;font-family:'Archivo',system-ui,sans-serif}
+.csg-calendar::backdrop{background:rgba(7,28,23,.62)}
+.cal-header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cal-kicker{margin:0 0 5px;font-size:10px;font-weight:800;letter-spacing:.12em;color:#A54010}
+.cal-header h2{margin:0;font-size:23px;line-height:1.15;font-weight:800}
+.cal-close{width:44px;height:44px;border:0;border-radius:50%;background:#F6F1E7;color:#171A18;font-size:26px;flex:none}
+.cal-help{font-size:12px;line-height:1.4;color:#525850;margin:12px 0}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0}
+.cal-nav button{width:44px;height:44px;border:1px solid #dedbcf;background:#F6F1E7;color:#171A18;border-radius:50%;font-size:28px;flex:none}
+.cal-nav button:disabled{opacity:.3}
+.cal-nav h3{font-size:18px;font-weight:800;margin:0;text-align:center}
+.cal-grid{width:100%;table-layout:fixed;border-spacing:3px;border-collapse:separate}
+.cal-grid th{font-size:11px;color:#565c54;font-weight:700;height:22px}
+.cal-grid td{padding:0;text-align:center}
+.cal-day{display:block;width:100%;height:44px;border:2px solid transparent;border-radius:11px;background:#F6F1E7;color:#171A18;font-size:16px;font-weight:650;padding:0;touch-action:manipulation}
+.cal-day:disabled{background:transparent;color:#aaa99f;opacity:.55}
+.cal-day.is-arrival{border-color:#315542}
+.cal-day.is-range{background:#E3ECE1}
+.cal-day[aria-current='date']:not(.is-selected){text-decoration:underline;text-underline-offset:3px}
+.cal-day.is-selected{background:#F26A2E;color:#fff;border-color:#F26A2E}
+.cal-day:focus-visible{outline:2px solid #0B2B24;outline-offset:1px}
+.cal-empty{height:44px}
+.cal-selection{padding:10px 12px;min-height:48px;margin:12px 0;font-size:12px;font-weight:650;line-height:1.4;border-radius:12px;background:#EEF2E9;color:#244937}
+.cal-actions{display:flex;gap:9px}
+.cal-actions button{min-height:48px;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:750}
+.cal-cancel{border:1px solid #d8d4c9;background:#FFFDF8;color:#171A18;flex:1}
+.cal-confirm{border:0;background:#F26A2E;color:#fff;flex:2}
+.cal-confirm:disabled{opacity:.4}
+.cal-footnote{font-size:10px;text-align:center;color:#666b63;line-height:1.3;margin:10px 0 0}
+@media(max-width:350px){.csg-calendar{padding:14px 10px}.cal-header h2{font-size:21px}.cal-grid{border-spacing:2px}.cal-nav h3{font-size:16px}}
 
 </style></head><body><div id="app"><div id="appRoot" class="production-device"></div></div>
 <template id="dc-template">
@@ -362,14 +399,14 @@ small,.small{font-size:12px;line-height:1.4}
 <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">¿Cuándo nos visitas?</div>
 <div style="padding:18px 16px;border-radius:22px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:16px">
 <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:17px;font-weight:800">Fechas de tu experiencia</div><div style="font-size:11px;color:rgba(23,26,24,.55)">Sujeta a disponibilidad</div></div>
-<label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700">Llegada / día de visita
-<input id="visit-start" type="date" min="{{ minDate }}" value="{{ startDate }}" onchange="{{ setStartDate }}" style="height:52px;border:2px solid rgba(23,26,24,.10);border-radius:15px;background:#F6F1E7;padding:0 14px;font-size:16px;color:#171A18;outline:none"/>
-</label>
-<label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700">Salida (opcional si es solo un día)
-<input id="visit-end" type="date" min="{{ endMinDate }}" value="{{ endDate }}" onchange="{{ setEndDate }}" onclick="{{ openEndDatePicker }}" style="height:52px;border:2px solid rgba(23,26,24,.10);border-radius:15px;background:#F6F1E7;padding:0 14px;font-size:16px;color:#171A18;outline:none;cursor:pointer"/>
-</label>
-<button type="button" onclick="{{ openEndDatePicker }}" style="height:44px;border-radius:14px;border:1.5px solid rgba(244,98,37,.35);background:#FFF8F1;color:#B84A1B;font-size:13px;font-weight:800">Elegir / cambiar fecha de salida</button>
-<sc-if value="{{ hasDateRange }}"><div style="padding:12px 14px;border-radius:15px;background:rgba(68,112,90,.10);color:#315542;font-size:12px;line-height:1.4;font-weight:650">{{ dateRangeSummary }}</div></sc-if>
+<div class="date-field"><span id="arrival-label">Llegada / día de visita</span>
+<button id="visit-start" type="button" class="date-trigger" aria-haspopup="dialog" aria-labelledby="arrival-label visit-start" data-selected-date="{{ startDate }}" onclick="{{ openStartDatePicker }}">{{ startDateText }}</button></div>
+<div class="date-field"><span id="departure-label">Salida · obligatoria si te hospedas</span>
+<button id="visit-end" type="button" class="date-trigger" aria-haspopup="dialog" aria-labelledby="departure-label visit-end" data-selected-date="{{ endDate }}" disabled="{{ endDateDisabled }}" onclick="{{ openEndDatePicker }}">{{ endDateText }}</button></div>
+<sc-if value="{{ hasEndDate }}"><button type="button" class="date-clear" onclick="{{ clearEndDate }}">Quitar fecha de salida</button></sc-if>
+<sc-if value="{{ hasDateNotice }}"><div class="notice warning" role="status">{{ dateNotice }}</div></sc-if>
+<sc-if value="{{ showDayVisitRecovery }}"><button type="button" class="secondary-action" onclick="{{ setDia }}">Cambiar a visita de un día (sin hospedaje)</button><small class="muted">Esta opción quita los hospedajes y las casas de campaña seleccionadas.</small></sc-if>
+<sc-if value="{{ hasDateRange }}"><div id="date-range-summary" data-nights="{{ nightsValue }}" class="notice">{{ dateRangeSummary }}</div></sc-if>
 </div>
 <div style="font-size:13px;color:rgba(23,26,24,.7);line-height:1.45">{{ dateHint }}</div>
 </div>
@@ -409,6 +446,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <sc-if hint-placeholder-val="{{ false }}" value="{{ isNoche }}">
 <div style="display:flex;flex-direction:column;gap:10px;animation:fadeUp .3s ease both">
+<sc-if value="{{ hasStayDateIssue }}"><div class="notice warning" role="status">{{ stayDateIssue }}<button type="button" class="secondary-action" style="margin-top:10px" onclick="{{ editStayDates }}">Revisar llegada y salida</button></div></sc-if>
 <div style="font-size:16px;font-weight:800">Elige uno o varios tipos de hospedaje</div>
 <div style="font-size:12px;color:rgba(23,26,24,.62);line-height:1.4">Puedes combinar varias Cuevitas, varios Glampings y Camping dentro de la misma solicitud. Las personas asignadas entre todos los hospedajes no pueden superar el total de visitantes.</div>
 <sc-if value="{{ hasLodgingWarn }}"><div class="notice warning" role="status">{{ lodgingWarn }}</div></sc-if>
@@ -906,7 +944,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.6.1 · Supabase · Folios reales · Launch Candidate</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.6.2 · Supabase · Folios reales · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2565,7 +2603,151 @@ module.exports = QRCode;
 })();
 </script>
 <script>
-const BUILD_ID = 'CSG-20260913-1.6.1';
+/* CSG 1.6.2 — Date-only arithmetic and a calendar isolated from the app renderer.
+   Selection remains a draft until Confirmar; no input[type=date], showPicker or
+   synthetic input.click() is used. No browser-native picker state can be lost. */
+(function () {
+  'use strict';
+  const DAY = 86400000;
+  function parse(iso) {
+    if (typeof iso !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+    const [y,m,d] = iso.split('-').map(Number);
+    if (y < 1 || m < 1 || m > 12 || d < 1 || d > 31) return null;
+    const dt = new Date(0); dt.setUTCFullYear(y,m-1,d); dt.setUTCHours(0,0,0,0);
+    return dt.getUTCFullYear()===y && dt.getUTCMonth()===m-1 && dt.getUTCDate()===d ? dt : null;
+  }
+  function iso(dt) {
+    if (!dt || !Number.isFinite(dt.getTime()) || dt.getUTCFullYear()<1 || dt.getUTCFullYear()>9999) return '';
+    return String(dt.getUTCFullYear()).padStart(4,'0')+'-'+String(dt.getUTCMonth()+1).padStart(2,'0')+'-'+String(dt.getUTCDate()).padStart(2,'0');
+  }
+  function add(value, days) { const d=parse(value); if(!d) return ''; d.setUTCDate(d.getUTCDate()+days); return iso(d); }
+  function between(start,end) { const a=parse(start), b=parse(end); return a&&b ? (b-a)/DAY : 0; }
+  function today() {
+    try { const p=new Intl.DateTimeFormat('en-US',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()); const get=t=>p.find(x=>x.type===t).value; return get('year')+'-'+get('month')+'-'+get('day'); }
+    catch (_) { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  }
+  function format(value,long) {const d=parse(value); return d ? d.toLocaleDateString('es-MX',{timeZone:'UTC',weekday:long?'long':'short',day:'numeric',month:long?'long':'short',year:'numeric'}).replace(/\./g,'') : '';}
+  window.CumbreDates=Object.freeze({parse,iso,add,between,today,format});
+  let dlg=null, cfg=null, draft='', view='', focusISO='';
+  const monthStart=s=>s.slice(0,7)+'-01';
+  function shiftMonth(s,n){const d=parse(monthStart(s)); if(!d)return ''; d.setUTCMonth(d.getUTCMonth()+n);return iso(d);}
+  function allowed(s){return !!parse(s)&&s>=cfg.min;}
+  function close(){if(dlg&&dlg.open)dlg.close();}
+  function paint(){
+    let start=cfg.kind==='start'?draft:cfg.start;
+    let end=cfg.kind==='end'?draft:cfg.end;
+    dlg.querySelectorAll('[data-cal-date]').forEach(b=>{
+      const value=b.dataset.calDate, on=value===draft, cell=b.closest('td');
+      cell.setAttribute('aria-selected',String(on));
+      b.classList.toggle('is-selected',on);
+      b.classList.toggle('is-range',!!(start&&end&&end>start&&value>start&&value<end));
+      b.classList.toggle('is-arrival',cfg.kind==='end'&&value===cfg.start);
+      b.tabIndex=!b.disabled&&value===focusISO?0:-1;
+    });
+    const summary=dlg.querySelector('#csg-calendar-selection');
+    const label=cfg.kind==='end'?'Salida':'Llegada';
+    summary.textContent=draft ? label+': '+format(draft,true) : 'Selecciona un día del calendario.';
+    if(draft&&cfg.kind==='end'&&cfg.start){const n=between(cfg.start,draft);summary.textContent+=' · '+n+' '+(n===1?'noche':'noches');}
+    dlg.querySelector('[data-cal-confirm]').disabled=!allowed(draft);
+  }
+  function renderGrid(targetFocus){
+    const first=parse(view), y=first.getUTCFullYear(), m=first.getUTCMonth();
+    const heading=first.toLocaleDateString('es-MX',{month:'long',year:'numeric',timeZone:'UTC'});
+    dlg.querySelector('#csg-calendar-month').textContent=heading.charAt(0).toUpperCase()+heading.slice(1);
+    const prev=shiftMonth(view,-1), next=shiftMonth(view,1);
+    dlg.querySelector('[data-cal-prev]').disabled=!prev||prev<monthStart(cfg.min);
+    dlg.querySelector('[data-cal-next]').disabled=!next;
+    const last=new Date(first); last.setUTCMonth(m+1,0);
+    const count=last.getUTCDate(), offset=(first.getUTCDay()+6)%7;
+    const body=dlg.querySelector('tbody'); body.replaceChildren();
+    const selectedInView=draft&&draft.slice(0,7)===view.slice(0,7)&&allowed(draft)?draft:'';
+    const earliest=cfg.min.slice(0,7)===view.slice(0,7)?cfg.min:view;
+    focusISO=targetFocus&&allowed(targetFocus)&&targetFocus.slice(0,7)===view.slice(0,7)?targetFocus:(selectedInView||earliest);
+    for(let row=0;row<6;row++){
+      const tr=document.createElement('tr');
+      for(let col=0;col<7;col++){
+        const td=document.createElement('td'), d=row*7+col-offset+1;
+        if(d<1||d>count){td.className='cal-empty';td.setAttribute('aria-hidden','true');}
+        else{
+          const value=String(y).padStart(4,'0')+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+          const btn=document.createElement('button'); btn.type='button';btn.textContent=d;btn.dataset.calDate=value;
+          btn.className='cal-day';btn.disabled=!allowed(value);btn.setAttribute('aria-label',format(value,true));
+          if(value===today())btn.setAttribute('aria-current','date');
+          btn.addEventListener('click',()=>{if(!allowed(value))return;draft=value;focusISO=value;paint();});
+          btn.addEventListener('keydown',e=>keyDay(e,value));
+          td.appendChild(btn);
+        }
+        tr.appendChild(td);
+      }
+      body.appendChild(tr);
+    }
+    paint();
+  }
+  function focusDay(){const b=dlg.querySelector('[data-cal-date="'+focusISO+'"]'); if(b)b.focus({preventScroll:true});}
+  function keyDay(e,value){
+    let next='', d=parse(value);
+    if(e.key==='ArrowLeft')next=add(value,-1);
+    if(e.key==='ArrowRight')next=add(value,1);
+    if(e.key==='ArrowUp')next=add(value,-7);
+    if(e.key==='ArrowDown')next=add(value,7);
+    if(e.key==='Home')next=add(value,-((d.getUTCDay()+6)%7));
+    if(e.key==='End')next=add(value,6-((d.getUTCDay()+6)%7));
+    if(e.key==='PageUp'||e.key==='PageDown'){
+      const dir=e.key==='PageUp'?-1:1, target=shiftMonth(value,dir*(e.shiftKey?12:1));
+      if(target){const last=parse(target);last.setUTCMonth(last.getUTCMonth()+1,0);next=add(target,Math.min(d.getUTCDate(),last.getUTCDate())-1);}
+    }
+    if(!next)return;
+    e.preventDefault();if(next<cfg.min)next=cfg.min;
+    if(!allowed(next))return;
+    if(next.slice(0,7)!==view.slice(0,7)){view=monthStart(next);renderGrid(next);}
+    else{focusISO=next;paint();}
+    focusDay();
+  }
+  function ensure(){
+    if(dlg)return;
+    dlg=document.createElement('dialog');dlg.id='csg-calendar';dlg.className='csg-calendar';
+    dlg.setAttribute('aria-labelledby','csg-calendar-title');dlg.setAttribute('aria-describedby','csg-calendar-help');
+    dlg.innerHTML=`<div class="cal-header"><div><p class="cal-kicker">FECHAS DE TU EXPERIENCIA</p><h2 id="csg-calendar-title"></h2></div><button type="button" class="cal-close" data-cal-cancel aria-label="Cerrar calendario">×</button></div>
+      <p id="csg-calendar-help" class="cal-help"></p>
+      <div class="cal-nav"><button type="button" data-cal-prev aria-label="Mes anterior">‹</button><h3 id="csg-calendar-month" aria-live="polite"></h3><button type="button" data-cal-next aria-label="Mes siguiente">›</button></div>
+      <table class="cal-grid" role="grid" aria-labelledby="csg-calendar-month"><thead><tr><th scope="col" abbr="Lunes">L</th><th scope="col" abbr="Martes">M</th><th scope="col" abbr="Miércoles">M</th><th scope="col" abbr="Jueves">J</th><th scope="col" abbr="Viernes">V</th><th scope="col" abbr="Sábado">S</th><th scope="col" abbr="Domingo">D</th></tr></thead><tbody></tbody></table>
+      <p id="csg-calendar-selection" class="cal-selection" aria-live="polite"></p>
+      <div class="cal-actions"><button type="button" class="cal-cancel" data-cal-cancel>Cancelar</button><button type="button" class="cal-confirm" data-cal-confirm></button></div>
+      <p class="cal-footnote">Las fechas solicitadas están sujetas a disponibilidad.</p>`;
+    dlg.querySelectorAll('[data-cal-cancel]').forEach(b=>b.addEventListener('click',close));
+    dlg.querySelector('[data-cal-prev]').addEventListener('click',()=>{const v=shiftMonth(view,-1);if(v&&v>=monthStart(cfg.min)){view=v;renderGrid();}});
+    dlg.querySelector('[data-cal-next]').addEventListener('click',()=>{const v=shiftMonth(view,1);if(v){view=v;renderGrid();}});
+    dlg.querySelector('[data-cal-confirm]').addEventListener('click',()=>{
+      if(!allowed(draft))return;
+      const fn=cfg.onSelect,value=draft;close();fn(value);
+    });
+    dlg.addEventListener('close',()=>{
+      const id=cfg&&cfg.returnTo;
+      requestAnimationFrame(()=>{const el=id&&document.getElementById(id);if(el)el.focus({preventScroll:true});});
+    });
+    dlg.addEventListener('keydown',e=>{
+      if(e.key!=='Tab')return;
+      const list=[...dlg.querySelectorAll('button:not(:disabled)')].filter(b=>b.tabIndex>=0);
+      const first=list[0],last=list[list.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    });
+    document.body.appendChild(dlg);
+  }
+  window.CumbreCalendar=Object.freeze({open(options){
+    ensure();if(dlg.open)dlg.close();
+    cfg=options;if(!parse(cfg.min))return;
+    draft=allowed(cfg.value)?cfg.value:'';view=monthStart(draft||cfg.min);
+    dlg.querySelector('#csg-calendar-title').textContent=cfg.kind==='end'?'Elige tu salida':'Elige tu llegada';
+    dlg.querySelector('#csg-calendar-help').textContent=cfg.kind==='end'?'Llegada: '+format(cfg.start)+'. Elige una salida posterior y confírmala.':'Elige el día de tu visita o llegada y confírmalo.';
+    dlg.querySelector('[data-cal-confirm]').textContent=cfg.kind==='end'?'Confirmar salida':'Confirmar llegada';
+    renderGrid();dlg.showModal();focusDay();
+  },close});
+})();
+
+</script>
+<script>
+const BUILD_ID = 'CSG-20260913-1.6.2';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2613,7 +2795,7 @@ function trafficMeta(){
     utm_campaign:q.get('utm_campaign'),
     source:q.get('utm_source')||q.get('source')||q.get('src')||'direct',
     user_agent:navigator.userAgent,
-    build:'CSG-20260913-1.6.0'
+    build:'CSG-20260913-1.6.2'
   };
 }
 function newQuoteFolio(){
@@ -2725,7 +2907,7 @@ function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^=
 class Component extends DCLogic {
   state = {
     screen: 'splash', prev: [], visitType: 'none', cat: 'aventura', detId: null,
-    day: null, startDate: '', endDate: '', adults: 2, kids: 2, stay: null, lodging: null, lodgingQty:{cabana:0,glamping:0,camping:0}, acts: {}, extras: {}, celeb: null, celebText: '',
+    day: null, startDate: '', endDate: '', dateNotice: '', adults: 2, kids: 2, stay: null, lodging: null, lodgingQty:{cabana:0,glamping:0,camping:0}, acts: {}, extras: {}, celeb: null, celebText: '',
     // Cantidades independientes por actividad. NUNCA se inicializan con el total del grupo.
     actQty: {}, actAdults: {}, actKids: {}, units: {}, extraQty: {}, foodDiners: 1, qtyWarn: '',
     lodgingGuests: {cabana:0,glamping:0}, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
@@ -2737,17 +2919,41 @@ class Component extends DCLogic {
   tacoCount(){ return GUISOS.reduce((n,g)=>n+integer(this.state.tacoQty[g]||0,0,99),0); }
   quesadillaGCount(){ return GUISOS.reduce((n,g)=>n+integer(this.state.quesadillaGQty[g]||0,0,99),0); }
   platilloCount(){ return GUISOS.reduce((n,g)=>n+integer(this.state.platilloQty[g]||0,0,99),0); }
-  todayISO(){ const d=new Date(), y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; }
-  dateObj(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso||'')) return null; const [y,m,d]=iso.split('-').map(Number); const dt=new Date(y,m-1,d); return Number.isNaN(dt.getTime())?null:dt; }
-  nightsCount(){ const s=this.state, a=this.dateObj(s.startDate), b=this.dateObj(s.endDate); if(!a) return s.stay==='noche'?1:0; if(!b || b<=a) return s.stay==='noche'?1:0; return Math.max(1,Math.round((b-a)/86400000)); }
-  formatDateISO(iso){ const dt=this.dateObj(iso); if(!dt) return ''; return dt.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).replace(/\./g,''); }
-  dateRangeIssue(){ const s=this.state; if(!s.startDate) return 'Selecciona la fecha de llegada o visita.'; if(s.endDate && s.endDate<s.startDate) return 'La fecha de salida no puede ser anterior a la fecha de llegada.'; return ''; }
-  setStartDateValue(value){ this.setState(s=>({startDate:value,endDate:s.endDate&&s.endDate<value?'':s.endDate,day:null,totalKey:s.totalKey+1,qtyWarn:''})); }
-  setEndDateValue(value){ this.setState(s=>({endDate:value&&s.startDate&&value<s.startDate?'':value,day:null,totalKey:s.totalKey+1,qtyWarn:value&&s.startDate&&value<s.startDate?'La salida no puede ser anterior a la llegada.':''})); }
-  openNativeDatePicker(id){
-    const el=document.getElementById(id); if(!el) return;
-    try{ if(typeof el.showPicker==='function') el.showPicker(); else { el.focus({preventScroll:true}); el.click(); } }
-    catch(_){ try{ el.focus({preventScroll:true}); el.click(); }catch(__){} }
+  todayISO(){ return window.CumbreDates.today(); }
+  dateObj(iso){ return window.CumbreDates.parse(iso); }
+  nightsCount(){ return Math.max(0,window.CumbreDates.between(this.state.startDate,this.state.endDate)); }
+  formatDateISO(iso){ return window.CumbreDates.format(iso,false); }
+  dateRangeIssue(){
+    const s=this.state,D=window.CumbreDates;
+    if(!D.parse(s.startDate))return 'Selecciona una fecha de llegada válida.';
+    if(s.startDate<this.todayISO())return 'La llegada no puede ser anterior a hoy. Elige una fecha nueva.';
+    if(s.endDate&&!D.parse(s.endDate))return 'Selecciona una fecha de salida válida.';
+    if(s.endDate&&D.between(s.startDate,s.endDate)<=0)return 'La salida debe ser posterior a la llegada. Para pasar solo el día, quita la salida.';
+    if(s.stay==='noche'&&!s.endDate)return 'Selecciona la fecha de salida para calcular las noches de hospedaje.';
+    return '';
+  }
+  setStartDateValue(value){
+    const D=window.CumbreDates;
+    if(!D.parse(value)||value<this.todayISO()) {this.setState({dateNotice:'Elige una llegada válida a partir de hoy.'});return false;}
+    this.setState(s=>{
+      const reset=!!s.endDate&&(!D.parse(s.endDate)||s.endDate<=value);
+      return {startDate:value,endDate:reset?'':s.endDate,day:null,totalKey:s.totalKey+1,qtyWarn:'',dateNotice:reset?'La nueva llegada deja fuera la salida anterior. Elige y confirma otra fecha de salida.':''};
+    });return true;
+  }
+  setEndDateValue(value){
+    const D=window.CumbreDates,s=this.state;
+    if(!D.parse(s.startDate)){this.setState({dateNotice:'Primero elige la fecha de llegada.'});return false;}
+    if(!D.parse(value)||D.between(s.startDate,value)<=0){this.setState({dateNotice:'La salida debe ser posterior a la llegada.'});return false;}
+    this.setState(s=>({endDate:value,stay:'noche',day:null,totalKey:s.totalKey+1,qtyWarn:'',dateNotice:''}));return true;
+  }
+  clearDeparture(){
+    this.setState(s=>{const hasLodging=this.selectedLodgingIds(s).length>0;return {endDate:'',stay:hasLodging?'noche':'dia',dateNotice:hasLodging?'Para hospedarte debes elegir una nueva fecha de salida.':'Sin salida: visita de un día.',totalKey:s.totalKey+1,qtyWarn:''};});
+  }
+  openCalendar(kind){
+    const s=this.state,D=window.CumbreDates;
+    if(kind==='end'&&!D.parse(s.startDate)){this.setState({dateNotice:'Primero elige la fecha de llegada.'});return;}
+    const min=kind==='end'?D.add(s.startDate,1):this.todayISO();
+    window.CumbreCalendar.open({kind,min,value:kind==='end'?s.endDate:s.startDate,start:s.startDate,end:s.endDate,returnTo:kind==='end'?'visit-end':'visit-start',onSelect:value=>kind==='end'?this.setEndDateValue(value):this.setStartDateValue(value)});
   }
   selectedLodgingIds(state){ const s=state||this.state; return LODG.filter(l=>(s.lodgingQty&&s.lodgingQty[l.id]||0)>0).map(l=>l.id); }
   lodgingAssignedGuests(state,excludeId){ const s=state||this.state; let n=0; LODG.forEach(l=>{if(l.id===excludeId) return; const q=(s.lodgingQty&&s.lodgingQty[l.id]||0); if(!q) return; if(l.per==='an') n+=(s.actAdults[l.id]||0)+(s.actKids[l.id]||0); else n+=s.lodgingGuests[l.id]||0;}); return n; }
@@ -2947,6 +3153,7 @@ class Component extends DCLogic {
     catch(e){console.warn('track_event failed',name,e);return null;}
   }
   async saveQuote(){
+    const dateError=this.dateRangeIssue(); if(dateError)throw new Error(dateError);
     const s=this.state, T=this.totals(), meta=trafficMeta();
     const result=await supabaseRpc('submit_quote',{
       p_session_id:s.sessionId,
@@ -3238,7 +3445,7 @@ class Component extends DCLogic {
     lines.push({ id:'entrada', kicker:'Acceso', title:'Entrada general', sub:`${n} × ${MXN(ENTRADA)}`, amount: ENTRADA * n, step:'visitantes' });
     // El hospedaje por persona (camping) usa SUS propias cantidades: quiénes pernoctan,
     // no el grupo completo. Único lugar donde el grupo multiplica sigue siendo la entrada.
-    if (stay === 'noche') { const nights=this.nightsCount(); LODG.forEach(l=>{ const units=(this.state.lodgingQty&&this.state.lodgingQty[l.id])||0; if(!units) return; let a=0,sub=''; if(l.per==='an'){const qa=actAdults[l.id]||0,qk=actKids[l.id]||0; a=(l.price*qa+l.kids*qk)*nights; sub=`${qa} adulto${qa!==1?'s':''}${qk?` · ${qk} niño${qk!==1?'s':''}`:''} · ${nights} noche${nights!==1?'s':''}`;} else {const guests=this.state.lodgingGuests[l.id]||0; a=l.price*units*nights; sub=`${units} ${units===1?'unidad':'unidades'} · ${guests} huésped${guests===1?'':'es'} · ${nights} noche${nights!==1?'s':''}`;} lines.push({id:'lodg:'+l.id,kicker:'Hospedaje',title:l.name,sub,amount:a,step:'estancia'}); }); }
+    if (stay === 'noche') { const nights=this.nightsCount(); LODG.forEach(l=>{ const units=(this.state.lodgingQty&&this.state.lodgingQty[l.id])||0; if(!units) return; let a=0,sub=''; if(l.per==='an'){const qa=actAdults[l.id]||0,qk=actKids[l.id]||0; a=(l.price*qa+l.kids*qk)*nights; sub=`${qa} adulto${qa!==1?'s':''}${qk?` · ${qk} niño${qk!==1?'s':''}`:''} · ${nights} noche${nights!==1?'s':''}`;} else {const guests=this.state.lodgingGuests[l.id]||0; a=l.price*units*nights; sub=`${units} ${units===1?'unidad':'unidades'} · ${guests} huésped${guests===1?'':'es'} · ${nights} noche${nights!==1?'s':''}`;} lines.push({id:'lodg:'+l.id,kicker:'Hospedaje',title:l.name,sub:nights>0?sub:'Fecha de salida pendiente',amount:a,quote:nights<=0,step:'estancia'}); }); }
     // Cada actividad usa SU propia cantidad (actQty / actAdults / actKids / units).
     // Ninguna se multiplica por el total del grupo.
     CAT.forEach(c => { if (!acts[c.id] || c.combo || c.lodging) return; let a = 0, sub = '';
@@ -3268,7 +3475,7 @@ class Component extends DCLogic {
     const hasQuote=lines.some(l=>l.quote), deposit=hasQuote?null:Math.round(cents/2)/100;
     return {lines,total,deposit,balance:deposit==null?null:(cents-toCents(deposit))/100,n,hasQuote};
   }
-  dateLabel() { const s=this.state; if(!s.startDate) return 'Sin fecha'; const a=this.formatDateISO(s.startDate); if(s.endDate&&s.endDate>s.startDate) return `${a} al ${this.formatDateISO(s.endDate)}`; return a; }
+  dateLabel() { const s=this.state; if(!s.startDate) return 'Sin fecha'; const a=this.formatDateISO(s.startDate); if(s.stay==='noche'&&!s.endDate)return a+' · salida pendiente'; if(s.endDate&&s.endDate>s.startDate) return `${a} al ${this.formatDateISO(s.endDate)}`; return a; }
   visitorsLabel() { const { adults, kids } = this.state; return `${adults} adulto${adults !== 1 ? 's' : ''}${kids ? ` · ${kids} niño${kids !== 1 ? 's' : ''}` : ''}`; }
   servicesText(lines) { return lines.filter(l => l.id !== 'entrada').map(l => l.combo ? `Alimentos (${l.sub})` : l.title+(l.sub?' ('+l.sub+')':'')).join(' · ') || 'Entrada general'; }
   qr(seed){
@@ -3322,10 +3529,10 @@ class Component extends DCLogic {
     const capacityInvalid = CAT.some(c => c.seats && s.acts[c.id] && (s.actQty[c.id] || 1) > (s.units[c.id] || 1) * c.seats);
     const issue=this.selectionIssue();
     const activityError=CAT.filter(c=>c.seats).map(c=>this.vehicleIssue(c)).find(Boolean)||this.spotIssue();
-    const nextDisabled = (sc==='fecha'&&!!dateIssue)||(sc==='estancia'&&(!s.stay||(s.stay==='noche'&&this.selectedLodgingIds(s).length===0))) || (sc==='actividades' && !!activityError);
+    const nextDisabled = (sc==='fecha'&&!!dateIssue)||(sc==='estancia'&&(!s.stay||(s.stay==='noche'&&(this.selectedLodgingIds(s).length===0||!!dateIssue)))) || (sc==='actividades' && !!activityError);
     const nextStep = () => { if (nextDisabled) return; if (stepIdx < STEPS.length - 1) this.go(STEPS[stepIdx + 1]); else this.go('carrito'); };
     const lodgingWarn=this.selectedLodgingIds(s).length?(()=>{const assigned=this.lodgingAssignedGuests(s);return assigned>this.groupTotal()?`Asignaste ${assigned} huéspedes, pero tu grupo tiene ${this.groupTotal()} visitantes.`:'';})():'';
-    const lodgings = LODG.map(l => { const unitCount=(s.lodgingQty&&s.lodgingQty[l.id])||0, on=unitCount>0, qa=s.actAdults[l.id]||0,qk=s.actKids[l.id]||0, nights=this.nightsCount(); const guests=l.per==='an'?qa+qk:(s.lodgingGuests[l.id]||0); const cap=unitCount*(l.maxGuests||0); const min=unitCount*(l.per==='an'?0:this.minGuestsPerUnit(l)); const available=this.groupTotal()-this.lodgingAssignedGuests(s,l.id); const maxUnits=l.per==='an'?1:this.maxLodgingUnits(l.id,s); const amount=l.per==='an'?(l.price*qa+(l.kids||0)*qk)*nights:l.price*unitCount*nights; return { ...l, selected:on, priceLabel:lodgLabel(l), showSel:on&&l.per==='an', showCapacity:on&&!!l.maxGuests, capacityText:l.id==='glamping'?`${unitCount} glamping${unitCount===1?'':'s'} · capacidad máxima ${cap} personas (${l.maxGuests} por unidad).`:`${unitCount} cuevita${unitCount===1?'':'s'} · capacidad máxima ${cap} personas (${l.maxGuests} por unidad).`, unitName:l.id==='glamping'?'glampings':'cuevitas', unitHint:l.id==='glamping'?'Capacidad recomendada 2–4 personas por unidad.':'Máximo 2 personas por unidad.', unitCount, unitDec:()=>this.setLodgingQty(l.id,-1), unitInc:()=>this.setLodgingQty(l.id,1), unitDecDisabled:unitCount<=1, unitIncDisabled:unitCount>=maxUnits, guestCount:guests, guestDec:()=>this.setLodgingGuests(l.id,-1), guestInc:()=>this.setLodgingGuests(l.id,1), guestDecDisabled:guests<=min, guestIncDisabled:guests>=Math.min(cap,available), qAdults:qa,qKids:qk, aDec:()=>this.setActAN(l.id,'a',-1),aInc:()=>this.setActAN(l.id,'a',1),kDec:()=>this.setActAN(l.id,'k',-1),kInc:()=>this.setActAN(l.id,'k',1), subLabel:MXN(amount), selBorder:on?ACC:BORDER, hasImg:!!l.img,noImg:!l.img,iconEl:l.icon?icon(l.icon,24):null, select:()=>this.toggleLodging(l.id), ring:on?ACC:MUTED,fill:on?ACC:'transparent',border:on?ACC:BORDER }; });
+    const lodgings = LODG.map(l => { const unitCount=(s.lodgingQty&&s.lodgingQty[l.id])||0, on=unitCount>0, qa=s.actAdults[l.id]||0,qk=s.actKids[l.id]||0, nights=this.nightsCount(); const guests=l.per==='an'?qa+qk:(s.lodgingGuests[l.id]||0); const cap=unitCount*(l.maxGuests||0); const min=unitCount*(l.per==='an'?0:this.minGuestsPerUnit(l)); const available=this.groupTotal()-this.lodgingAssignedGuests(s,l.id); const maxUnits=l.per==='an'?1:this.maxLodgingUnits(l.id,s); const amount=l.per==='an'?(l.price*qa+(l.kids||0)*qk)*nights:l.price*unitCount*nights; return { ...l, selected:on, priceLabel:lodgLabel(l), showSel:on&&l.per==='an', showCapacity:on&&!!l.maxGuests, capacityText:l.id==='glamping'?`${unitCount} glamping${unitCount===1?'':'s'} · capacidad máxima ${cap} personas (${l.maxGuests} por unidad).`:`${unitCount} cuevita${unitCount===1?'':'s'} · capacidad máxima ${cap} personas (${l.maxGuests} por unidad).`, unitName:l.id==='glamping'?'glampings':'cuevitas', unitHint:l.id==='glamping'?'Capacidad recomendada 2–4 personas por unidad.':'Máximo 2 personas por unidad.', unitCount, unitDec:()=>this.setLodgingQty(l.id,-1), unitInc:()=>this.setLodgingQty(l.id,1), unitDecDisabled:unitCount<=1, unitIncDisabled:unitCount>=maxUnits, guestCount:guests, guestDec:()=>this.setLodgingGuests(l.id,-1), guestInc:()=>this.setLodgingGuests(l.id,1), guestDecDisabled:guests<=min, guestIncDisabled:guests>=Math.min(cap,available), qAdults:qa,qKids:qk, aDec:()=>this.setActAN(l.id,'a',-1),aInc:()=>this.setActAN(l.id,'a',1),kDec:()=>this.setActAN(l.id,'k',-1),kInc:()=>this.setActAN(l.id,'k',1), subLabel:nights>0?MXN(amount):'Selecciona salida', selBorder:on?ACC:BORDER, hasImg:!!l.img,noImg:!l.img,iconEl:l.icon?icon(l.icon,24):null, select:()=>this.toggleLodging(l.id), ring:on?ACC:MUTED,fill:on?ACC:'transparent',border:on?ACC:BORDER }; });
     // Selector inline de cantidad por actividad: aparece solo cuando la actividad está activa.
     const withQty = it => {
       const u = this.unitOf(it);
@@ -3431,7 +3638,7 @@ class Component extends DCLogic {
       shareMoment: () => { try { navigator.clipboard && navigator.clipboard.writeText('https://cumbresalvaje.mx/momentos/' + mItem.id); } catch (e) {} this.showToast('Enlace copiado'); },
       hasToast: !!s.toast, toast: s.toast, toastKey: 't' + s.toastKey,
       stepLabel: `Paso ${stepIdx + 1} de ${STEPS.length}`, stepName: STEP_NAMES[sc] || '', stepSegs: STEPS.map((_, i) => ({ bg: i <= stepIdx ? ACC : 'rgba(23,26,24,.12)' })),
-      minDate:this.todayISO(),startDate:s.startDate,endDate:s.endDate,endMinDate:s.startDate||this.todayISO(),setStartDate:e=>this.setStartDateValue(e.target.value),setEndDate:e=>this.setEndDateValue(e.target.value),openEndDatePicker:()=>this.openNativeDatePicker('visit-end'),hasDateRange:!!s.startDate,dateRangeSummary:s.endDate&&s.endDate>s.startDate?`${this.dateLabel()} · ${this.nightsCount()} noche${this.nightsCount()!==1?'s':''}`:`${this.dateLabel()} · visita de un día`,dateHint:dateIssue|| (s.startDate?`Solicitarás ${this.dateLabel()}. El equipo confirma disponibilidad por WhatsApp.`:'Selecciona una fecha de llegada o visita. Puedes añadir salida para varias noches.'),
+      startDate:s.startDate,endDate:s.endDate,startDateText:s.startDate?this.formatDateISO(s.startDate):'Elegir fecha de llegada',endDateText:s.endDate?this.formatDateISO(s.endDate):'Elegir fecha de salida',endDateDisabled:!this.dateObj(s.startDate),hasEndDate:!!s.endDate,openStartDatePicker:()=>this.openCalendar('start'),openEndDatePicker:()=>this.openCalendar('end'),clearEndDate:()=>this.clearDeparture(),hasDateNotice:!!s.dateNotice,dateNotice:s.dateNotice,showDayVisitRecovery:s.stay==='noche'&&!s.endDate,hasDateRange:!!s.startDate,nightsValue:this.nightsCount(),dateRangeSummary:s.endDate&&this.nightsCount()>0?`${this.dateLabel()} · ${this.nightsCount()} noche${this.nightsCount()!==1?'s':''}`:s.stay==='noche'?`${this.formatDateISO(s.startDate)} · salida pendiente`:`${this.dateLabel()} · sin hospedaje por ahora`,dateHint:dateIssue||(s.startDate?`Fechas solicitadas: ${this.dateLabel()}. El equipo confirma disponibilidad por WhatsApp.`:'Selecciona y confirma la llegada. Para hospedarte, elige también una salida posterior.'),hasStayDateIssue:s.stay==='noche'&&!!dateIssue,stayDateIssue:dateIssue,editStayDates:()=>this.go('fecha'),
       entradaLabel: `Entrada general ${MXN(ENTRADA)} p/p`,
       guisoExtraLabel, descorcheBebLabel, descorcheBebShort,
       comboTeaserLabel: `Tacos ${MXN(tacoPrice)} · platillos, quesadillas y molletes`,
@@ -3439,7 +3646,7 @@ class Component extends DCLogic {
       dinersHint: `Máximo ${s.adults + s.kids} (tu grupo). No todos tienen que comer.`,
       qtyWarn:activityError||s.qtyWarn,hasQtyWarn:!!(activityError||s.qtyWarn),
       adults: s.adults, kids: s.kids, incA: () => this.setState(st => ({ adults: Math.min(60, st.adults + 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), decA: () => this.setState(st => ({ adults: Math.max(1, st.adults - 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), incK: () => this.setState(st => ({ kids: Math.min(60, st.kids + 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), decK: () => this.setState(st => ({ kids: Math.max(0, st.kids - 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()),
-      setDia: () => this.setState(st => ({ stay:'dia',endDate:'',lodging:null,lodgingQty:{cabana:0,glamping:0,camping:0},lodgingGuests:{cabana:0,glamping:0},actAdults:{...st.actAdults,camping:0},actKids:{...st.actKids,camping:0},totalKey:st.totalKey+1 })), setNoche: () => this.setState({ stay: 'noche' }), isNoche: s.stay === 'noche',
+      setDia: () => this.setState(st => ({ stay:'dia',endDate:'',dateNotice:'',lodging:null,lodgingQty:{cabana:0,glamping:0,camping:0},lodgingGuests:{cabana:0,glamping:0},actAdults:{...st.actAdults,camping:0},actKids:{...st.actKids,camping:0},totalKey:st.totalKey+1 })), setNoche: () => this.setState({ stay: 'noche' }), isNoche: s.stay === 'noche',
       diaBorder: s.stay === 'dia' ? INK : BORDER, diaBg: s.stay === 'dia' ? INK : '#FFFDF8', diaColor: s.stay === 'dia' ? PAPER : INK,
       nocheBorder: s.stay === 'noche' ? INK : BORDER, nocheBg: s.stay === 'noche' ? INK : '#FFFDF8', nocheColor: s.stay === 'noche' ? PAPER : INK,
       lodgings,hasLodgingWarn:!!lodgingWarn,lodgingWarn,actGroups: groups, extrasList,

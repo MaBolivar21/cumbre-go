@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.4.1">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.6.0">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -360,17 +360,15 @@ small,.small{font-size:12px;line-height:1.4}
 <sc-if hint-placeholder-val="{{ false }}" value="{{ isFecha }}">
 <div style="padding:22px 20px 0;display:flex;flex-direction:column;gap:18px;animation:fadeUp .3s ease both">
 <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">¿Cuándo nos visitas?</div>
-<div style="padding:18px 16px;border-radius:22px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:14px">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<div style="font-size:17px;font-weight:800">Octubre 2026</div>
-<div style="font-size:11px;color:rgba(23,26,24,.55)">Sujeta a disponibilidad</div>
-</div>
-<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
-<sc-for as="d" hint-placeholder-count="7" list="{{ dows }}"><div style="font-size:10px;text-align:center;color:rgba(23,26,24,.5);font-weight:800;letter-spacing:.08em;padding-bottom:4px">{{ d.t }}</div></sc-for>
-<sc-for as="d" hint-placeholder-count="35" list="{{ days }}">
-<button disabled="{{ d.blank }}" onclick="{{ d.select }}" style="height:44px;border:0;border-radius:12px;background:{{ d.bg }};color:{{ d.color }};font-size:14px;font-weight:600;padding:0;transition:transform .1s,background .2s" style-active="transform:scale(.9)">{{ d.label }}</button>
-</sc-for>
-</div>
+<div style="padding:18px 16px;border-radius:22px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06);display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:17px;font-weight:800">Fechas de tu experiencia</div><div style="font-size:11px;color:rgba(23,26,24,.55)">Sujeta a disponibilidad</div></div>
+<label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700">Llegada / día de visita
+<input id="visit-start" type="date" min="{{ minDate }}" value="{{ startDate }}" onchange="{{ setStartDate }}" style="height:52px;border:2px solid rgba(23,26,24,.10);border-radius:15px;background:#F6F1E7;padding:0 14px;font-size:16px;color:#171A18;outline:none"/>
+</label>
+<label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700">Salida (opcional si es solo un día)
+<input id="visit-end" type="date" min="{{ endMinDate }}" value="{{ endDate }}" onchange="{{ setEndDate }}" style="height:52px;border:2px solid rgba(23,26,24,.10);border-radius:15px;background:#F6F1E7;padding:0 14px;font-size:16px;color:#171A18;outline:none"/>
+</label>
+<sc-if value="{{ hasDateRange }}"><div style="padding:12px 14px;border-radius:15px;background:rgba(68,112,90,.10);color:#315542;font-size:12px;line-height:1.4;font-weight:650">{{ dateRangeSummary }}</div></sc-if>
 </div>
 <div style="font-size:13px;color:rgba(23,26,24,.7);line-height:1.45">{{ dateHint }}</div>
 </div>
@@ -406,48 +404,35 @@ small,.small{font-size:12px;line-height:1.4}
 <div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">¿Nos quedamos a dormir?</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <button onclick="{{ setDia }}" style="text-align:left;padding:16px;height:130px;border:2px solid {{ diaBorder }};border-radius:22px;background:{{ diaBg }};color:{{ diaColor }};display:flex;flex-direction:column;justify-content:space-between;transition:all .2s" style-active="transform:scale(.97)"><svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewbox="0 0 24 24" width="24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg><div><div style="font-size:18px;font-weight:800;line-height:1.1">Pasar el día</div><div style="font-size:12px;opacity:.75">Sin hospedaje</div></div></button>
-<button onclick="{{ setNoche }}" style="text-align:left;padding:16px;height:130px;border:2px solid {{ nocheBorder }};border-radius:22px;background:{{ nocheBg }};color:{{ nocheColor }};display:flex;flex-direction:column;justify-content:space-between;transition:all .2s" style-active="transform:scale(.97)"><svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg><div><div style="font-size:18px;font-weight:800;line-height:1.1">Quedarnos</div><div style="font-size:12px;opacity:.75">Glamping, cabaña o camping</div></div></button>
+<button onclick="{{ setNoche }}" style="text-align:left;padding:16px;height:130px;border:2px solid {{ nocheBorder }};border-radius:22px;background:{{ nocheBg }};color:{{ nocheColor }};display:flex;flex-direction:column;justify-content:space-between;transition:all .2s" style-active="transform:scale(.97)"><svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg><div><div style="font-size:18px;font-weight:800;line-height:1.1">Quedarnos</div><div style="font-size:12px;opacity:.75">Combina cabañas, glamping y camping</div></div></button>
 </div>
 <sc-if hint-placeholder-val="{{ false }}" value="{{ isNoche }}">
 <div style="display:flex;flex-direction:column;gap:10px;animation:fadeUp .3s ease both">
-<div style="font-size:16px;font-weight:800">Elige tu hospedaje</div>
+<div style="font-size:16px;font-weight:800">Elige uno o varios tipos de hospedaje</div>
+<div style="font-size:12px;color:rgba(23,26,24,.62);line-height:1.4">Puedes combinar varias Cuevitas, varios Glampings y Camping dentro de la misma solicitud. Las personas asignadas entre todos los hospedajes no pueden superar el total de visitantes.</div>
+<sc-if value="{{ hasLodgingWarn }}"><div class="notice warning" role="status">{{ lodgingWarn }}</div></sc-if>
 <sc-for as="l" hint-placeholder-count="3" list="{{ lodgings }}">
 <div style="display:flex;flex-direction:column;gap:0">
 <button data-lodging="{{ l.id }}" onclick="{{ l.select }}" style="width:100%;text-align:left;display:flex;align-items:center;gap:14px;padding:10px;border:2px solid {{ l.border }};border-radius:20px;background:#FFFDF8;color:#171A18;transition:all .2s;box-shadow:0 1px 2px rgba(23,26,24,.05)" style-active="transform:scale(.98)">
-<div style="width:80px;height:80px;border-radius:16px;overflow:hidden;background:{{ l.tile }};color:#F6F1E7;display:flex;align-items:center;justify-content:center;flex:none"><sc-if hint-placeholder-val="{{ false }}" value="{{ l.hasImg }}"><img alt="{{ l.name }}" src="{{ l.img }}" style="width:100%;height:100%;object-fit:cover;display:block"/></sc-if><sc-if hint-placeholder-val="{{ true }}" value="{{ l.noImg }}">{{ l.iconEl }}</sc-if></div>
+<div style="width:80px;height:80px;border-radius:16px;overflow:hidden;background:{{ l.tile }};color:#F6F1E7;display:flex;align-items:center;justify-content:center;flex:none"><sc-if value="{{ l.hasImg }}"><img alt="{{ l.name }}" src="{{ l.img }}" style="width:100%;height:100%;object-fit:cover;display:block"/></sc-if><sc-if value="{{ l.noImg }}">{{ l.iconEl }}</sc-if></div>
 <div style="flex:1;display:flex;flex-direction:column;gap:3px"><div style="font-size:17px;font-weight:800">{{ l.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ l.priceLabel }}</div></div>
-<div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ l.ring }};background:{{ l.fill }};flex:none"></div>
-</button><sc-if value="{{ l.showCapacity }}"><div class="capacity-box" data-lodging-capacity="{{ l.id }}">
-<div class="notice">{{ l.capacityText }}</div><div class="field-row"><div class="field-copy"><b>Personas que se hospedan</b><small>Cuenta adultos y niños. Los demás visitantes no se asignan a esta cabaña.</small></div><div class="stepper"><button aria-label="Quitar huésped" disabled="{{ l.guestDecDisabled }}" onclick="{{ l.guestDec }}">−</button><strong>{{ l.guestCount }}</strong><button aria-label="Agregar huésped" class="plus" disabled="{{ l.guestIncDisabled }}" onclick="{{ l.guestInc }}">+</button></div></div>
-<small>Tarifa por una cabaña y una noche. Más cabañas o noches: consultar por WhatsApp.</small></div></sc-if>
-<sc-if hint-placeholder-val="{{ false }}" value="{{ l.showSel }}">
-<div style="margin:-4px 10px 0;padding:14px;border:2px solid {{ l.selBorder }};border-top:0;border-radius:0 0 18px 18px;background:#FFFDF8;display:flex;flex-direction:column;gap:10px;animation:fadeUp .25s ease both">
-<div style="font-size:12px;color:rgba(23,26,24,.6);line-height:1.35">¿Quiénes pernoctan? El precio del camping es por persona.</div>
-<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-<div style="font-size:13px;font-weight:700">Adultos</div>
-<div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
-<button aria-label="Quitar adulto del hospedaje" onclick="{{ l.aDec }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
-<div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ l.qAdults }}</div>
-<button aria-label="Agregar adulto al hospedaje" onclick="{{ l.aInc }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
-</div>
-</div>
-<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-<div style="font-size:13px;font-weight:700">Niños</div>
-<div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none">
-<button aria-label="Quitar niño del hospedaje" onclick="{{ l.kDec }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18;box-shadow:0 1px 2px rgba(23,26,24,.08);padding:0">−</button>
-<div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ l.qKids }}</div>
-<button aria-label="Agregar niño al hospedaje" onclick="{{ l.kInc }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7;padding:0">+</button>
-</div>
-</div>
-<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid rgba(23,26,24,.08);padding-top:10px">
-<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Subtotal hospedaje</div>
-<div style="font-size:16px;font-weight:800">{{ l.subLabel }}</div>
-</div>
-</div>
-</sc-if>
+<div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ l.ring }};background:{{ l.fill }};display:flex;align-items:center;justify-content:center;color:#F6F1E7;flex:none"><sc-if value="{{ l.selected }}"><svg fill="none" height="13" stroke="currentColor" stroke-width="3.5" viewbox="0 0 24 24" width="13"><path d="M20 6 9 17l-5-5"></path></svg></sc-if></div>
+</button>
+<sc-if value="{{ l.showCapacity }}"><div class="capacity-box" data-lodging-capacity="{{ l.id }}">
+<div class="notice">{{ l.capacityText }}</div>
+<div class="field-row"><div class="field-copy"><b>Cantidad de {{ l.unitName }}</b><small>{{ l.unitHint }}</small></div><div class="stepper"><button aria-label="Quitar unidad de hospedaje" disabled="{{ l.unitDecDisabled }}" onclick="{{ l.unitDec }}">−</button><strong>{{ l.unitCount }}</strong><button aria-label="Agregar unidad de hospedaje" class="plus" disabled="{{ l.unitIncDisabled }}" onclick="{{ l.unitInc }}">+</button></div></div>
+<div class="field-row"><div class="field-copy"><b>Personas asignadas</b><small>Huéspedes de este tipo de alojamiento.</small></div><div class="stepper"><button aria-label="Quitar huésped" disabled="{{ l.guestDecDisabled }}" onclick="{{ l.guestDec }}">−</button><strong>{{ l.guestCount }}</strong><button aria-label="Agregar huésped" class="plus" disabled="{{ l.guestIncDisabled }}" onclick="{{ l.guestInc }}">+</button></div></div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid rgba(23,26,24,.08);padding-top:10px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Subtotal hospedaje</div><div style="font-size:16px;font-weight:800">{{ l.subLabel }}</div></div>
+</div></sc-if>
+<sc-if value="{{ l.showSel }}"><div style="margin:-4px 10px 0;padding:14px;border:2px solid {{ l.selBorder }};border-top:0;border-radius:0 0 18px 18px;background:#FFFDF8;display:flex;flex-direction:column;gap:10px;animation:fadeUp .25s ease both">
+<div style="font-size:12px;color:rgba(23,26,24,.6);line-height:1.35">¿Quiénes pernoctan en Camping? El precio es por persona y por noche.</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div style="font-size:13px;font-weight:700">Adultos</div><div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none"><button aria-label="Quitar adulto del camping" onclick="{{ l.aDec }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18">−</button><div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ l.qAdults }}</div><button aria-label="Agregar adulto al camping" onclick="{{ l.aInc }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7">+</button></div></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div style="font-size:13px;font-weight:700">Niños</div><div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none"><button aria-label="Quitar niño del camping" onclick="{{ l.kDec }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18">−</button><div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ l.qKids }}</div><button aria-label="Agregar niño al camping" onclick="{{ l.kInc }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7">+</button></div></div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid rgba(23,26,24,.08);padding-top:10px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Subtotal camping</div><div style="font-size:16px;font-weight:800">{{ l.subLabel }}</div></div>
+</div></sc-if>
 </div>
 </sc-for>
-<div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.4">Fogatas solo en zonas autorizadas. Respeta horarios y el descanso de otros visitantes.</div>
+<div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.4">Los importes de hospedaje se calculan según las noches solicitadas. Fogatas solo en zonas autorizadas.</div>
 </div>
 </sc-if>
 </div>
@@ -626,6 +611,15 @@ small,.small{font-size:12px;line-height:1.4}
 <sc-if value="{{ quesadillaOpen }}"><div class="taco-variants"><sc-for as="t" list="{{ quesadillaRows }}"><div class="variant-row" data-quesadilla="{{ t.name }}">
 <div class="field-copy"><b>{{ t.name }}</b><small>{{ t.priceLabel }} cada una<sc-if value="{{ t.hasQty }}"> · {{ t.subtotal }}</sc-if></small></div><div class="stepper"><button aria-label="Quitar quesadilla de {{ t.name }}" disabled="{{ t.decDisabled }}" onclick="{{ t.dec }}">−</button><strong>{{ t.qty }}</strong><button aria-label="Agregar quesadilla de {{ t.name }}" class="plus" disabled="{{ t.incDisabled }}" onclick="{{ t.inc }}">+</button></div>
 </div></sc-for></div></sc-if></div></sc-if>
+<sc-if value="{{ m.isPlatillo }}"><div data-platillos-panel="">
+<div class="field-row"><div><b style="font-size:17px">Platillos con guiso</b><small class="block">{{ m.priceShort }} por platillo</small></div><strong>{{ platilloQtyLabel }}</strong></div>
+<p class="muted small">Elige cuántos platillos quieres de cada guiso. Puedes combinar varios guisos en el mismo pedido.</p>
+<button aria-expanded="{{ platilloOpen }}" class="secondary-action" onclick="{{ togglePlatillos }}" type="button">Elegir / editar guisos</button>
+<sc-if value="{{ platilloOpen }}"><div class="taco-variants"><sc-for as="t" list="{{ platilloRows }}"><div class="variant-row" data-platillo="{{ t.name }}">
+<div class="field-copy"><b>{{ t.name }}</b><small>{{ t.priceLabel }} cada uno<sc-if value="{{ t.hasQty }}"> · {{ t.subtotal }}</sc-if></small></div><div class="stepper"><button aria-label="Quitar platillo de {{ t.name }}" disabled="{{ t.decDisabled }}" onclick="{{ t.dec }}">−</button><strong>{{ t.qty }}</strong><button aria-label="Agregar platillo de {{ t.name }}" class="plus" disabled="{{ t.incDisabled }}" onclick="{{ t.inc }}">+</button></div>
+</div></sc-for></div></sc-if>
+<sc-if value="{{ platilloHasQty }}"><button onclick="{{ platilloToggleExtra }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:0;border-radius:14px;background:#F6F1E7;color:#171A18;text-align:left"><div style="font-size:13px;font-weight:600">Guiso extra <span style="color:rgba(23,26,24,.6)">{{ guisoExtraLabel }}</span> <span style="color:rgba(23,26,24,.45)">· aplica a todos los platillos seleccionados</span></div><div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ platilloExtraRing }};background:{{ platilloExtraFill }};flex:none"></div></button></sc-if>
+</div></sc-if>
 <sc-if value="{{ m.notTaco }}">
 <div style="display:flex;align-items:center;gap:12px">
 <div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:800;line-height:1.1">{{ m.name }}</div><div style="font-size:12px;color:rgba(23,26,24,.6);line-height:1.35">{{ m.desc }}</div><div style="font-size:13px;font-weight:800;padding-top:2px">{{ m.priceShort }}</div></div>
@@ -911,7 +905,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260911-1.3.0 · Supabase · Folios reales · WhatsApp</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.6.0 · Supabase · Folios reales · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2434,7 +2428,7 @@ module.exports = QRCode;
     setState(updater, cb){
       const patch=typeof updater==='function'?updater(this.state,this.props):updater;
       if(patch && typeof patch==='object'){
-        const fields=['day','adults','kids','stay','lodging','acts','extras','extraQty','actQty','actAdults','actKids','units','foodDiners','lodgingGuests','spotStart','spotEnd','spotGuests','tacoQty','quesadillaGQty','menuQty','menuPick','menuExtra','drinks','drinkPeople','drinkNote','comboAdded','name','phone','email','celebText'];
+        const fields=['day','startDate','endDate','adults','kids','stay','lodging','lodgingQty','acts','extras','extraQty','actQty','actAdults','actKids','units','foodDiners','lodgingGuests','spotStart','spotEnd','spotGuests','tacoQty','quesadillaGQty','platilloQty','menuQty','menuPick','menuExtra','drinks','drinkPeople','drinkNote','comboAdded','name','phone','email','celebText'];
         const edited=this.state.folio&&fields.some(k=>Object.prototype.hasOwnProperty.call(patch,k)&&JSON.stringify(patch[k])!==JSON.stringify(this.state[k]));
         this.state=Object.assign({},this.state,patch,edited?{folio:null,quoteId:null,confirmed:false}:{});
       }
@@ -2567,7 +2561,7 @@ module.exports = QRCode;
 })();
 </script>
 <script>
-const BUILD_ID = 'CSG-20260913-1.4.0';
+const BUILD_ID = 'CSG-20260913-1.6.0';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2615,7 +2609,7 @@ function trafficMeta(){
     utm_campaign:q.get('utm_campaign'),
     source:q.get('utm_source')||q.get('source')||q.get('src')||'direct',
     user_agent:navigator.userAgent,
-    build:'CSG-20260913-1.4.0'
+    build:'CSG-20260913-1.6.0'
   };
 }
 function newQuoteFolio(){
@@ -2633,7 +2627,7 @@ const GUISOS = ['Lengua','Birria','Papas con chorizo','Bistec','Adobada','Choriz
 const DULCE = ['Azúcar','Lechera','Mermelada de fresa'];
 const MENU = [
   { id:'taco', name:'Taco', price:30, desc:'Guiso a elegir', pick:'guiso' },
-  { id:'platillo', name:'Platillo con 1 guiso', price:120, extraPrice:30, pick:'guiso', extra:true },
+  { id:'platillo', name:'Platillo con 1 guiso', price:120, extraPrice:30, pick:'guiso', extra:true, splitGuiso:true },
   { id:'quesadilla', name:'Quesadilla sencilla', price:25, desc:'Tortilla recién hecha con queso mozzarella' },
   { id:'quesadillaG', name:'Quesadilla con guiso', price:40, desc:'Queso mozzarella y el guiso de tu preferencia', pick:'guiso', splitGuiso:true },
   { id:'gringa', name:'Gringa', price:50, desc:'Tortilla de harina, queso y carne' },
@@ -2727,22 +2721,63 @@ function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^=
 class Component extends DCLogic {
   state = {
     screen: 'splash', prev: [], visitType: 'none', cat: 'aventura', detId: null,
-    day: null, adults: 2, kids: 2, stay: null, lodging: null, acts: {}, extras: {}, celeb: null, celebText: '',
+    day: null, startDate: '', endDate: '', adults: 2, kids: 2, stay: null, lodging: null, lodgingQty:{cabana:0,glamping:0,camping:0}, acts: {}, extras: {}, celeb: null, celebText: '',
     // Cantidades independientes por actividad. NUNCA se inicializan con el total del grupo.
     actQty: {}, actAdults: {}, actKids: {}, units: {}, extraQty: {}, foodDiners: 1, qtyWarn: '',
-    lodgingGuests: {cabana:1,glamping:2}, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
+    lodgingGuests: {cabana:0,glamping:0}, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
     name: '', phone: '', email: '', formError: '', acceptPolicies: false, policyError: false,
     folio: null, quoteId: null, sessionId: getSessionId(), savingQuote: false, saveError: '', confirmed: false, loadingExplore: false, copied: false, qrKey: 0,
     momentIdx: 0, frameIdx: 0, saved: {}, toast: '', toastKey: 0, badgeKey: 0, totalKey: 0,
-    menuQty: {}, menuPick: {}, menuExtra: {}, quesadillaGQty: {}, quesadillaOpen: false, drinks: null, drinkPeople: 1, drinkNote: '', comboAdded: false, menuOpen: false, menuZoom: false,
+    menuQty: {}, menuPick: {}, menuExtra: {}, quesadillaGQty: {}, quesadillaOpen: false, platilloQty:{}, platilloOpen:false, drinks: null, drinkPeople: 1, drinkNote: '', comboAdded: false, menuOpen: false, menuZoom: false,
   };
   tacoCount(){ return GUISOS.reduce((n,g)=>n+integer(this.state.tacoQty[g]||0,0,99),0); }
   quesadillaGCount(){ return GUISOS.reduce((n,g)=>n+integer(this.state.quesadillaGQty[g]||0,0,99),0); }
+  platilloCount(){ return GUISOS.reduce((n,g)=>n+integer(this.state.platilloQty[g]||0,0,99),0); }
+  todayISO(){ const d=new Date(), y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; }
+  dateObj(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso||'')) return null; const [y,m,d]=iso.split('-').map(Number); const dt=new Date(y,m-1,d); return Number.isNaN(dt.getTime())?null:dt; }
+  nightsCount(){ const s=this.state, a=this.dateObj(s.startDate), b=this.dateObj(s.endDate); if(!a) return s.stay==='noche'?1:0; if(!b || b<=a) return s.stay==='noche'?1:0; return Math.max(1,Math.round((b-a)/86400000)); }
+  formatDateISO(iso){ const dt=this.dateObj(iso); if(!dt) return ''; return dt.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).replace(/\./g,''); }
+  dateRangeIssue(){ const s=this.state; if(!s.startDate) return 'Selecciona la fecha de llegada o visita.'; if(s.endDate && s.endDate<s.startDate) return 'La fecha de salida no puede ser anterior a la fecha de llegada.'; return ''; }
+  setStartDateValue(value){ this.setState(s=>({startDate:value,endDate:s.endDate&&s.endDate<value?'':s.endDate,day:null,totalKey:s.totalKey+1,qtyWarn:''})); }
+  setEndDateValue(value){ this.setState(s=>({endDate:value&&s.startDate&&value<s.startDate?'':value,day:null,totalKey:s.totalKey+1,qtyWarn:value&&s.startDate&&value<s.startDate?'La salida no puede ser anterior a la llegada.':''})); }
+  selectedLodgingIds(state){ const s=state||this.state; return LODG.filter(l=>(s.lodgingQty&&s.lodgingQty[l.id]||0)>0).map(l=>l.id); }
+  lodgingAssignedGuests(state,excludeId){ const s=state||this.state; let n=0; LODG.forEach(l=>{if(l.id===excludeId) return; const q=(s.lodgingQty&&s.lodgingQty[l.id]||0); if(!q) return; if(l.per==='an') n+=(s.actAdults[l.id]||0)+(s.actKids[l.id]||0); else n+=s.lodgingGuests[l.id]||0;}); return n; }
+  minGuestsPerUnit(l){ return l.id==='glamping'?2:1; }
+  maxLodgingUnits(id,state){ const s=state||this.state, l=LODG.find(x=>x.id===id); if(!l||l.per==='an') return 1; const available=Math.max(0,(s.adults+s.kids)-this.lodgingAssignedGuests(s,id)); const perMin=this.minGuestsPerUnit(l); return Math.max(0,Math.floor(available/perMin)); }
+  setLodgingQty(id,delta){
+    const l=LODG.find(x=>x.id===id); if(!l||l.per==='an') return;
+    this.setState(s=>{
+      const cur=integer((s.lodgingQty&&s.lodgingQty[id])||0,0,99), max=this.maxLodgingUnits(id,s), next=integer(cur+delta,0,max);
+      if(next===cur && delta>0) return {qtyWarn:`${l.name}: no hay más visitantes disponibles para asignar a otra unidad.`};
+      const lodgingQty={...s.lodgingQty,[id]:next};
+      const oldGuests=s.lodgingGuests[id]||0, min=next*this.minGuestsPerUnit(l), cap=next*(l.maxGuests||1);
+      const available=Math.max(0,(s.adults+s.kids)-this.lodgingAssignedGuests(s,id));
+      const guests=next===0?0:integer(oldGuests||min,min,Math.min(cap,available));
+      return {lodgingQty,lodgingGuests:{...s.lodgingGuests,[id]:guests},lodging:this.selectedLodgingIds({...s,lodgingQty}).join(',')||null,totalKey:s.totalKey+1,qtyWarn:''};
+    });
+  }
+  toggleLodging(id){
+    const l=LODG.find(x=>x.id===id); if(!l) return;
+    this.setState(s=>{
+      const on=(s.lodgingQty&&s.lodgingQty[id]||0)>0, lodgingQty={...s.lodgingQty};
+      const actAdults={...s.actAdults},actKids={...s.actKids},lodgingGuests={...s.lodgingGuests};
+      if(on){lodgingQty[id]=0;if(l.per==='an'){actAdults[id]=0;actKids[id]=0;}else lodgingGuests[id]=0;}
+      else if(l.per==='an'){
+        const available=(s.adults+s.kids)-this.lodgingAssignedGuests(s,id); if(available<1) return {qtyWarn:'Ya asignaste a todos los visitantes a otros hospedajes.'};
+        lodgingQty[id]=1; actAdults[id]=s.adults>0?1:0; actKids[id]=actAdults[id]?0:1;
+      } else {
+        const available=(s.adults+s.kids)-this.lodgingAssignedGuests(s,id), min=this.minGuestsPerUnit(l); if(available<min) return {qtyWarn:`${l.name}: necesitas al menos ${min} visitante${min===1?'':'s'} disponible${min===1?'':'s'}.`};
+        lodgingQty[id]=1; lodgingGuests[id]=min;
+      }
+      return {lodgingQty,lodgingGuests,actAdults,actKids,lodging:LODG.filter(x=>(lodgingQty[x.id]||0)>0).map(x=>x.id).join(',')||null,totalKey:s.totalKey+1,qtyWarn:''};
+    });
+  }
   foodLines(){
-    const s=this.state, out=[], taco=MENU.find(m=>m.id==='taco'), qg=MENU.find(m=>m.id==='quesadillaG');
+    const s=this.state, out=[], taco=MENU.find(m=>m.id==='taco'), qg=MENU.find(m=>m.id==='quesadillaG'), plat=MENU.find(m=>m.id==='platillo');
     GUISOS.forEach(g=>{const q=integer(s.tacoQty[g]||0,0,99); if(q) out.push({id:'taco:'+g,name:'Taco de '+g.toLowerCase(),qty:q,unitPrice:taco.price,amount:q*taco.price});});
     GUISOS.forEach(g=>{const q=integer(s.quesadillaGQty[g]||0,0,99); if(q) out.push({id:'quesadillaG:'+g,name:'Quesadilla con guiso de '+g.toLowerCase(),qty:q,unitPrice:qg.price,amount:q*qg.price});});
-    MENU.filter(m=>m.id!=='taco'&&m.id!=='quesadillaG').forEach(m=>{
+    const platExtra=s.menuExtra.platillo?(plat.extraPrice||0):0; GUISOS.forEach(g=>{const q=integer(s.platilloQty[g]||0,0,99); if(q) out.push({id:'platillo:'+g,name:'Platillo con guiso de '+g.toLowerCase()+(platExtra?' + guiso extra':''),qty:q,unitPrice:plat.price+platExtra,amount:q*(plat.price+platExtra)});});
+    MENU.filter(m=>m.id!=='taco'&&m.id!=='quesadillaG'&&m.id!=='platillo').forEach(m=>{
       const q=integer(s.menuQty[m.id]||0,0,99); if(!q) return;
       const choices=m.pick==='guiso'?GUISOS:m.pick==='dulce'?DULCE:[];
       const pick=s.menuPick[m.id]||(choices[0]||'');
@@ -2771,6 +2806,10 @@ class Component extends DCLogic {
       const quesadillaGQty={...s.quesadillaGQty,[g]:value};
       return {quesadillaGQty,menuQty:{...s.menuQty,quesadillaG:total-old+value},totalKey:s.totalKey+1};
     });
+  }
+  setPlatilloQty(g,delta){
+    if(!GUISOS.includes(g)) return;
+    this.setState(s=>{ const old=integer(s.platilloQty[g]||0,0,99), total=this.platilloCount(), value=integer(old+delta,0,99-total+old), platilloQty={...s.platilloQty,[g]:value}; return {platilloQty,menuQty:{...s.menuQty,platillo:total-old+value},totalKey:s.totalKey+1}; });
   }
   campingGuests(state){
     const s=state||this.state;
@@ -2815,7 +2854,13 @@ class Component extends DCLogic {
   }
   setLodgingGuests(id,delta){
     const l=LODG.find(l=>l.id===id); if(!l || !l.maxGuests) return;
-    this.setState(s=>{ const min=l.minGuests||1, next=integer((s.lodgingGuests[id]||min)+delta,min,l.maxGuests); const warn=next>(s.adults+s.kids)?`${l.name}: seleccionaste ${next} huéspedes, pero tu grupo actual tiene ${s.adults+s.kids}. Aumenta Visitantes para continuar.`:''; return {lodgingGuests:{...s.lodgingGuests,[id]:next},totalKey:s.totalKey+1,qtyWarn:warn}; });
+    this.setState(s=>{
+      const units=(s.lodgingQty&&s.lodgingQty[id])||0; if(!units) return {};
+      const min=units*this.minGuestsPerUnit(l), capacity=units*l.maxGuests, available=Math.max(0,(s.adults+s.kids)-this.lodgingAssignedGuests(s,id));
+      const cur=s.lodgingGuests[id]||min, next=integer(cur+delta,min,Math.min(capacity,available));
+      if(delta>0&&cur>=Math.min(capacity,available)) return {qtyWarn:'Ya asignaste a todos los visitantes disponibles o alcanzaste la capacidad de este alojamiento.'};
+      return {lodgingGuests:{...s.lodgingGuests,[id]:next},totalKey:s.totalKey+1,qtyWarn:''};
+    });
   }
   setSpotTime(key,value){
     if(!['spotStart','spotEnd'].includes(key)) return;
@@ -2839,24 +2884,28 @@ class Component extends DCLogic {
     return '';
   }
   selectionIssue(){
-    const s=this.state;
-    if(!s.day) return {screen:'fecha',message:'Elige una fecha para tu solicitud.'};
-    if(!s.stay || (s.stay==='noche' && !s.lodging)) return {screen:'estancia',message:'Selecciona la modalidad de estancia.'};
+    const s=this.state, dateError=this.dateRangeIssue();
+    if(dateError) return {screen:'fecha',message:dateError};
+    if(!s.stay) return {screen:'estancia',message:'Selecciona la modalidad de estancia.'};
     if(s.stay==='noche'){
-      const l=LODG.find(l=>l.id===s.lodging);
-      if(l && l.maxGuests){ const q=s.lodgingGuests[l.id], min=l.minGuests||1; if(!Number.isInteger(q)||q<min||q>l.maxGuests) return {screen:'estancia',message:l.name+': selecciona entre '+min+' y '+l.maxGuests+' huéspedes.'}; if(q>this.groupTotal()) return {screen:'estancia',message:l.name+': seleccionaste '+q+' huéspedes, pero tu grupo actual tiene '+this.groupTotal()+'. Aumenta Visitantes antes de continuar.'}; }
-      if(s.lodging==='camping'){
-        const campers=this.campingGuests(s);
-        const ts=this.tentStats(s);
-        if((s.extras.tienda2||s.extras.tienda4) && campers<1) return {screen:'estancia',message:'Indica quiénes van a acampar antes de rentar casas de campaña.'};
-        if(!ts.valid) return {screen:'extras',message:`Las casas seleccionadas ofrecen capacidad para ${ts.cap} personas, pero solo ${campers} van a acampar. Reduce la cantidad de casas.`};
+      const selected=this.selectedLodgingIds(s); if(!selected.length) return {screen:'estancia',message:'Selecciona al menos un tipo de hospedaje.'};
+      let assigned=0;
+      for(const id of selected){
+        const l=LODG.find(x=>x.id===id), units=s.lodgingQty[id]||0;
+        if(l.per==='an'){
+          const q=(s.actAdults[id]||0)+(s.actKids[id]||0); if(q<1) return {screen:'estancia',message:'Camping: selecciona al menos una persona que pernoctará.'}; assigned+=q;
+        } else {
+          const q=s.lodgingGuests[id]||0, min=units*this.minGuestsPerUnit(l), max=units*l.maxGuests; if(q<min||q>max) return {screen:'estancia',message:`${l.name}: asigna entre ${min} y ${max} huéspedes para ${units} ${units===1?'unidad':'unidades'}.`}; assigned+=q;
+        }
       }
+      if(assigned>this.groupTotal()) return {screen:'estancia',message:`Asignaste ${assigned} huéspedes entre los alojamientos, pero tu grupo tiene ${this.groupTotal()} visitantes.`};
+      if((s.lodgingQty.camping||0)>0){ const campers=this.campingGuests(s), ts=this.tentStats(s); if((s.extras.tienda2||s.extras.tienda4)&&campers<1) return {screen:'estancia',message:'Indica quiénes van a acampar antes de rentar casas de campaña.'}; if(!ts.valid) return {screen:'extras',message:`Las casas seleccionadas ofrecen capacidad para ${ts.cap} personas, pero solo ${campers} van a acampar. Reduce la cantidad de casas.`}; }
     }
     for(const c of CAT.filter(c=>c.seats)){const error=this.vehicleIssue(c); if(error) return {screen:'actividades',message:error};}
     const error=this.spotIssue(); if(error) return {screen:'actividades',message:error};
     return null;
   }
-  visitDateISO(){ return this.state.day ? `2026-10-${String(this.state.day).padStart(2,'0')}` : null; }
+  visitDateISO(){ return this.state.startDate || null; }
   quoteItems(){
     const s=this.state, T=this.totals(), items=[];
     T.lines.forEach(l=>{
@@ -2864,9 +2913,9 @@ class Component extends DCLogic {
       if(l.id==='entrada'){
         items.push({item_code:'entrada',item_name:'Entrada general',category:'acceso',quantity:T.n,participants:null,units:null,adults:s.adults,children:s.kids,unit_price:ENTRADA,line_total:l.amount,details:{}}); return;
       }
-      if(l.id==='lodg'){
-        const ld=LODG.find(x=>x.id===s.lodging), qa=s.actAdults[s.lodging]||0, qk=s.actKids[s.lodging]||0;
-        items.push({item_code:s.lodging||'hospedaje',item_name:l.title,category:'hospedaje',quantity:1,participants:ld&&ld.maxGuests?(s.lodgingGuests[ld.id]||ld.minGuests||1):qa+qk,units:1,adults:ld&&ld.per==='an'?qa:null,children:ld&&ld.per==='an'?qk:null,unit_price:ld?ld.price:l.amount,line_total:l.amount,details:{stay:s.stay,nights:1,guests:ld&&ld.maxGuests?(s.lodgingGuests[ld.id]||null):null}}); return;
+      if(l.id.startsWith('lodg:')){
+        const id=l.id.split(':')[1], ld=LODG.find(x=>x.id===id), units=(s.lodgingQty&&s.lodgingQty[id])||1, qa=s.actAdults[id]||0, qk=s.actKids[id]||0, guests=ld&&ld.per==='an'?qa+qk:(s.lodgingGuests[id]||0);
+        items.push({item_code:id,item_name:l.title,category:'hospedaje',quantity:units,participants:guests,units:ld&&ld.per==='an'?1:units,adults:ld&&ld.per==='an'?qa:null,children:ld&&ld.per==='an'?qk:null,unit_price:ld?ld.price:0,line_total:l.amount,details:{stay:s.stay,nights:this.nightsCount(),guests,start_date:s.startDate,end_date:s.endDate||s.startDate}}); return;
       }
       const c=CAT.find(x=>x.id===l.id);
       if(c){
@@ -2901,7 +2950,7 @@ class Component extends DCLogic {
       p_email:s.email,
       p_total_estimated:T.total,
       p_source:meta.source,
-      p_meta:{...meta,visit_type:s.visitType,stay:s.stay,lodging:s.lodging,celebration:s.celeb? s.celebText||true:false,has_pending_quote:T.hasQuote},
+      p_meta:{...meta,visit_type:s.visitType,stay:s.stay,lodgings:s.lodgingQty,start_date:s.startDate,end_date:s.endDate||s.startDate,nights:this.nightsCount(),celebration:s.celeb? s.celebText||true:false,has_pending_quote:T.hasQuote},
       p_items:this.quoteItems()
     });
     const row=Array.isArray(result)?result[0]:result;
@@ -2929,7 +2978,7 @@ class Component extends DCLogic {
   // Nivel 2 de defensa: al dejar camping, las casas de campaña salen del estado para que no
   // reaparezcan seleccionadas si el visitante vuelve a camping más tarde.
   purgeCampingExtras() {
-    if (this.state.lodging === 'camping') return;
+    if ((this.state.lodgingQty&&this.state.lodgingQty.camping)||0) return;
     const stuck = EXTRAS.filter(x => x.camping && this.state.extras[x.id]);
     if (!stuck.length) return;
     this.setState(st => { const extras = { ...st.extras }; stuck.forEach(x => { delete extras[x.id]; }); return { extras, totalKey: st.totalKey + 1 }; });
@@ -3122,11 +3171,14 @@ class Component extends DCLogic {
   setActAN(id, kind, d) {
     this.setState(s => {
       const cap = kind === 'a' ? s.adults : s.kids;
-      void 0;
       const key = kind === 'a' ? 'actAdults' : 'actKids';
       const v = Math.max(0, Math.min(cap, (s[key][id] || 0) + d));
       const other = kind === 'a' ? (s.actKids[id] || 0) : (s.actAdults[id] || 0);
       if (v + other < 1) return { qtyWarn: 'Debe participar al menos una persona.' };
+      if(id==='camping'){
+        const available=(s.adults+s.kids)-this.lodgingAssignedGuests(s,'camping');
+        if(v+other>available) return {qtyWarn:`Camping: solo quedan ${available} visitante${available===1?'':'s'} sin asignar a otro hospedaje.`};
+      }
       return { [key]: { ...s[key], [id]: v }, totalKey: s.totalKey + 1, qtyWarn: '' };
     });
   }
@@ -3159,11 +3211,11 @@ class Component extends DCLogic {
     LODG.forEach(l => { if (l.per !== 'an') return;
       if (actAdults[l.id] > s.adults) { actAdults[l.id] = s.adults; changed = true; }
       if (actKids[l.id] > s.kids) { actKids[l.id] = s.kids; changed = true; }
-      if (s.lodging === l.id && !(actAdults[l.id] || 0) && !(actKids[l.id] || 0)) { actAdults[l.id] = 1; changed = true; }
+      if ((s.lodgingQty&&s.lodgingQty[l.id]||0)>0 && !(actAdults[l.id] || 0) && !(actKids[l.id] || 0)) { actAdults[l.id] = 1; changed = true; }
     });
     const diners = Math.min(g, s.foodDiners);
     const lodgingGuests={...s.lodgingGuests};
-    LODG.filter(l=>l.maxGuests).forEach(l=>{const min=l.minGuests||1, q=integer(lodgingGuests[l.id]||min,min,l.maxGuests); if(q!==lodgingGuests[l.id]){lodgingGuests[l.id]=q;changed=true;}});
+    LODG.filter(l=>l.maxGuests).forEach(l=>{const units=(s.lodgingQty&&s.lodgingQty[l.id])||0, min=units*this.minGuestsPerUnit(l), max=units*l.maxGuests; const q=units?integer(lodgingGuests[l.id]||min,min,max):0; if(q!==lodgingGuests[l.id]){lodgingGuests[l.id]=q;changed=true;}});
     const spotGuests=integer(s.spotGuests,1,g), drinkPeople=integer(s.drinkPeople,1,g);
     if(spotGuests!==s.spotGuests||drinkPeople!==s.drinkPeople) changed=true;
     if (changed || diners !== s.foodDiners) this.setState({ actQty, actAdults, actKids, units, lodgingGuests, spotGuests, drinkPeople, foodDiners: diners, qtyWarn: 'Ajustamos las cantidades al nuevo tamaño del grupo.', totalKey: s.totalKey + 1 });
@@ -3177,10 +3229,7 @@ class Component extends DCLogic {
     lines.push({ id:'entrada', kicker:'Acceso', title:'Entrada general', sub:`${n} × ${MXN(ENTRADA)}`, amount: ENTRADA * n, step:'visitantes' });
     // El hospedaje por persona (camping) usa SUS propias cantidades: quiénes pernoctan,
     // no el grupo completo. Único lugar donde el grupo multiplica sigue siendo la entrada.
-    if (stay === 'noche' && lodging) { const l = LODG.find(x => x.id === lodging); let a, sub;
-      if (l.per === 'an') { const qa = actAdults[l.id] || 0, qk = actKids[l.id] || 0; a = l.price * qa + l.kids * qk; sub = `${qa} adulto${qa !== 1 ? 's' : ''}${qk ? ` · ${qk} niño${qk !== 1 ? 's' : ''}` : ''}`; }
-      else { a = l.price; const q=this.state.lodgingGuests[l.id]||1; sub = `1 cabaña · ${q} huésped${q===1?'':'es'} · 1 noche`; }
-      lines.push({ id:'lodg', kicker:'Hospedaje', title:l.name, sub, amount:a, step:'estancia' }); }
+    if (stay === 'noche') { const nights=this.nightsCount(); LODG.forEach(l=>{ const units=(this.state.lodgingQty&&this.state.lodgingQty[l.id])||0; if(!units) return; let a=0,sub=''; if(l.per==='an'){const qa=actAdults[l.id]||0,qk=actKids[l.id]||0; a=(l.price*qa+l.kids*qk)*nights; sub=`${qa} adulto${qa!==1?'s':''}${qk?` · ${qk} niño${qk!==1?'s':''}`:''} · ${nights} noche${nights!==1?'s':''}`;} else {const guests=this.state.lodgingGuests[l.id]||0; a=l.price*units*nights; sub=`${units} ${units===1?'unidad':'unidades'} · ${guests} huésped${guests===1?'':'es'} · ${nights} noche${nights!==1?'s':''}`;} lines.push({id:'lodg:'+l.id,kicker:'Hospedaje',title:l.name,sub,amount:a,step:'estancia'}); }); }
     // Cada actividad usa SU propia cantidad (actQty / actAdults / actKids / units).
     // Ninguna se multiplica por el total del grupo.
     CAT.forEach(c => { if (!acts[c.id] || c.combo || c.lodging) return; let a = 0, sub = '';
@@ -3198,7 +3247,7 @@ class Component extends DCLogic {
     // Los extras exclusivos de camping solo cuentan si el hospedaje elegido es camping (nivel 1 de defensa)
     // descBeb tiene un único estado (extras.descBeb) que escriben tanto Extras como el combo,
     // así que aquí no hace falta ninguna exclusión condicional.
-    EXTRAS.forEach(x => { if (x.camping && lodging !== 'camping') return; if (extras[x.id]) { const q=x.multi?integer(this.state.extraQty[x.id]||1,1,99):1; lines.push({ id:x.id, kicker:'Extras', title:x.name, sub:x.multi?`${q} × ${MXN(x.price)}`:x.meta, amount:x.price*q, step:'extras' }); } });
+    EXTRAS.forEach(x => { if (x.camping && !((this.state.lodgingQty&&this.state.lodgingQty.camping)||0)) return; if (extras[x.id]) { const q=x.multi?integer(this.state.extraQty[x.id]||1,1,99):1; lines.push({ id:x.id, kicker:'Extras', title:x.name, sub:x.multi?`${q} × ${MXN(x.price)}`:x.meta, amount:x.price*q, step:'extras' }); } });
     // Known food, corkage, and requested park drinks are separate accounting lines.
     // Corkage is already in EXTRAS above: it is NEVER added a second time here.
     if(this.state.comboAdded){
@@ -3210,7 +3259,7 @@ class Component extends DCLogic {
     const hasQuote=lines.some(l=>l.quote), deposit=hasQuote?null:Math.round(cents/2)/100;
     return {lines,total,deposit,balance:deposit==null?null:(cents-toCents(deposit))/100,n,hasQuote};
   }
-  dateLabel() { const d = this.state.day; if (!d) return 'Sin fecha'; const dt = new Date(2026, 9, d); return `${DNAMES[dt.getDay()]} ${d} oct 2026`; }
+  dateLabel() { const s=this.state; if(!s.startDate) return 'Sin fecha'; const a=this.formatDateISO(s.startDate); if(s.endDate&&s.endDate>s.startDate) return `${a} al ${this.formatDateISO(s.endDate)}`; return a; }
   visitorsLabel() { const { adults, kids } = this.state; return `${adults} adulto${adults !== 1 ? 's' : ''}${kids ? ` · ${kids} niño${kids !== 1 ? 's' : ''}` : ''}`; }
   servicesText(lines) { return lines.filter(l => l.id !== 'entrada').map(l => l.combo ? `Alimentos (${l.sub})` : l.title+(l.sub?' ('+l.sub+')':'')).join(' · ') || 'Entrada general'; }
   qr(seed){
@@ -3240,7 +3289,7 @@ class Component extends DCLogic {
     const priceLabel = c => c.id==='spot' ? (SPOT_RATE_BASIS==='pending'?'Tarifa por confirmar':`${MXN(c.price)} ${SPOT_RATE_BASIS==='stay'?'por estancia':'por persona'}`) : c.per === 'menu' ? `${MXN(tacoPrice)} por taco · arma tu combo` : c.herp ? 'Consultar disponibilidad' : c.per === 'q' ? 'Cotización con el equipo' : c.per === 'an' ? `${MXN(c.price)} adulto · ${MXN(c.kids)} niño` : `${MXN(c.price)} ${c.per === 'pp' ? 'por persona' : c.lodging ? 'por noche' : 'por unidad'}`;
     const priceShort = c => c.id==='spot' && SPOT_RATE_BASIS==='pending' ? 'Por cotizar' : c.herp ? 'Consultar' : c.per === 'q' ? 'Cotizar' : MXN(c.price);
     const perLabel = c => c.id==='spot' ? (SPOT_RATE_BASIS==='pending'?'1 estancia':SPOT_RATE_BASIS==='stay'?'por estancia':'por persona') : c.per === 'menu' ? 'por taco' : c.herp ? 'precio por confirmar' : c.per === 'q' ? 'con el equipo' : c.per === 'pp' ? 'por persona' : c.per === 'an' ? 'adulto · niños ' + MXN(c.kids) : c.lodging ? 'por noche' : 'por unidad';
-    const isOn = c => c.combo ? s.comboAdded : c.lodging ? (c.lodgingId ? s.lodging===c.lodgingId : !!s.lodging) : !!s.acts[c.id];
+    const isOn = c => c.combo ? s.comboAdded : c.lodging ? (c.lodgingId ? ((s.lodgingQty&&s.lodgingQty[c.lodgingId])||0)>0 : this.selectedLodgingIds(s).length>0) : !!s.acts[c.id];
     const mk = c => { const on = isOn(c); return { ...c, open: openItem(c.id), toggle: () => c.combo ? this.go('combo') : c.lodging ? this.go('estancia') : this.toggleAct(c.id, false), selected: on, priceLabel: priceLabel(c), priceShort: priceShort(c), perLabel: perLabel(c), meta: `${c.dur} · ${perLabel(c)}`, shortDesc: c.short, ipos: ipos(c.img), hasImg: !!c.img && !(c.herp && !HERP_PHOTO_READY), noImg: !c.img || (c.herp && !HERP_PHOTO_READY), pending: !!c.pending || (c.herp && !HERP_PHOTO_READY), icon: c.icon || (c.herp ? 'snake' : undefined), tile: c.tile || FOREST, iconEl: icon(c.icon || (c.herp ? 'snake' : 'mountain'), 26), iconElLg: icon(c.icon || (c.herp ? 'snake' : 'mountain'), 36, 1.8), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; };
     const catDefs = [{ id:'todos', name:'Todos' }, { id:'aventura', name:'Aventura' }, { id:'naturaleza', name:'Naturaleza y safari' }, { id:'especiales', name:'Photo spots' }, { id:'hospedaje', name:'Hospedaje' }, { id:'alimentos', name:'Alimentos y bebidas' }, { id:'herpetario', name:'Herpetario' }];
     // Carril de categorías: los gestos viven en attachChips(); aquí solo el centrado del activo
@@ -3248,7 +3297,7 @@ class Component extends DCLogic {
     const centerChip = id => { const el = chips.ref.current; if (!el) return; const b = el.querySelector(`[data-chip="${id}"]`); if (!b) return; const left = b.offsetLeft - (el.clientWidth - b.offsetWidth) / 2; const max = Math.max(0, el.scrollWidth - el.clientWidth); el.scrollTo({ left: Math.max(0, Math.min(left, max)), behavior: 'smooth' }); };
     // Combo
     const setQty = (id, d) => this.setState(st => ({ menuQty: { ...st.menuQty, [id]: Math.max(0, Math.min(99, (st.menuQty[id] || 0) + d)) }, totalKey: st.totalKey + 1 }));
-    const menuItems = MENU.map(m => { const q = m.id==='taco'?this.tacoCount():m.id==='quesadillaG'?this.quesadillaGCount():(s.menuQty[m.id] || 0); const opts = m.pick === 'guiso' ? GUISOS : m.pick === 'dulce' ? DULCE : []; const pick = s.menuPick[m.id] || (opts[0] || ''); return { ...m, isTaco:m.id==='taco', isQuesadillaG:m.id==='quesadillaG', notTaco:m.id!=='taco'&&m.id!=='quesadillaG', qty: q, hasQty: q > 0, priceShort: MXN(m.price), inc: () => setQty(m.id, 1), dec: () => setQty(m.id, -1), hasPick: !!m.pick && q > 0, pickLabel: m.pick === 'dulce' ? 'Elige el dulce' : 'Elige el guiso', opts: opts.map(o => ({ t: o, select: () => this.setState(st => ({ menuPick: { ...st.menuPick, [m.id]: o } })), bg: pick === o ? INK : '#F6F1E7', color: pick === o ? PAPER : INK })), hasExtra: !!m.extra && q > 0, extraOn: !!s.menuExtra[m.id], extraRing: s.menuExtra[m.id] ? ACC : MUTED, extraFill: s.menuExtra[m.id] ? ACC : 'transparent', toggleExtra: () => this.setState(st => ({ menuExtra: { ...st.menuExtra, [m.id]: !st.menuExtra[m.id] }, totalKey: st.totalKey + 1 })), qtyBg: q > 0 ? ACC : '#F6F1E7', qtyColor: q > 0 ? PAPER : INK, cardBorder: q > 0 ? ACC : BORDER }; });
+    const menuItems = MENU.map(m => { const q = m.id==='taco'?this.tacoCount():m.id==='quesadillaG'?this.quesadillaGCount():m.id==='platillo'?this.platilloCount():(s.menuQty[m.id] || 0); const opts = m.pick === 'guiso' ? GUISOS : m.pick === 'dulce' ? DULCE : []; const pick = s.menuPick[m.id] || (opts[0] || ''); return { ...m, isTaco:m.id==='taco', isQuesadillaG:m.id==='quesadillaG', isPlatillo:m.id==='platillo', notTaco:m.id!=='taco'&&m.id!=='quesadillaG'&&m.id!=='platillo', qty: q, hasQty: q > 0, priceShort: MXN(m.price), inc: () => setQty(m.id, 1), dec: () => setQty(m.id, -1), hasPick: !!m.pick && q > 0, pickLabel: m.pick === 'dulce' ? 'Elige el dulce' : 'Elige el guiso', opts: opts.map(o => ({ t: o, select: () => this.setState(st => ({ menuPick: { ...st.menuPick, [m.id]: o } })), bg: pick === o ? INK : '#F6F1E7', color: pick === o ? PAPER : INK })), hasExtra: !!m.extra && q > 0, extraOn: !!s.menuExtra[m.id], extraRing: s.menuExtra[m.id] ? ACC : MUTED, extraFill: s.menuExtra[m.id] ? ACC : 'transparent', toggleExtra: () => this.setState(st => ({ menuExtra: { ...st.menuExtra, [m.id]: !st.menuExtra[m.id] }, totalKey: st.totalKey + 1 })), qtyBg: q > 0 ? ACC : '#F6F1E7', qtyColor: q > 0 ? PAPER : INK, cardBorder: q > 0 ? ACC : BORDER }; });
     // Etiquetas del combo derivadas de la misma fuente que usa comboTotal(): el precio
     // visible y el cobrado no pueden divergir.
     const extraPrice = (MENU.find(m => m.extraPrice) || {}).extraPrice || 0;
@@ -3260,25 +3309,14 @@ class Component extends DCLogic {
     const comboItemsArr = this.comboItems();
     const drinkOpt = (id) => ({ border: s.drinks === id ? ACC : BORDER, ring: s.drinks === id ? ACC : MUTED, fill: s.drinks === id ? ACC : 'transparent' });
     const goCat = id => () => this.go('explorar', { cat: id });
-    const days = []; for (let i = 0; i < 3; i++) days.push({ blank: true, label: '', bg: 'transparent', color: 'transparent', select: () => {} });
-    for (let d = 1; d <= 31; d++) { const sel = s.day === d; days.push({ blank: false, label: String(d), bg: sel ? ACC : '#F6F1E7', color: sel ? PAPER : INK, select: () => this.setState({ day: d }) }); }
+    const dateIssue=this.dateRangeIssue();
     const capacityInvalid = CAT.some(c => c.seats && s.acts[c.id] && (s.actQty[c.id] || 1) > (s.units[c.id] || 1) * c.seats);
     const issue=this.selectionIssue();
     const activityError=CAT.filter(c=>c.seats).map(c=>this.vehicleIssue(c)).find(Boolean)||this.spotIssue();
-    const nextDisabled = (sc==='fecha'&&!s.day)||(sc==='estancia'&&(!s.stay||(s.stay==='noche'&&!s.lodging))) || (sc==='actividades' && !!activityError);
+    const nextDisabled = (sc==='fecha'&&!!dateIssue)||(sc==='estancia'&&(!s.stay||(s.stay==='noche'&&this.selectedLodgingIds(s).length===0))) || (sc==='actividades' && !!activityError);
     const nextStep = () => { if (nextDisabled) return; if (stepIdx < STEPS.length - 1) this.go(STEPS[stepIdx + 1]); else this.go('carrito'); };
-    const lodgings = LODG.map(l => { const on = s.lodging === l.id; const qa = s.actAdults[l.id] || 0, qk = s.actKids[l.id] || 0; return { ...l, priceLabel: lodgLabel(l),
-      showSel: on && l.per === 'an', showCapacity:on&&!!l.maxGuests,
-      capacityText:l.id==='glamping'?`Capacidad: 2 a 4 personas por cabaña. Máximo 4. Tu grupo actual: ${this.groupTotal()}.`:`Capacidad: máximo 2 personas por cabaña. Tu grupo actual: ${this.groupTotal()}.`,
-      guestCount:s.lodgingGuests[l.id]||(l.minGuests||1),
-      guestDec:()=>this.setLodgingGuests(l.id,-1), guestInc:()=>this.setLodgingGuests(l.id,1),
-      guestDecDisabled:(s.lodgingGuests[l.id]||(l.minGuests||1))<=(l.minGuests||1), guestIncDisabled:(s.lodgingGuests[l.id]||(l.minGuests||1))>=(l.maxGuests||1),
-      qAdults: qa, qKids: qk,
-      aDec: () => this.setActAN(l.id, 'a', -1), aInc: () => this.setActAN(l.id, 'a', 1),
-      kDec: () => this.setActAN(l.id, 'k', -1), kInc: () => this.setActAN(l.id, 'k', 1),
-      subLabel: MXN(l.price * qa + (l.kids || 0) * qk), selBorder: on ? ACC : BORDER, hasImg: !!l.img, noImg: !l.img, iconEl: l.icon ? icon(l.icon, 24) : null, select: () => this.setState(st => { const o = { lodging: l.id, totalKey: st.totalKey + 1 }; // cantidad inicial 1, nunca el grupo completo
-        if (l.per === 'an' && !(st.actAdults[l.id] || 0) && !(st.actKids[l.id] || 0)) { o.actAdults = { ...st.actAdults, [l.id]: 1 }; o.actKids = { ...st.actKids, [l.id]: 0 }; }
-        return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
+    const lodgingWarn=this.selectedLodgingIds(s).length?(()=>{const assigned=this.lodgingAssignedGuests(s);return assigned>this.groupTotal()?`Asignaste ${assigned} huéspedes, pero tu grupo tiene ${this.groupTotal()} visitantes.`:'';})():'';
+    const lodgings = LODG.map(l => { const unitCount=(s.lodgingQty&&s.lodgingQty[l.id])||0, on=unitCount>0, qa=s.actAdults[l.id]||0,qk=s.actKids[l.id]||0, nights=this.nightsCount(); const guests=l.per==='an'?qa+qk:(s.lodgingGuests[l.id]||0); const cap=unitCount*(l.maxGuests||0); const min=unitCount*(l.per==='an'?0:this.minGuestsPerUnit(l)); const available=this.groupTotal()-this.lodgingAssignedGuests(s,l.id); const maxUnits=l.per==='an'?1:this.maxLodgingUnits(l.id,s); const amount=l.per==='an'?(l.price*qa+(l.kids||0)*qk)*nights:l.price*unitCount*nights; return { ...l, selected:on, priceLabel:lodgLabel(l), showSel:on&&l.per==='an', showCapacity:on&&!!l.maxGuests, capacityText:l.id==='glamping'?`${unitCount} glamping${unitCount===1?'':'s'} · capacidad máxima ${cap} personas (${l.maxGuests} por unidad).`:`${unitCount} cuevita${unitCount===1?'':'s'} · capacidad máxima ${cap} personas (${l.maxGuests} por unidad).`, unitName:l.id==='glamping'?'glampings':'cuevitas', unitHint:l.id==='glamping'?'Capacidad recomendada 2–4 personas por unidad.':'Máximo 2 personas por unidad.', unitCount, unitDec:()=>this.setLodgingQty(l.id,-1), unitInc:()=>this.setLodgingQty(l.id,1), unitDecDisabled:unitCount<=1, unitIncDisabled:unitCount>=maxUnits, guestCount:guests, guestDec:()=>this.setLodgingGuests(l.id,-1), guestInc:()=>this.setLodgingGuests(l.id,1), guestDecDisabled:guests<=min, guestIncDisabled:guests>=Math.min(cap,available), qAdults:qa,qKids:qk, aDec:()=>this.setActAN(l.id,'a',-1),aInc:()=>this.setActAN(l.id,'a',1),kDec:()=>this.setActAN(l.id,'k',-1),kInc:()=>this.setActAN(l.id,'k',1), subLabel:MXN(amount), selBorder:on?ACC:BORDER, hasImg:!!l.img,noImg:!l.img,iconEl:l.icon?icon(l.icon,24):null, select:()=>this.toggleLodging(l.id), ring:on?ACC:MUTED,fill:on?ACC:'transparent',border:on?ACC:BORDER }; });
     // Selector inline de cantidad por actividad: aparece solo cuando la actividad está activa.
     const withQty = it => {
       const u = this.unitOf(it);
@@ -3298,10 +3336,10 @@ class Component extends DCLogic {
     };
     const groups = ['Aventura', 'Naturaleza y safari', 'Photo spots'].map(g => ({ name: g, items: CAT.filter(c => c.group === g && !c.lodging).map(mk).map(withQty) }));
     const tentStats=this.tentStats(s);
-    const extrasList = EXTRAS.filter(x => !x.camping || s.lodging === 'camping').map(x => { const on = !!s.extras[x.id], q=x.multi?integer(s.extraQty[x.id]||(on?1:0),0,99):1; const maxQty=x.camping?this.maxTentQty(x.id,s):99; const capPer=x.camping?this.tentCapacity(x.id):0; const capSelected=x.camping?tentStats.cap:0; const campers=x.camping?tentStats.campers:0; return { ...x, priceShort: MXN(x.price), selected: on, showQty:!!x.multi&&on, qty:q, qtySubtotal:x.multi?MXN(x.price*Math.max(1,q)):MXN(x.price), qtyHint:x.id==='tienda4'?'Capacidad: hasta 4 personas por casa':'Capacidad: hasta 2 personas por casa', capacitySummary:x.camping?`Capacidad rentada: ${capSelected} persona${capSelected===1?'':'s'} · Campistas: ${campers}`:'', maxQtyLabel:x.camping?`Máximo útil para este tamaño: ${maxQty} casa${maxQty===1?'':'s'}`:'', incDisabled:!!x.camping&&q>=maxQty, decQty:()=>this.setExtraQty(x.id,-1), incQty:()=>this.setExtraQty(x.id,1), toggle: () => this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1, qtyWarn:'' }; if(x.multi) o.extraQty={...st.extraQty,[x.id]:next?Math.max(1,st.extraQty[x.id]||1):0}; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
+    const extrasList = EXTRAS.filter(x => !x.camping || ((s.lodgingQty&&s.lodgingQty.camping)||0)>0).map(x => { const on = !!s.extras[x.id], q=x.multi?integer(s.extraQty[x.id]||(on?1:0),0,99):1; const maxQty=x.camping?this.maxTentQty(x.id,s):99; const capPer=x.camping?this.tentCapacity(x.id):0; const capSelected=x.camping?tentStats.cap:0; const campers=x.camping?tentStats.campers:0; return { ...x, priceShort: MXN(x.price), selected: on, showQty:!!x.multi&&on, qty:q, qtySubtotal:x.multi?MXN(x.price*Math.max(1,q)):MXN(x.price), qtyHint:x.id==='tienda4'?'Capacidad: hasta 4 personas por casa':'Capacidad: hasta 2 personas por casa', capacitySummary:x.camping?`Capacidad rentada: ${capSelected} persona${capSelected===1?'':'s'} · Campistas: ${campers}`:'', maxQtyLabel:x.camping?`Máximo útil para este tamaño: ${maxQty} casa${maxQty===1?'':'s'}`:'', incDisabled:!!x.camping&&q>=maxQty, decQty:()=>this.setExtraQty(x.id,-1), incQty:()=>this.setExtraQty(x.id,1), toggle: () => this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1, qtyWarn:'' }; if(x.multi) o.extraQty={...st.extraQty,[x.id]:next?Math.max(1,st.extraQty[x.id]||1):0}; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
     const cartRows = T.lines.map(l => ({ kicker: l.kicker, title: l.title, sub: l.sub, amount: l.quote ? 'Por cotizar' : MXN(l.amount), edit: () => this.go(l.step) }));
-    const selCount = Object.values(s.acts).filter(Boolean).length + Object.values(s.extras).filter(Boolean).length + (s.lodging ? 1 : 0) + (s.comboAdded ? 1 : 0);
-    const hasSel = selCount > 0 || !!s.day;
+    const selCount = Object.values(s.acts).filter(Boolean).length + Object.values(s.extras).filter(Boolean).length + this.selectedLodgingIds(s).length + (s.comboAdded ? 1 : 0);
+    const hasSel = selCount > 0 || !!s.startDate;
     // Una línea por servicio con su precio: el equipo de reservaciones recibe el mismo
     // desglose que ve el visitante, sin agrupar experiencias distintas en un solo importe.
     const waLine = l => l.combo ? this.foodLines().map(f=>`- ${f.name} · ${f.qty} × ${MXN(f.unitPrice)} = ${MXN(f.amount)}`).join('\n') : l.quote
@@ -3335,6 +3373,7 @@ class Component extends DCLogic {
       menuItems, tacosOpen:s.tacosOpen, toggleTacos:()=>this.setState(st=>({tacosOpen:!st.tacosOpen})), quesadillaOpen:s.quesadillaOpen, toggleQuesadillas:()=>this.setState(st=>({quesadillaOpen:!st.quesadillaOpen})),
       tacoQtyLabel:this.tacoCount()+(this.tacoCount()===1?' taco':' tacos'), tacoRows:GUISOS.map(g=>({name:g,qty:s.tacoQty[g]||0,priceLabel:MXN(tacoPrice),subtotal:MXN((s.tacoQty[g]||0)*tacoPrice),hasQty:(s.tacoQty[g]||0)>0,decDisabled:!(s.tacoQty[g]||0),incDisabled:this.tacoCount()>=99,inc:()=>this.setTacoQty(g,1),dec:()=>this.setTacoQty(g,-1)})),
       quesadillaQtyLabel:this.quesadillaGCount()+(this.quesadillaGCount()===1?' quesadilla':' quesadillas'), quesadillaRows:GUISOS.map(g=>{const q=s.quesadillaGQty[g]||0,p=(MENU.find(m=>m.id==='quesadillaG')||{}).price||0;return{name:g,qty:q,priceLabel:MXN(p),subtotal:MXN(q*p),hasQty:q>0,decDisabled:!q,incDisabled:this.quesadillaGCount()>=99,inc:()=>this.setQuesadillaGQty(g,1),dec:()=>this.setQuesadillaGQty(g,-1)}}),
+      platilloOpen:s.platilloOpen,togglePlatillos:()=>this.setState(st=>({platilloOpen:!st.platilloOpen})),platilloQtyLabel:this.platilloCount()+(this.platilloCount()===1?' platillo':' platillos'),platilloHasQty:this.platilloCount()>0,platilloRows:GUISOS.map(g=>{const q=s.platilloQty[g]||0,p=(MENU.find(m=>m.id==='platillo')||{}).price||0,extra=s.menuExtra.platillo?((MENU.find(m=>m.id==='platillo')||{}).extraPrice||0):0;return{name:g,qty:q,priceLabel:MXN(p+extra),subtotal:MXN(q*(p+extra)),hasQty:q>0,decDisabled:!q,incDisabled:this.platilloCount()>=99,inc:()=>this.setPlatilloQty(g,1),dec:()=>this.setPlatilloQty(g,-1)}}),platilloToggleExtra:()=>this.setState(st=>({menuExtra:{...st.menuExtra,platillo:!st.menuExtra.platillo},totalKey:st.totalKey+1})),platilloExtraRing:s.menuExtra.platillo?ACC:MUTED,platilloExtraFill:s.menuExtra.platillo?ACC:'transparent',
       comboFoodTotalLabel:MXN(comboFoodTotal), comboCorkageLabel:MXN(comboCorkage), comboHasCorkage:comboCorkage>0,
       comboNote:s.drinks==='park'?'Bebidas del parque: precio por confirmar':s.extras.descBeb?'Descorche incluido una sola vez':'Sin bebidas del parque solicitadas',
       comboTotalLabel: MXN(comboTotal), comboCount, comboCountLabel: comboCount === 1 ? '1 producto' : comboCount + ' productos', comboHasItems: comboCount > 0 || !!s.drinks, comboOpacity: (comboCount > 0 || !!s.drinks) ? 1 : 0.45, comboDisabled: !(comboCount > 0 || !!s.drinks), comboCta: s.comboAdded ? 'Actualizar combo en mi aventura' : 'Agregar combo a mi aventura', comboKey: 'c' + s.totalKey,
@@ -3343,13 +3382,13 @@ class Component extends DCLogic {
       setDrinksPark: () => this.setState(st => { const on = st.drinks === 'park'; return { drinks: on ? null : 'park', extras: { ...st.extras, descBeb: false }, totalKey: st.totalKey + 1 }; }),
       setDrinksOwn: () => this.setState(st => { const on = st.drinks === 'own'; return { drinks: on ? null : 'own', extras: { ...st.extras, descBeb: !on }, totalKey: st.totalKey + 1 }; }),
       drinkPeople: s.drinkPeople, incDP: () => this.setState(st => ({ drinkPeople: Math.min(st.adults+st.kids, st.drinkPeople + 1) })), decDP: () => this.setState(st => ({ drinkPeople: Math.max(1, st.drinkPeople - 1) })), drinkNote: s.drinkNote, setDrinkNote: e => this.setState({ drinkNote: e.target.value }),
-      addCombo: () => { if (!(comboCount > 0 || !!s.drinks)) return; this.setState(st => ({ comboAdded: true, badgeKey: st.badgeKey + 1, totalKey: st.totalKey + 1 })); this.showToast('Combo agregado a tu aventura'); this.go(s.day ? 'carrito' : 'fecha'); },
+      addCombo: () => { if (!(comboCount > 0 || !!s.drinks)) return; this.setState(st => ({ comboAdded: true, badgeKey: st.badgeKey + 1, totalKey: st.totalKey + 1 })); this.showToast('Combo agregado a tu aventura'); this.go(s.startDate ? 'carrito' : 'fecha'); },
       removeCombo: () => { this.setState(st => ({ comboAdded: false, totalKey: st.totalKey + 1 })); },
       comboAdded: s.comboAdded,
       isFecha: sc === 'fecha', isVisitantes: sc === 'visitantes', isEstancia: sc === 'estancia', isActividades: sc === 'actividades', isExtras: sc === 'extras',
       isCarrito: sc === 'carrito', isDatos: sc === 'datos', isResumen: sc === 'resumen', isGenerando: sc === 'generando', isPase: sc === 'pase', isWhatsapp: sc === 'whatsapp', isConfirmado:false, isReserva: sc === 'reserva', isAyuda: sc === 'ayuda',
       showTabs, tabs,
-      screenList: screensNav.map(([id, label]) => ({ label, bg: sc === id ? INK : '#FFFDF8', color: sc === id ? PAPER : INK, go: () => { if (id === 'pase' || id === 'confirmado' || id === 'whatsapp') this.setState({ folio: ensureFolio(), name: s.name || 'Familia visitante', phone: s.phone || '33 0000 0000', day: s.day || 17, confirmed:false, qrKey: s.qrKey + 1 }); if (id === 'detalle' && !s.detId) this.setState({ detId: 'ranger' }); this.go(id); } })),
+      screenList: screensNav.map(([id, label]) => ({ label, bg: sc === id ? INK : '#FFFDF8', color: sc === id ? PAPER : INK, go: () => { if (id === 'pase' || id === 'confirmado' || id === 'whatsapp') this.setState({ folio: ensureFolio(), name: s.name || 'Familia visitante', phone: s.phone || '33 0000 0000', startDate:s.startDate||this.todayISO(),endDate:s.endDate||'', confirmed:false, qrKey: s.qrKey + 1 }); if (id === 'detalle' && !s.detId) this.setState({ detId: 'ranger' }); this.go(id); } })),
       goHome: () => this.go('home'), goTipo: () => this.go('tipo'), goExplorarTodo: () => this.go('explorar'), goMomentos: () => this.go('momentos'), goEstancia: () => this.go('estancia'), goDatos: () => this.go('datos'), goWhatsapp: () => this.go('whatsapp'), goReserva: () => this.go('reserva'), back: () => this.back(),
       startBuilder: () => this.go('fecha'),
       visitLabel: cur ? cur.label : 'Tipo de visita', homeKicker: cur ? `Inicio para ${cur.label.toLowerCase()}` : 'Cumbre GO', homeTitle: TITLES[s.visitType],
@@ -3368,7 +3407,7 @@ class Component extends DCLogic {
       exploreItems: CAT.filter(c => s.cat === 'todos' || c.cat === s.cat || c.cat2 === s.cat).map(mk),
       det: { ...mk(det), cta: det.lodging ? (s.lodging ? 'Cambiar hospedaje' : 'Elegir mi estancia') : (isOn(det) ? 'Quitar de mi aventura' : 'Agregar a mi aventura'), ctaBg: isOn(det) && !det.lodging ? INK : ACC },
       detGallery: (det.gallery || []).map((src, i) => ({ src, alt: det.name + ' ' + (i + 1), pos: ipos(src) })), detIncl: det.incl.map(t => ({ t })),
-      addDetail: () => { if (det.lodging) return this.go('estancia'); const was = !!s.acts[det.id]; this.toggleAct(det.id, false); if (!was) this.go(s.day ? 'carrito' : 'fecha'); },
+      addDetail: () => { if (det.lodging) return this.go('estancia'); const was = !!s.acts[det.id]; this.toggleAct(det.id, false); if (!was) this.go(s.startDate ? 'carrito' : 'fecha'); },
       // Momentos
       mom, momentKey: 'm' + s.momentIdx, frameKey: 'f' + s.momentIdx + '-' + fi,
       prevOpacity: s.momentIdx === 0 ? 0.35 : 1, nextOpacity: s.momentIdx === MOMENTS.length - 1 ? 0.35 : 1,
@@ -3383,7 +3422,7 @@ class Component extends DCLogic {
       shareMoment: () => { try { navigator.clipboard && navigator.clipboard.writeText('https://cumbresalvaje.mx/momentos/' + mItem.id); } catch (e) {} this.showToast('Enlace copiado'); },
       hasToast: !!s.toast, toast: s.toast, toastKey: 't' + s.toastKey,
       stepLabel: `Paso ${stepIdx + 1} de ${STEPS.length}`, stepName: STEP_NAMES[sc] || '', stepSegs: STEPS.map((_, i) => ({ bg: i <= stepIdx ? ACC : 'rgba(23,26,24,.12)' })),
-      dows: DOW.map(t => ({ t })), days, dateHint: s.day ? `Solicitarás el ${this.dateLabel()}. El equipo confirma disponibilidad por WhatsApp.` : 'Elige un día. Reprogramaciones sujetas a disponibilidad.',
+      minDate:this.todayISO(),startDate:s.startDate,endDate:s.endDate,endMinDate:s.startDate||this.todayISO(),setStartDate:e=>this.setStartDateValue(e.target.value),setEndDate:e=>this.setEndDateValue(e.target.value),hasDateRange:!!s.startDate,dateRangeSummary:s.endDate&&s.endDate>s.startDate?`${this.dateLabel()} · ${this.nightsCount()} noche${this.nightsCount()!==1?'s':''}`:`${this.dateLabel()} · visita de un día`,dateHint:dateIssue|| (s.startDate?`Solicitarás ${this.dateLabel()}. El equipo confirma disponibilidad por WhatsApp.`:'Selecciona una fecha de llegada o visita. Puedes añadir salida para varias noches.'),
       entradaLabel: `Entrada general ${MXN(ENTRADA)} p/p`,
       guisoExtraLabel, descorcheBebLabel, descorcheBebShort,
       comboTeaserLabel: `Tacos ${MXN(tacoPrice)} · platillos, quesadillas y molletes`,
@@ -3391,13 +3430,13 @@ class Component extends DCLogic {
       dinersHint: `Máximo ${s.adults + s.kids} (tu grupo). No todos tienen que comer.`,
       qtyWarn:activityError||s.qtyWarn,hasQtyWarn:!!(activityError||s.qtyWarn),
       adults: s.adults, kids: s.kids, incA: () => this.setState(st => ({ adults: Math.min(60, st.adults + 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), decA: () => this.setState(st => ({ adults: Math.max(1, st.adults - 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), incK: () => this.setState(st => ({ kids: Math.min(60, st.kids + 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), decK: () => this.setState(st => ({ kids: Math.max(0, st.kids - 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()),
-      setDia: () => this.setState(st => ({ stay: 'dia', lodging: null, totalKey: st.totalKey + 1 })), setNoche: () => this.setState({ stay: 'noche' }), isNoche: s.stay === 'noche',
+      setDia: () => this.setState(st => ({ stay:'dia',endDate:'',lodging:null,lodgingQty:{cabana:0,glamping:0,camping:0},lodgingGuests:{cabana:0,glamping:0},actAdults:{...st.actAdults,camping:0},actKids:{...st.actKids,camping:0},totalKey:st.totalKey+1 })), setNoche: () => this.setState({ stay: 'noche' }), isNoche: s.stay === 'noche',
       diaBorder: s.stay === 'dia' ? INK : BORDER, diaBg: s.stay === 'dia' ? INK : '#FFFDF8', diaColor: s.stay === 'dia' ? PAPER : INK,
       nocheBorder: s.stay === 'noche' ? INK : BORDER, nocheBg: s.stay === 'noche' ? INK : '#FFFDF8', nocheColor: s.stay === 'noche' ? PAPER : INK,
-      lodgings, actGroups: groups, extrasList,
+      lodgings,hasLodgingWarn:!!lodgingWarn,lodgingWarn,actGroups: groups, extrasList,
       celebOn: s.celeb === true, celebNo: () => this.setState({ celeb: false }), celebSi: () => this.setState({ celeb: true }), celebText: s.celebText, setCeleb: e => this.setState({ celebText: e.target.value }),
       celebNoBg: s.celeb === false ? INK : 'transparent', celebNoColor: s.celeb === false ? PAPER : INK, celebSiBg: s.celeb === true ? INK : 'transparent', celebSiColor: s.celeb === true ? PAPER : INK,
-      summaryLine: `${this.visitorsLabel()}${s.day ? ' · ' + this.dateLabel() : ''}`, totalTitle:T.hasQuote?'Total parcial estimado':'Total estimado',hasKnownTotal:!T.hasQuote,totalPending:T.hasQuote,totalPendingNote:T.hasQuote?'Incluye servicios por cotizar. El equipo confirmará el total y el anticipo.':'Importes estimados; sujetos a disponibilidad y confirmación del equipo.',totalLabel:MXN(T.total),depositLabel:T.deposit==null?'Por confirmar':MXN(T.deposit),balanceLabel:T.balance==null?'Por confirmar':MXN(T.balance), totalKey: 'k' + s.totalKey,
+      summaryLine: `${this.visitorsLabel()}${s.startDate ? ' · ' + this.dateLabel() : ''}`, totalTitle:T.hasQuote?'Total parcial estimado':'Total estimado',hasKnownTotal:!T.hasQuote,totalPending:T.hasQuote,totalPendingNote:T.hasQuote?'Incluye servicios por cotizar. El equipo confirmará el total y el anticipo.':'Importes estimados; sujetos a disponibilidad y confirmación del equipo.',totalLabel:MXN(T.total),depositLabel:T.deposit==null?'Por confirmar':MXN(T.deposit),balanceLabel:T.balance==null?'Por confirmar':MXN(T.balance), totalKey: 'k' + s.totalKey,
       nextStep, nextDisabled, nextOpacity: nextDisabled ? 0.45 : 1, nextLabel: stepIdx === STEPS.length - 1 ? 'Ver mi aventura' : 'Continuar',
       cartEmpty: !hasSel, cartFull: hasSel, cartRows,
       name: s.name, phone: s.phone, email: s.email,

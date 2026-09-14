@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.7.0">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.9.0">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -24,6 +24,24 @@ button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparen
 @keyframes readyIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
 @keyframes badgePop{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes promoReveal{0%{opacity:0;transform:translateY(-8px) scale(.98)}100%{opacity:1;transform:none}}
+@keyframes promoGlow{0%,100%{box-shadow:0 0 0 0 rgba(242,106,46,0)}50%{box-shadow:0 0 0 7px rgba(242,106,46,.10)}}
+@keyframes promoSuccess{0%{transform:scale(.82);opacity:0}65%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes promoShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.promo-card{border:2px solid rgba(242,106,46,.20);border-radius:20px;background:linear-gradient(135deg,#FFFDF8 0%,#FFF4EC 100%);overflow:hidden;transition:border-color .25s,box-shadow .25s,background .25s}
+.promo-card.is-open{border-color:#F26A2E;animation:promoGlow 1.8s ease-in-out}
+.promo-card.is-success{border-color:#44705A;background:linear-gradient(135deg,#F6FBF5 0%,#EAF4E8 100%)}
+.promo-card.is-error{border-color:#C64A20}
+.promo-head{width:100%;border:0;background:transparent;padding:15px 16px;display:flex;align-items:center;gap:12px;text-align:left;color:#171A18}
+.promo-gift{width:42px;height:42px;border-radius:14px;background:#F26A2E;color:white;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none;box-shadow:0 8px 20px rgba(242,106,46,.24)}
+.promo-card.is-success .promo-gift{background:#44705A;animation:promoSuccess .45s ease}
+.promo-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.promo-copy strong{font-size:14px;line-height:1.25}.promo-copy span{font-size:11px;line-height:1.35;color:rgba(23,26,24,.62)}
+.promo-chevron{font-size:18px;color:#A54010;transition:transform .2s}.promo-card.is-open .promo-chevron{transform:rotate(180deg)}
+.promo-body{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;animation:promoReveal .25s ease}
+.promo-row{display:flex;gap:8px;align-items:stretch}.promo-row input{flex:1;min-width:0;height:50px;border:2px solid rgba(23,26,24,.12);background:#FFFDF8;border-radius:14px;padding:0 14px;font-size:16px;text-transform:uppercase;outline:none}.promo-row input:focus{border-color:#F26A2E}.promo-row button{min-width:92px;border:0;border-radius:14px;background:#171A18;color:#FFFDF8;font-size:13px;font-weight:800;padding:0 14px}.promo-row button:disabled{opacity:.45}
+.promo-message{font-size:12px;line-height:1.4;padding:10px 12px;border-radius:12px;background:#F6F1E7;color:#51564F}.promo-message.success{background:#EAF4E8;color:#244937}.promo-message.error{background:#FDEDE4;color:#7A2F0D;animation:promoShake .34s ease}
+.promo-applied{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-radius:14px;background:#EAF4E8;color:#244937}.promo-applied strong{font-size:13px}.promo-applied span{font-size:11px}.promo-remove{border:0;background:transparent;color:#7A2F0D;text-decoration:underline;font-size:11px;font-weight:700;padding:8px 0}
 .hs::-webkit-scrollbar{display:none}
 .hs{scrollbar-width:none}
 /* El snap del carril vive aquí y no en el estilo inline: React re-aplica los estilos en
@@ -812,7 +830,15 @@ small,.small{font-size:12px;line-height:1.4}
 <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800;padding-bottom:4px">Servicios</div>
 <sc-for as="s" hint-placeholder-count="4" list="{{ serviceLines }}"><div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:7px 0"><span>{{ s.t }}</span><span style="font-weight:700;flex:none">{{ s.a }}</span></div></sc-for>
 </div>
+<div class="promo-card {{ promoClass }}">
+<button class="promo-head" onclick="{{ togglePromo }}"><div class="promo-gift">{{ promoIcon }}</div><div class="promo-copy"><strong>{{ promoTitle }}</strong><span>{{ promoSubtitle }}</span></div><div class="promo-chevron">⌄</div></button>
+<sc-if value="{{ promoOpen }}"><div class="promo-body">
+<sc-if value="{{ promoCanApply }}"><div class="promo-row"><input aria-label="Código de descuento" autocomplete="off" onchange="{{ setPromoInput }}" placeholder="Escribe tu código" value="{{ promoInput }}"/><button disabled="{{ promoBusy }}" onclick="{{ applyPromo }}">{{ promoButtonLabel }}</button></div></sc-if>
+<sc-if value="{{ promoApplied }}"><div class="promo-applied"><div><strong>🎉 {{ promoAppliedLabel }}</strong><br/><span>{{ promoAppliedSavings }}</span></div><button class="promo-remove" onclick="{{ removePromo }}">Quitar</button></div></sc-if>
+<sc-if value="{{ hasPromoMessage }}"><div class="promo-message {{ promoMessageClass }}">{{ promoMessage }}</div></sc-if>
+</div></sc-if></div>
 <div style="background:#0B2B24;color:#F6F1E7;padding:18px;border-radius:22px;display:flex;flex-direction:column;gap:10px">
+<sc-if value="{{ hasPromoDiscount }}"><div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(246,241,231,.78)"><span>Subtotal</span><span style="font-weight:700">{{ subtotalLabel }}</span></div><div style="display:flex;justify-content:space-between;font-size:13px;color:#9FD4A8"><span>Descuento · {{ promoCodeLabel }}</span><span style="font-weight:800">−{{ discountLabel }}</span></div></sc-if>
 <div style="display:flex;justify-content:space-between;font-size:14px"><span>{{ totalTitle }}</span><span style="font-weight:800;font-size:18px">{{ totalLabel }}</span></div><sc-if value="{{ totalPending }}"><div class="notice warning">{{ totalPendingNote }}</div></sc-if>
 <sc-if value="{{ hasKnownTotal }}"><div style="display:flex;justify-content:space-between;font-size:14px;color:#F6B26B"><span style="font-weight:800">Anticipo sugerido 50%</span><span style="font-weight:800;font-size:18px">{{ depositLabel }}</span></div></sc-if>
 <div style="font-size:11px;color:rgba(246,241,231,.65);line-height:1.4">El anticipo bloquea fecha, personal y servicios; se descuenta del total. Sujeto a disponibilidad.</div>
@@ -958,7 +984,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.7.0 · Supabase · Personalización · Launch Candidate</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.9.0 · Supabase · Personalización · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2761,7 +2787,7 @@ module.exports = QRCode;
 
 </script>
 <script>
-const BUILD_ID = 'CSG-20260913-1.8.0';
+const BUILD_ID = 'CSG-20260913-1.9.0';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2809,7 +2835,7 @@ function trafficMeta(){
     utm_campaign:q.get('utm_campaign'),
     source:q.get('utm_source')||q.get('source')||q.get('src')||'direct',
     user_agent:navigator.userAgent,
-    build:'CSG-20260913-1.7.0'
+    build:'CSG-20260913-1.9.0'
   };
 }
 function newQuoteFolio(){
@@ -2925,6 +2951,7 @@ class Component extends DCLogic {
     // Cantidades independientes por actividad. NUNCA se inicializan con el total del grupo.
     actQty: {}, actAdults: {}, actKids: {}, units: {}, extraQty: {}, foodDiners: 1, qtyWarn: '',
     lodgingGuests: {cabana:0,glamping:0}, campTentMode:null, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
+    promoOpen:false, promoInput:'', promoBusy:false, promoStatus:'idle', promoMessage:'', appliedPromo:null, promoAnimKey:0,
     name: '', phone: '', email: '', formError: '', acceptPolicies: false, policyError: false,
     folio: null, quoteId: null, sessionId: getSessionId(), savingQuote: false, saveError: '', confirmed: false, loadingExplore: false, copied: false, qrKey: 0,
     momentIdx: 0, frameIdx: 0, saved: {}, toast: '', toastKey: 0, badgeKey: 0, totalKey: 0,
@@ -3166,6 +3193,25 @@ class Component extends DCLogic {
     const error=this.spotIssue(); if(error) return {screen:'actividades',message:error};
     return null;
   }
+  promoDiscountFor(subtotal){
+    const p=this.state.appliedPromo; if(!p||!p.code||subtotal<=0)return 0;
+    const min=Number(p.min_total||0); if(subtotal+1e-9<min)return 0;
+    let d=p.discount_type==='percent'?subtotal*(Number(p.discount_value||0)/100):Number(p.discount_value||0);
+    if(p.max_discount!=null&&Number(p.max_discount)>0)d=Math.min(d,Number(p.max_discount));
+    return Math.max(0,Math.min(subtotal,Math.round(d*100)/100));
+  }
+  async applyPromoCode(){
+    if(this.state.promoBusy)return;
+    const code=(this.state.promoInput||'').trim().toUpperCase(), T=this.totals();
+    if(!code){this.setState({promoStatus:'error',promoMessage:'Escribe un código para intentar aplicarlo.',appliedPromo:null});return;}
+    if(T.hasQuote){this.setState({promoStatus:'error',promoMessage:'El descuento se habilita cuando todos los servicios tienen precio confirmado.',appliedPromo:null});return;}
+    this.setState({promoBusy:true,promoStatus:'loading',promoMessage:'Validando beneficio…'});
+    try{const result=await supabaseRpc('validate_promo',{p_code:code,p_subtotal:T.subtotal});const row=Array.isArray(result)?result[0]:result;
+      if(!row||!row.valid){this.setState(st=>({promoBusy:false,promoStatus:'error',promoMessage:(row&&row.message)||'Ese código no es válido o ya no está disponible.',appliedPromo:null,promoAnimKey:st.promoAnimKey+1}));return;}
+      this.setState(st=>({promoBusy:false,promoStatus:'success',promoInput:row.code||code,promoMessage:row.message||'Beneficio aplicado correctamente.',appliedPromo:row,promoOpen:true,promoAnimKey:st.promoAnimKey+1,totalKey:st.totalKey+1}));this.showToast('🎉 Descuento aplicado');
+    }catch(e){console.error('validate_promo failed',e);this.setState(st=>({promoBusy:false,promoStatus:'error',promoMessage:'No pudimos validar el código. Revisa tu conexión e inténtalo de nuevo.',appliedPromo:null,promoAnimKey:st.promoAnimKey+1}));}
+  }
+  removePromoCode(){this.setState(st=>({appliedPromo:null,promoStatus:'idle',promoMessage:'',promoInput:'',promoAnimKey:st.promoAnimKey+1,totalKey:st.totalKey+1}));}
   visitDateISO(){ return this.state.startDate || null; }
   quoteItems(){
     const s=this.state, T=this.totals(), items=[];
@@ -3201,7 +3247,7 @@ class Component extends DCLogic {
   async saveQuote(){
     const dateError=this.dateRangeIssue(); if(dateError)throw new Error(dateError);
     const s=this.state, T=this.totals(), meta=trafficMeta();
-    const result=await supabaseRpc('submit_quote',{
+    const result=await supabaseRpc('submit_quote_v2',{
       p_session_id:s.sessionId,
       p_visit_date:this.visitDateISO(),
       p_adults:s.adults,
@@ -3210,10 +3256,10 @@ class Component extends DCLogic {
       p_full_name:s.name,
       p_phone:s.phone,
       p_email:s.email,
-      p_total_estimated:T.total,
       p_source:meta.source,
-      p_meta:{...meta,visit_type:s.visitType,stay:s.stay,lodgings:s.lodgingQty,start_date:s.startDate,end_date:s.endDate||s.startDate,nights:this.nightsCount(),celebration:s.celeb? s.celebText||true:false,has_pending_quote:T.hasQuote,camp_tent_mode:s.campTentMode},
-      p_items:this.quoteItems()
+      p_meta:{...meta,visit_type:s.visitType,stay:s.stay,lodgings:s.lodgingQty,start_date:s.startDate,end_date:s.endDate||s.startDate,nights:this.nightsCount(),celebration:s.celeb? s.celebText||true:false,has_pending_quote:T.hasQuote,camp_tent_mode:s.campTentMode,promo_preview:s.appliedPromo?{code:s.appliedPromo.code,label:s.appliedPromo.label||null}:null},
+      p_items:this.quoteItems(),
+      p_promo_code:T.discount>0&&s.appliedPromo?s.appliedPromo.code:null
     });
     const row=Array.isArray(result)?result[0]:result;
     if(!row || !row.folio || !row.quote_id) throw new Error('Supabase no devolvió folio');
@@ -3226,12 +3272,14 @@ class Component extends DCLogic {
     this.setState({savingQuote:true,saveError:''});
     try{
       const row=await this.saveQuote();
-      this.setState(st=>({folio:row.folio,quoteId:row.quote_id,savingQuote:false,saveError:'',qrKey:st.qrKey+1}));
-      this.trackEvent('quote_generated',{folio:row.folio,total:this.totals().total});
+      this.setState(st=>({folio:row.folio,quoteId:row.quote_id,savingQuote:false,saveError:'',qrKey:st.qrKey+1,appliedPromo:row.promo_code&&st.appliedPromo?{...st.appliedPromo,code:row.promo_code}:st.appliedPromo}));
+      this.trackEvent('quote_generated',{folio:row.folio,subtotal:row.subtotal_estimated,discount:row.discount_amount,total:row.total_estimated,promo_code:row.promo_code||null});
       this.go('generando',{folio:row.folio,quoteId:row.quote_id,savingQuote:false});
       clearTimeout(this._t2); this._t2=setTimeout(()=>this.go('pase'),900);
     }catch(e){
       console.error('submit_quote failed',e);
+      const msg=String(e&&e.message||e||'');
+      if(msg.includes('PROMO_INVALID')){this.setState(st=>({savingQuote:false,saveError:'El código cambió o dejó de estar disponible. Vuelve a aplicarlo antes de generar el Pase.',promoStatus:'error',promoMessage:'El beneficio debe validarse nuevamente.',appliedPromo:null,promoOpen:true,totalKey:st.totalKey+1}));return;}
       this.setState({savingQuote:false,saveError:'No pudimos registrar tu cotización. Revisa tu conexión e inténtalo de nuevo.'});
     }
   }
@@ -3559,9 +3607,12 @@ class Component extends DCLogic {
       if(items.length) lines.push({id:'combo',kicker:'Alimentos',title:'Alimentos',sub:`${this.state.foodDiners} comensales · `+items.join(', '),amount:food,step:'combo',combo:true});
       if(d==='park') lines.push({id:'bebidasParque',kicker:'Alimentos y bebidas',title:'Bebidas del parque',sub:`${this.state.drinkPeople} personas`+(this.state.drinkNote?' · '+this.state.drinkNote:''),amount:0,quote:true,step:'combo'});
     }
-    const cents=lines.reduce((n,l)=>n+toCents(l.amount),0), total=cents/100;
-    const hasQuote=lines.some(l=>l.quote), deposit=hasQuote?null:Math.round(cents/2)/100;
-    return {lines,total,deposit,balance:deposit==null?null:(cents-toCents(deposit))/100,n,hasQuote};
+    const subtotalCents=lines.reduce((n,l)=>n+toCents(l.amount),0), subtotal=subtotalCents/100;
+    const hasQuote=lines.some(l=>l.quote);
+    const discount=hasQuote?0:this.promoDiscountFor(subtotal);
+    const discountCents=toCents(discount), totalCents=Math.max(0,subtotalCents-discountCents), total=totalCents/100;
+    const deposit=hasQuote?null:Math.round(totalCents/2)/100;
+    return {lines,subtotal,discount,total,deposit,balance:deposit==null?null:(totalCents-toCents(deposit))/100,n,hasQuote};
   }
   dateLabel() { const s=this.state; if(!s.startDate) return 'Sin fecha'; const a=this.formatDateISO(s.startDate); if(s.stay==='noche'&&!s.endDate)return a+' · salida pendiente'; if(s.endDate&&s.endDate>s.startDate) return `${a} al ${this.formatDateISO(s.endDate)}`; return a; }
   visitorsLabel() { const { adults, kids } = this.state; return `${adults} adulto${adults !== 1 ? 's' : ''}${kids ? ` · ${kids} niño${kids !== 1 ? 's' : ''}` : ''}`; }
@@ -3653,7 +3704,8 @@ class Component extends DCLogic {
       : `- ${l.combo ? 'Combo de alimentos' : l.title}${l.sub ? ` · ${l.sub}` : ''} = ${MXN(l.amount)}`;
     const waHasQuote = T.lines.some(l => l.quote);
     const waFood = s.comboAdded && this.foodLines().length ? `\nComensales: ${s.foodDiners}` : '';
-    const waMessage = `Hola, equipo de reservaciones. Solicito cotizar mi aventura en Cumbre Salvaje.\nFolio: ${s.folio || 'CS-—'}\nFecha solicitada: ${this.dateLabel()}\nVisitantes: ${this.visitorsLabel()}${waFood}\n\nServicios:\n${T.lines.map(waLine).join('\n')}\n\n${T.hasQuote?'Total parcial estimado':'Total estimado'}: ${MXN(T.total)}${T.hasQuote?'\nServicios pendientes de cotizar. Total final y anticipo por confirmar.':'\nAnticipo sugerido 50%: '+MXN(T.deposit)}\nQuedo pendiente de disponibilidad y anticipo.${s.celeb && s.celebText ? `\nNota: ${s.celebText}` : ''}`;
+    const waPromo = T.discount>0&&s.appliedPromo ? `\nSubtotal: ${MXN(T.subtotal)}\nCódigo ${s.appliedPromo.code}: -${MXN(T.discount)}` : '';
+    const waMessage = `Hola, equipo de reservaciones. Solicito cotizar mi aventura en Cumbre Salvaje.\nFolio: ${s.folio || 'CS-—'}\nFecha solicitada: ${this.dateLabel()}\nVisitantes: ${this.visitorsLabel()}${waFood}\n\nServicios:\n${T.lines.map(waLine).join('\n')}${waPromo}\n\n${T.hasQuote?'Total parcial estimado':'Total estimado'}: ${MXN(T.total)}${T.hasQuote?'\nServicios pendientes de cotizar. Total final y anticipo por confirmar.':'\nAnticipo sugerido 50%: '+MXN(T.deposit)}\nQuedo pendiente de disponibilidad y anticipo.${s.celeb && s.celebText ? `\nNota: ${s.celebText}` : ''}`;
     const tabDefs = [{ id:'explorar', label:'Explorar', screen:'home' }, { id:'momentos', label:'Momentos', screen:'momentos' }, { id:'aventura', label:'Mi aventura', screen:'carrito' }, { id:'reservas', label:'Reservaciones', screen:'reserva' }, { id:'ayuda', label:'Ayuda', screen:'ayuda' }];
     const activeTab = { home:'explorar', explorar:'explorar', momentos:'momentos', carrito:'aventura', reserva:'reservas', ayuda:'ayuda' }[sc];
     const onDark = sc === 'momentos';
@@ -3743,7 +3795,7 @@ class Component extends DCLogic {
       campTentMode:s.campTentMode,campTentOwn:s.campTentMode==='own',campTentRent:s.campTentMode==='rent',setCampTentOwn:()=>this.setCampTentMode('own'),setCampTentRent:()=>this.setCampTentMode('rent'),campTentOptions,campTentStats:tentStats,campTentHasShortage:s.campTentMode==='rent'&&tentStats.campers>0&&!tentStats.enough,campTentShortage:s.campTentMode==='rent'&&tentStats.campers>0&&!tentStats.enough?`Faltan ${tentStats.campers-tentStats.cap} lugar${tentStats.campers-tentStats.cap===1?'':'es'} de capacidad.`:'',campTentHasExcess:s.campTentMode==='rent'&&tentStats.campers>0&&tentStats.cap>0&&!tentStats.notExcessive,campTentExcess:s.campTentMode==='rent'&&tentStats.campers>0&&tentStats.cap>0&&!tentStats.notExcessive?`La capacidad seleccionada (${tentStats.cap}) es demasiado alta para ${tentStats.campers} campista${tentStats.campers===1?'':'s'}. Reduce casas.`:'',campTentValid:s.campTentMode==='rent'&&tentStats.valid,
       celebOn: s.celeb === true, celebNo: () => this.setState({ celeb: false }), celebSi: () => this.setState({ celeb: true }), celebText: s.celebText, setCeleb: e => this.setState({ celebText: e.target.value }),
       celebNoBg: s.celeb === false ? INK : 'transparent', celebNoColor: s.celeb === false ? PAPER : INK, celebSiBg: s.celeb === true ? INK : 'transparent', celebSiColor: s.celeb === true ? PAPER : INK,
-      summaryLine: `${this.visitorsLabel()}${s.startDate ? ' · ' + this.dateLabel() : ''}`, totalTitle:T.hasQuote?'Total parcial estimado':'Total estimado',hasKnownTotal:!T.hasQuote,totalPending:T.hasQuote,totalPendingNote:T.hasQuote?'Incluye servicios por cotizar. El equipo confirmará el total y el anticipo.':'Importes estimados; sujetos a disponibilidad y confirmación del equipo.',totalLabel:MXN(T.total),depositLabel:T.deposit==null?'Por confirmar':MXN(T.deposit),balanceLabel:T.balance==null?'Por confirmar':MXN(T.balance), totalKey: 'k' + s.totalKey,
+      summaryLine: `${this.visitorsLabel()}${s.startDate ? ' · ' + this.dateLabel() : ''}`, totalTitle:T.hasQuote?'Total parcial estimado':T.discount>0?'Total con beneficio':'Total estimado',hasKnownTotal:!T.hasQuote,totalPending:T.hasQuote,totalPendingNote:T.hasQuote?'Incluye servicios por cotizar. El equipo confirmará el total y el anticipo.':'Importes estimados; sujetos a disponibilidad y confirmación del equipo.',subtotalLabel:MXN(T.subtotal),discountLabel:MXN(T.discount),hasPromoDiscount:T.discount>0,promoCodeLabel:s.appliedPromo&&s.appliedPromo.code?s.appliedPromo.code:'',totalLabel:MXN(T.total),depositLabel:T.deposit==null?'Por confirmar':MXN(T.deposit),balanceLabel:T.balance==null?'Por confirmar':MXN(T.balance), totalKey: 'k' + s.totalKey,
       nextStep, nextDisabled, nextOpacity: nextDisabled ? 0.45 : 1, nextLabel: stepIdx === STEPS.length - 1 ? 'Ver mi aventura' : 'Continuar',
       cartEmpty: !hasSel, cartFull: hasSel, cartRows,
       name: s.name, phone: s.phone, email: s.email,
@@ -3753,13 +3805,14 @@ class Component extends DCLogic {
       nameBorder: s.formError && !s.name.trim() ? ACC : 'rgba(23,26,24,.12)', phoneBorder: s.formError && s.phone.replace(/\D/g, '').length < 10 ? ACC : 'rgba(23,26,24,.12)',
       hasFormError: !!s.formError, formError: s.formError,
       submitDatos: () => { if (!s.name.trim()) return this.setState({ formError: 'Escribe tu nombre para poder enviarte la cotización.' }); if (s.phone.replace(/\D/g, '').length < 10) return this.setState({ formError: 'Necesitamos un WhatsApp de 10 dígitos para confirmar disponibilidad.' }); this.go('resumen'); },
-      dateLabel: this.dateLabel(), visitorsLabel: this.visitorsLabel(), serviceLines: T.lines.map(l => ({ t: l.title+(l.sub?' · '+l.sub:''), a: l.quote ? 'Por cotizar' : MXN(l.amount) })), servicesText: this.servicesText(T.lines),
+      dateLabel: this.dateLabel(), visitorsLabel: this.visitorsLabel(), serviceLines: T.lines.map(l => ({ t: l.title+(l.sub?' · '+l.sub:''), a: l.quote ? 'Por cotizar' : MXN(l.amount) })).concat(T.discount>0&&s.appliedPromo?[{t:'Descuento · '+s.appliedPromo.code,a:'−'+MXN(T.discount)}]:[]), servicesText: this.servicesText(T.lines)+(T.discount>0&&s.appliedPromo?' · Descuento '+s.appliedPromo.code:''),
+      promoOpen:s.promoOpen,promoInput:s.promoInput,promoBusy:s.promoBusy,promoApplied:!!s.appliedPromo,promoCanApply:!T.hasQuote,promoClass:(s.promoOpen?'is-open ':'')+(s.promoStatus==='success'?'is-success':s.promoStatus==='error'?'is-error':''),promoIcon:s.promoStatus==='success'?'✓':'🎁',promoTitle:s.appliedPromo?'¡Beneficio desbloqueado!':'¿Tienes un código especial?',promoSubtitle:T.hasQuote?'Disponible cuando todos los servicios tengan precio confirmado.':s.appliedPromo?'Tu descuento se refleja en el total y en tu cotización.':'Agrégalo aquí y descubre si tu aventura tiene beneficio 🎁',promoButtonLabel:s.promoBusy?'Validando…':'Aplicar',promoAppliedLabel:s.appliedPromo?(s.appliedPromo.label||s.appliedPromo.code):'',promoAppliedSavings:T.discount>0?'Ahorras '+MXN(T.discount):s.appliedPromo&&T.subtotal<Number(s.appliedPromo.min_total||0)?'Necesitas un subtotal mínimo de '+MXN(s.appliedPromo.min_total):'',hasPromoMessage:!!s.promoMessage,promoMessage:s.promoMessage,promoMessageClass:s.promoStatus==='success'?'success':s.promoStatus==='error'?'error':'',togglePromo:()=>this.setState(st=>({promoOpen:!st.promoOpen})),setPromoInput:e=>this.setState({promoInput:String(e.target.value||'').toUpperCase(),promoStatus:'idle',promoMessage:''}),applyPromo:()=>this.applyPromoCode(),removePromo:()=>this.removePromoCode(),
       acceptPolicies: s.acceptPolicies, togglePolicies: () => this.setState(st => ({ acceptPolicies: !st.acceptPolicies, policyError: false })), polRing: s.acceptPolicies ? ACC : MUTED, polFill: s.acceptPolicies ? ACC : 'transparent', polBorder: s.acceptPolicies ? ACC : BORDER, policyError: s.policyError,
       goCombo: () => this.go('combo'),
       generate: () => this.generateQuote(), generateDisabled:s.savingQuote, generateOpacity:s.savingQuote?0.6:1, generateLabel:s.savingQuote?'Guardando cotización…':'Generar mi Pase de Aventura', hasSaveError:!!s.saveError, saveError:s.saveError,
       folio: s.folio || 'CS-—', qrPending: this.qr(s.folio || 'pending', false), qrAnimated: this.qr(s.folio || 'pending', true),
       // No client-side payment or reservation confirmation. Only a future trusted backend may confirm.
-      waMessage, waHref: 'https://wa.me/523331436632?text=' + encodeURIComponent(waMessage), trackWhatsApp:()=>this.trackEvent('whatsapp_clicked',{folio:s.folio||null,total:T.total}),
+      waMessage, waHref: 'https://wa.me/523331436632?text=' + encodeURIComponent(waMessage), trackWhatsApp:()=>this.trackEvent('whatsapp_clicked',{folio:s.folio||null,subtotal:T.subtotal,discount:T.discount,total:T.total,promo_code:s.appliedPromo&&T.discount>0?s.appliedPromo.code:null}),
       copyLabel: s.copied ? 'Mensaje copiado' : 'Copiar mensaje', copyMsg: () => { try { navigator.clipboard && navigator.clipboard.writeText(waMessage); } catch (e) {} this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
       noPass: !s.folio, hasPass: !!s.folio, passKind:'Pase de Aventura',passStatus:'Solicitud pendiente de confirmar',passTagBg:PAPER,passTagColor:INK,
       openPass: () => { this.setState({ qrKey: s.qrKey + 1 }); this.go('pase'); }, timeline: tl,

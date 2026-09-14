@@ -459,6 +459,7 @@ small,.small{font-size:12px;line-height:1.4}
 </button>
 <sc-if value="{{ l.showCapacity }}"><div class="capacity-box" data-lodging-capacity="{{ l.id }}">
 <div class="notice">{{ l.capacityText }}</div>
+<sc-if value="{{ l.hasExtraGuest }}"><div class="notice warning">{{ l.extraGuestText }}</div></sc-if>
 <div class="field-row"><div class="field-copy"><b>Cantidad de {{ l.unitName }}</b><small>{{ l.unitHint }}</small></div><div class="stepper"><button aria-label="Quitar unidad de hospedaje" disabled="{{ l.unitDecDisabled }}" onclick="{{ l.unitDec }}">−</button><strong>{{ l.unitCount }}</strong><button aria-label="Agregar unidad de hospedaje" class="plus" disabled="{{ l.unitIncDisabled }}" onclick="{{ l.unitInc }}">+</button></div></div>
 <div class="field-row"><div class="field-copy"><b>Personas asignadas</b><small>Huéspedes de este tipo de alojamiento.</small></div><div class="stepper"><button aria-label="Quitar huésped" disabled="{{ l.guestDecDisabled }}" onclick="{{ l.guestDec }}">−</button><strong>{{ l.guestCount }}</strong><button aria-label="Agregar huésped" class="plus" disabled="{{ l.guestIncDisabled }}" onclick="{{ l.guestInc }}">+</button></div></div>
 <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid rgba(23,26,24,.08);padding-top:10px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Subtotal hospedaje</div><div style="font-size:16px;font-weight:800">{{ l.subLabel }}</div></div>
@@ -467,6 +468,19 @@ small,.small{font-size:12px;line-height:1.4}
 <div style="font-size:12px;color:rgba(23,26,24,.6);line-height:1.35">¿Quiénes pernoctan en Camping? El precio es por persona y por noche.</div>
 <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div style="font-size:13px;font-weight:700">Adultos</div><div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none"><button aria-label="Quitar adulto del camping" onclick="{{ l.aDec }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18">−</button><div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ l.qAdults }}</div><button aria-label="Agregar adulto al camping" onclick="{{ l.aInc }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7">+</button></div></div>
 <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div style="font-size:13px;font-weight:700">Niños</div><div style="display:flex;align-items:center;border-radius:999px;background:#F6F1E7;padding:3px;flex:none"><button aria-label="Quitar niño del camping" onclick="{{ l.kDec }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px;font-weight:600;color:#171A18">−</button><div style="min-width:38px;text-align:center;font-size:16px;font-weight:800">{{ l.qKids }}</div><button aria-label="Agregar niño al camping" onclick="{{ l.kInc }}" style="width:44px;height:44px;border-radius:999px;border:0;background:#F26A2E;font-size:20px;font-weight:600;color:#F6F1E7">+</button></div></div>
+<div style="border-top:1px solid rgba(23,26,24,.08);padding-top:12px;display:flex;flex-direction:column;gap:10px">
+<div><div style="font-size:13px;font-weight:800">¿Necesitas casa de campaña?</div><div style="font-size:11px;color:rgba(23,26,24,.58);line-height:1.4">Indica si llevarás la tuya o si quieres rentar una dentro de Cumbre.</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button onclick="{{ setCampTentOwn }}" style="height:42px;border-radius:14px;border:2px solid {{ campTentOwn ? '#171A18' : 'rgba(23,26,24,.12)' }};background:{{ campTentOwn ? '#171A18' : '#FFFDF8' }};color:{{ campTentOwn ? '#F6F1E7' : '#171A18' }};font-weight:700">Llevo la mía</button><button onclick="{{ setCampTentRent }}" style="height:42px;border-radius:14px;border:2px solid {{ campTentRent ? '#F26A2E' : 'rgba(23,26,24,.12)' }};background:{{ campTentRent ? '#F26A2E' : '#FFFDF8' }};color:{{ campTentRent ? '#F6F1E7' : '#171A18' }};font-weight:700">Rentar casa</button></div>
+<sc-if value="{{ campTentRent }}"><div style="display:flex;flex-direction:column;gap:8px">
+<sc-for as="x" list="{{ campTentOptions }}">
+<button onclick="{{ x.toggle }}" style="width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:12px;border:2px solid {{ x.border }};border-radius:16px;background:#FFFDF8;color:#171A18"><div style="flex:1"><div style="font-size:14px;font-weight:800">{{ x.name }}</div><div style="font-size:11px;color:rgba(23,26,24,.58)">{{ x.priceShort }} · {{ x.qtyHint }}</div></div><div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ x.ring }};background:{{ x.fill }};color:#F6F1E7;display:flex;align-items:center;justify-content:center"><sc-if value="{{ x.selected }}"><svg fill="none" height="13" stroke="currentColor" stroke-width="3.5" viewbox="0 0 24 24" width="13"><path d="M20 6 9 17l-5-5"></path></svg></sc-if></div></button>
+<sc-if value="{{ x.showQty }}"><div style="padding:10px 12px;border:1px solid rgba(23,26,24,.08);border-radius:14px;background:#F8F4EC;display:flex;flex-direction:column;gap:7px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><div style="font-size:12px;font-weight:800">Cantidad</div><div style="display:flex;align-items:center;border-radius:999px;background:#EEE7DA;padding:3px"><button onclick="{{ x.decQty }}" style="width:36px;height:36px;border-radius:999px;border:0;background:#FFFDF8;font-size:20px">−</button><strong style="min-width:34px;text-align:center">{{ x.qty }}</strong><button disabled="{{ x.incDisabled }}" onclick="{{ x.incQty }}" style="width:36px;height:36px;border-radius:999px;border:0;background:#F26A2E;color:#F6F1E7;font-size:20px;opacity:{{ x.incDisabled ? .35 : 1 }}">+</button></div></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>{{ x.capacitySummary }}</span><b>{{ x.qtySubtotal }}</b></div></div></sc-if>
+</sc-for>
+<sc-if value="{{ campTentHasShortage }}"><div class="notice warning">{{ campTentShortage }}</div></sc-if>
+<sc-if value="{{ campTentHasExcess }}"><div class="notice warning">{{ campTentExcess }}</div></sc-if>
+<sc-if value="{{ campTentValid }}"><div class="notice">Capacidad de casas suficiente para las personas que acampan.</div></sc-if>
+</div></sc-if>
+</div>
 <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid rgba(23,26,24,.08);padding-top:10px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">Subtotal camping</div><div style="font-size:16px;font-weight:800">{{ l.subLabel }}</div></div>
 </div></sc-if>
 </div>
@@ -2467,7 +2481,7 @@ module.exports = QRCode;
     setState(updater, cb){
       const patch=typeof updater==='function'?updater(this.state,this.props):updater;
       if(patch && typeof patch==='object'){
-        const fields=['day','startDate','endDate','adults','kids','stay','lodging','lodgingQty','acts','extras','extraQty','actQty','actAdults','actKids','units','foodDiners','lodgingGuests','spotStart','spotEnd','spotGuests','tacoQty','quesadillaGQty','platilloQty','menuQty','menuPick','menuExtra','drinks','drinkPeople','drinkNote','comboAdded','name','phone','email','celebText'];
+        const fields=['day','startDate','endDate','adults','kids','stay','lodging','lodgingQty','acts','extras','extraQty','actQty','actAdults','actKids','units','foodDiners','lodgingGuests','campTentMode','spotStart','spotEnd','spotGuests','tacoQty','quesadillaGQty','platilloQty','menuQty','menuPick','menuExtra','drinks','drinkPeople','drinkNote','comboAdded','name','phone','email','celebText'];
         const edited=this.state.folio&&fields.some(k=>Object.prototype.hasOwnProperty.call(patch,k)&&JSON.stringify(patch[k])!==JSON.stringify(this.state[k]));
         this.state=Object.assign({},this.state,patch,edited?{folio:null,quoteId:null,confirmed:false}:{});
       }
@@ -2747,7 +2761,7 @@ module.exports = QRCode;
 
 </script>
 <script>
-const BUILD_ID = 'CSG-20260913-1.7.0';
+const BUILD_ID = 'CSG-20260913-1.8.0';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2828,7 +2842,7 @@ MENU.forEach(m => { if (m.extraPrice) m.desc = `Guiso a elegir · guiso extra +$
 // y no los repita como texto. per: u = por unidad/noche, an = adulto/niño.
 const LODG = [
   { id:'cabana', name:'Cabaña estilo cuevita', price:2000, per:'u', minGuests:1, maxGuests:2, img:IMG.cueva2 },
-  { id:'glamping', name:'Glamping', price:3500, per:'u', minGuests:2, maxGuests:4, img:IMG.glamping },
+  { id:'glamping', name:'Glamping', price:3500, per:'u', minGuests:2, idealMaxGuests:4, maxGuests:5, img:IMG.glamping },
   { id:'camping', name:'Camping', price:200, kids:150, per:'an', img:IMG.camping },
 ];
 const lodgLabel = l => l.per === 'an' ? `${MXN(l.price)} adulto · ${MXN(l.kids)} niño` : `${MXN(l.price)} por noche`;
@@ -2850,7 +2864,7 @@ const CAT = [
   { id:'columpio', name:'Columpio panorámico', group:'Photo spots', cat:'especiales', price:50, per:'u', dur:'Por turno', img:IMG.columpio, gallery:[IMG.columpio], short:'Columpio con vista al valle. Foto obligada.', desc:'Columpio con vista al valle. Foto obligada.', incl:['Turno en columpio','Arnés'], restr:'Uso con arnés y supervisión.' },
   { id:'herpetario', name:'Herpetario', group:'Naturaleza y safari', cat:'naturaleza', cat2:'herpetario', price:45, per:'pp', dur:'Visita guiada', img:IMG.herp, gallery:[IMG.herp, IMG.herpOld], short:'Reptiles exóticos y serpientes venenosas dentro de un herpetario único.', desc:'Adéntrate en nuestro herpetario con forma de serpiente de cascabel y conoce diferentes especies de reptiles exóticos y serpientes venenosas.', incl:['Recorrido con personal del herpetario','Observación segura de reptiles y especies exóticas'], restr:'No tocar ni golpear los cristales. Menores siempre con un adulto. Sigue las indicaciones del personal.' },
   { id:'hospedaje', lodgingId:'cabana', name:'Cabaña estilo cuevita', group:'Hospedaje', cat:'hospedaje', price:2000, per:'u', dur:'Por noche', img:IMG.cueva, gallery:[IMG.cueva, IMG.cueva2], lodging:true, short:'Cabaña estilo cuevita integrada al paisaje y con vista a la sierra.', desc:'Cabaña estilo cuevita integrada al paisaje, con vista a la sierra e interior acogedor.', incl:['Cabaña estilo cuevita','Estancia por noche'], restr:'Capacidad máxima de 2 personas por cabaña. Sujeto a disponibilidad.' },
-  { id:'hospedaje-glamping', lodgingId:'glamping', name:'Glamping', group:'Hospedaje', cat:'hospedaje', price:3500, per:'u', dur:'Por noche', img:IMG.glamping, gallery:[IMG.glamping], lodging:true, short:'Cabaña glamping triangular para disfrutar la sierra con mayor comodidad.', desc:'Hospédate en una cabaña glamping triangular rodeada de naturaleza.', incl:['Glamping','Estancia por noche'], restr:'Capacidad de 2 a 4 personas por cabaña. Sujeto a disponibilidad.' },
+  { id:'hospedaje-glamping', lodgingId:'glamping', name:'Glamping', group:'Hospedaje', cat:'hospedaje', price:3500, per:'u', dur:'Por noche', img:IMG.glamping, gallery:[IMG.glamping], lodging:true, short:'Cabaña glamping triangular para disfrutar la sierra con mayor comodidad.', desc:'Hospédate en una cabaña glamping triangular rodeada de naturaleza.', incl:['Glamping','Estancia por noche'], restr:'Capacidad ideal de 2 a 4 personas por Glamping. Se permite una 5.ª persona con colchoneta adicional, sujeta a disponibilidad.' },
   { id:'hospedaje-camping', lodgingId:'camping', name:'Camping', group:'Hospedaje', cat:'hospedaje', price:200, kids:150, per:'an', dur:'Por noche', img:IMG.camping, gallery:[IMG.camping], lodging:true, short:'Zona de camping para pasar la noche rodeado de naturaleza.', desc:'Acampa dentro de Cumbre Salvaje y disfruta la noche en la sierra.', incl:['Acceso a zona de camping','Estancia por noche'], restr:'Fogatas solo en zonas autorizadas. Respeta horarios y el descanso de otros visitantes.' },
   { id:'alimentos', name:'Alimentos y bebidas', group:'Alimentos', cat:'alimentos', price:30, per:'menu', dur:'Arma tu combo', img:IMG.food, gallery:[IMG.food], combo:true, short:'Tacos, platillos, quesadillas y molletes. Arma tu combo.', desc:'Menús para grupos, celebraciones y empresas, servidos en el parque. El equipo de reservaciones cotiza según asistentes y menú.', incl:['Servicio de alimentos en sitio','Montaje para grupos'], restr:'Se cotiza por separado. Solo se incluye lo especificado en la cotización confirmada.' },
 ];
@@ -2910,7 +2924,7 @@ class Component extends DCLogic {
     day: null, startDate: '', endDate: '', dateNotice: '', adults: 2, kids: 2, stay: null, lodging: null, lodgingQty:{cabana:0,glamping:0,camping:0}, acts: {}, extras: {}, celeb: null, celebText: '',
     // Cantidades independientes por actividad. NUNCA se inicializan con el total del grupo.
     actQty: {}, actAdults: {}, actKids: {}, units: {}, extraQty: {}, foodDiners: 1, qtyWarn: '',
-    lodgingGuests: {cabana:0,glamping:0}, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
+    lodgingGuests: {cabana:0,glamping:0}, campTentMode:null, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
     name: '', phone: '', email: '', formError: '', acceptPolicies: false, policyError: false,
     folio: null, quoteId: null, sessionId: getSessionId(), savingQuote: false, saveError: '', confirmed: false, loadingExplore: false, copied: false, qrKey: 0,
     momentIdx: 0, frameIdx: 0, saved: {}, toast: '', toastKey: 0, badgeKey: 0, totalKey: 0,
@@ -2984,7 +2998,9 @@ class Component extends DCLogic {
         const available=(s.adults+s.kids)-this.lodgingAssignedGuests(s,id), min=this.minGuestsPerUnit(l); if(available<min) return {qtyWarn:`${l.name}: necesitas al menos ${min} visitante${min===1?'':'s'} disponible${min===1?'':'s'}.`};
         lodgingQty[id]=1; lodgingGuests[id]=min;
       }
-      return {lodgingQty,lodgingGuests,actAdults,actKids,lodging:LODG.filter(x=>(lodgingQty[x.id]||0)>0).map(x=>x.id).join(',')||null,totalKey:s.totalKey+1,qtyWarn:''};
+      const patch={lodgingQty,lodgingGuests,actAdults,actKids,lodging:LODG.filter(x=>(lodgingQty[x.id]||0)>0).map(x=>x.id).join(',')||null,totalKey:s.totalKey+1,qtyWarn:''};
+      if(id==='camping'&&on){patch.campTentMode=null;patch.extras={...s.extras,tienda2:false,tienda4:false};patch.extraQty={...s.extraQty,tienda2:0,tienda4:0};}
+      return patch;
     });
   }
   foodLines(){
@@ -3026,6 +3042,25 @@ class Component extends DCLogic {
     if(!GUISOS.includes(g)) return;
     this.setState(s=>{ const old=integer(s.platilloQty[g]||0,0,99), total=this.platilloCount(), value=integer(old+delta,0,99-total+old), platilloQty={...s.platilloQty,[g]:value}; return {platilloQty,menuQty:{...s.menuQty,platillo:total-old+value},totalKey:s.totalKey+1}; });
   }
+  setCampTentMode(mode){
+    if(!['own','rent'].includes(mode)) return;
+    this.setState(s=>{
+      const extras={...s.extras}, extraQty={...s.extraQty};
+      if(mode==='own'){
+        extras.tienda2=false; extras.tienda4=false;
+        extraQty.tienda2=0; extraQty.tienda4=0;
+      }
+      return {campTentMode:mode,extras,extraQty,totalKey:s.totalKey+1,qtyWarn:''};
+    });
+  }
+  toggleCampTent(id){
+    const x=EXTRAS.find(x=>x.id===id&&x.camping); if(!x) return;
+    this.setState(s=>{
+      const next=!s.extras[id], extras={...s.extras,[id]:next}, extraQty={...s.extraQty};
+      extraQty[id]=next?Math.max(1,integer(extraQty[id]||1,1,99)):0;
+      return {campTentMode:'rent',extras,extraQty,totalKey:s.totalKey+1,qtyWarn:''};
+    });
+  }
   campingGuests(state){
     const s=state||this.state;
     return Math.max(0,(s.actAdults.camping||0)+(s.actKids.camping||0));
@@ -3039,7 +3074,9 @@ class Component extends DCLogic {
     const campers=this.campingGuests(s);
     const largest=q4>0?4:q2>0?2:0;
     const maxUseful=campers>0?campers+Math.max(0,largest-1):0;
-    return {q2,q4,cap,campers,largest,maxUseful,valid:cap<=maxUseful};
+    const enough=campers>0 && cap>=campers;
+    const notExcessive=cap<=maxUseful;
+    return {q2,q4,cap,campers,largest,maxUseful,enough,notExcessive,valid:enough&&notExcessive};
   }
   maxTentQty(id,state){
     const s=state||this.state, cap=this.tentCapacity(id);
@@ -3049,7 +3086,7 @@ class Component extends DCLogic {
     let max=0;
     for(let q=1;q<=99;q++){
       const st=this.tentStats(s,id,q);
-      if(st.valid) max=q; else break;
+      if(st.notExcessive) max=q; else break;
     }
     return max;
   }
@@ -3114,7 +3151,16 @@ class Component extends DCLogic {
         }
       }
       if(assigned>this.groupTotal()) return {screen:'estancia',message:`Asignaste ${assigned} huéspedes entre los alojamientos, pero tu grupo tiene ${this.groupTotal()} visitantes.`};
-      if((s.lodgingQty.camping||0)>0){ const campers=this.campingGuests(s), ts=this.tentStats(s); if((s.extras.tienda2||s.extras.tienda4)&&campers<1) return {screen:'estancia',message:'Indica quiénes van a acampar antes de rentar casas de campaña.'}; if(!ts.valid) return {screen:'extras',message:`Las casas seleccionadas ofrecen capacidad para ${ts.cap} personas, pero solo ${campers} van a acampar. Reduce la cantidad de casas.`}; }
+      if((s.lodgingQty.camping||0)>0){
+        const campers=this.campingGuests(s), ts=this.tentStats(s);
+        if(campers<1) return {screen:'estancia',message:'Camping: selecciona al menos una persona que pernoctará.'};
+        if(!s.campTentMode) return {screen:'estancia',message:'Camping: indica si llevarás tu propia casa de campaña o si necesitas rentarla.'};
+        if(s.campTentMode==='rent'){
+          if(!(s.extras.tienda2||s.extras.tienda4)) return {screen:'estancia',message:'Camping: selecciona al menos una casa de campaña para rentar.'};
+          if(!ts.enough) return {screen:'estancia',message:`Las casas seleccionadas tienen capacidad para ${ts.cap} personas y van a acampar ${campers}. Agrega capacidad para ${campers-ts.cap} persona${campers-ts.cap===1?'':'s'} más.`};
+          if(!ts.notExcessive) return {screen:'estancia',message:`Las casas seleccionadas ofrecen capacidad para ${ts.cap} personas, pero solo ${campers} van a acampar. Reduce la cantidad de casas.`};
+        }
+      }
     }
     for(const c of CAT.filter(c=>c.seats)){const error=this.vehicleIssue(c); if(error) return {screen:'actividades',message:error};}
     const error=this.spotIssue(); if(error) return {screen:'actividades',message:error};
@@ -3140,7 +3186,7 @@ class Component extends DCLogic {
         items.push({item_code:c.id,item_name:c.name,category:c.group,quantity:u==='unit'?un:1,participants:u==='an'?qa+qk:u==='stay'?s.spotGuests:q,units:u==='unit'?un:u==='stay'?1:null,adults:u==='an'?qa:null,children:u==='an'?qk:null,unit_price:c.price||0,line_total:l.amount,details}); return;
       }
       const x=EXTRAS.find(x=>x.id===l.id);
-      if(x){const q=x.multi?integer(s.extraQty[x.id]||1,1,99):1; const ts=x.camping?this.tentStats(s):null; items.push({item_code:x.id,item_name:x.name,category:'extras',quantity:q,participants:null,units:null,adults:null,children:null,unit_price:x.price,line_total:l.amount,details:x.multi?{capacity_per_tent:x.id==='tienda4'?4:2,camping_guests:ts?ts.campers:null,rented_capacity_total:ts?ts.cap:null}:{}}); return;}
+      if(x){const q=x.multi?integer(s.extraQty[x.id]||1,1,99):1; const ts=x.camping?this.tentStats(s):null; items.push({item_code:x.id,item_name:x.name,category:'extras',quantity:q,participants:null,units:null,adults:null,children:null,unit_price:x.price,line_total:l.amount,details:x.multi?{capacity_per_tent:x.id==='tienda4'?4:2,camping_guests:ts?ts.campers:null,rented_capacity_total:ts?ts.cap:null,tent_mode:s.campTentMode}:{}}); return;}
     });
     if(s.comboAdded){
       this.foodLines().forEach(f=>items.push({item_code:f.id,item_name:f.name,category:'alimentos',quantity:f.qty,participants:null,units:null,adults:null,children:null,unit_price:f.unitPrice,line_total:f.amount,details:{diners:s.foodDiners}}));
@@ -3166,7 +3212,7 @@ class Component extends DCLogic {
       p_email:s.email,
       p_total_estimated:T.total,
       p_source:meta.source,
-      p_meta:{...meta,visit_type:s.visitType,stay:s.stay,lodgings:s.lodgingQty,start_date:s.startDate,end_date:s.endDate||s.startDate,nights:this.nightsCount(),celebration:s.celeb? s.celebText||true:false,has_pending_quote:T.hasQuote},
+      p_meta:{...meta,visit_type:s.visitType,stay:s.stay,lodgings:s.lodgingQty,start_date:s.startDate,end_date:s.endDate||s.startDate,nights:this.nightsCount(),celebration:s.celeb? s.celebText||true:false,has_pending_quote:T.hasQuote,camp_tent_mode:s.campTentMode},
       p_items:this.quoteItems()
     });
     const row=Array.isArray(result)?result[0]:result;
@@ -3197,7 +3243,7 @@ class Component extends DCLogic {
     if ((this.state.lodgingQty&&this.state.lodgingQty.camping)||0) return;
     const stuck = EXTRAS.filter(x => x.camping && this.state.extras[x.id]);
     if (!stuck.length) return;
-    this.setState(st => { const extras = { ...st.extras }; stuck.forEach(x => { delete extras[x.id]; }); return { extras, totalKey: st.totalKey + 1 }; });
+    this.setState(st => { const extras = { ...st.extras, tienda2:false, tienda4:false }; const extraQty={...st.extraQty,tienda2:0,tienda4:0}; return { extras, extraQty, campTentMode:null, totalKey: st.totalKey + 1 }; });
   }
   componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._t2); clearTimeout(this._t3); this.detachChips(); }
   // ---- Controlador de carril horizontal reutilizable -------------------------------
@@ -3387,6 +3433,7 @@ class Component extends DCLogic {
         if (lid === 'camping') {
           patch.extras = { ...s.extras, tienda2:false, tienda4:false };
           patch.extraQty = { ...s.extraQty, tienda2:0, tienda4:0 };
+          patch.campTentMode = null;
         }
         const remaining = LODG.some(l => l.id !== lid && ((lodgingQty[l.id] || 0) > 0));
         if (!remaining) { patch.stay = 'dia'; patch.endDate = ''; }
@@ -3573,7 +3620,7 @@ class Component extends DCLogic {
     const nextDisabled = (sc==='fecha'&&!!dateIssue)||(sc==='estancia'&&(!s.stay||(s.stay==='noche'&&(this.selectedLodgingIds(s).length===0||!!dateIssue)))) || (sc==='actividades' && !!activityError);
     const nextStep = () => { if (nextDisabled) return; if (stepIdx < STEPS.length - 1) this.go(STEPS[stepIdx + 1]); else this.go('carrito'); };
     const lodgingWarn=this.selectedLodgingIds(s).length?(()=>{const assigned=this.lodgingAssignedGuests(s);return assigned>this.groupTotal()?`Asignaste ${assigned} huéspedes, pero tu grupo tiene ${this.groupTotal()} visitantes.`:'';})():'';
-    const lodgings = LODG.map(l => { const unitCount=(s.lodgingQty&&s.lodgingQty[l.id])||0, on=unitCount>0, qa=s.actAdults[l.id]||0,qk=s.actKids[l.id]||0, nights=this.nightsCount(); const guests=l.per==='an'?qa+qk:(s.lodgingGuests[l.id]||0); const cap=unitCount*(l.maxGuests||0); const min=unitCount*(l.per==='an'?0:this.minGuestsPerUnit(l)); const available=this.groupTotal()-this.lodgingAssignedGuests(s,l.id); const maxUnits=l.per==='an'?1:this.maxLodgingUnits(l.id,s); const amount=l.per==='an'?(l.price*qa+(l.kids||0)*qk)*nights:l.price*unitCount*nights; return { ...l, selected:on, priceLabel:lodgLabel(l), showSel:on&&l.per==='an', showCapacity:on&&!!l.maxGuests, capacityText:l.id==='glamping'?`${unitCount} glamping${unitCount===1?'':'s'} · capacidad máxima ${cap} personas (${l.maxGuests} por unidad).`:`${unitCount} cuevita${unitCount===1?'':'s'} · capacidad máxima ${cap} personas (${l.maxGuests} por unidad).`, unitName:l.id==='glamping'?'glampings':'cuevitas', unitHint:l.id==='glamping'?'Capacidad recomendada 2–4 personas por unidad.':'Máximo 2 personas por unidad.', unitCount, unitDec:()=>this.setLodgingQty(l.id,-1), unitInc:()=>this.setLodgingQty(l.id,1), unitDecDisabled:unitCount<=1, unitIncDisabled:unitCount>=maxUnits, guestCount:guests, guestDec:()=>this.setLodgingGuests(l.id,-1), guestInc:()=>this.setLodgingGuests(l.id,1), guestDecDisabled:guests<=min, guestIncDisabled:guests>=Math.min(cap,available), qAdults:qa,qKids:qk, aDec:()=>this.setActAN(l.id,'a',-1),aInc:()=>this.setActAN(l.id,'a',1),kDec:()=>this.setActAN(l.id,'k',-1),kInc:()=>this.setActAN(l.id,'k',1), subLabel:nights>0?MXN(amount):'Selecciona salida', selBorder:on?ACC:BORDER, hasImg:!!l.img,noImg:!l.img,iconEl:l.icon?icon(l.icon,24):null, select:()=>this.toggleLodging(l.id), ring:on?ACC:MUTED,fill:on?ACC:'transparent',border:on?ACC:BORDER }; });
+    const lodgings = LODG.map(l => { const unitCount=(s.lodgingQty&&s.lodgingQty[l.id])||0, on=unitCount>0, qa=s.actAdults[l.id]||0,qk=s.actKids[l.id]||0, nights=this.nightsCount(); const guests=l.per==='an'?qa+qk:(s.lodgingGuests[l.id]||0); const cap=unitCount*(l.maxGuests||0); const idealCap=unitCount*(l.idealMaxGuests||l.maxGuests||0); const min=unitCount*(l.per==='an'?0:this.minGuestsPerUnit(l)); const available=this.groupTotal()-this.lodgingAssignedGuests(s,l.id); const maxUnits=l.per==='an'?1:this.maxLodgingUnits(l.id,s); const amount=l.per==='an'?(l.price*qa+(l.kids||0)*qk)*nights:l.price*unitCount*nights; const extraGuests=l.id==='glamping'?Math.max(0,guests-idealCap):0; return { ...l, selected:on, priceLabel:lodgLabel(l), showSel:on&&l.per==='an', showCapacity:on&&!!l.maxGuests, capacityText:l.id==='glamping'?`${unitCount} glamping${unitCount===1?'':'s'} · ideal ${2*unitCount}–${idealCap} huéspedes · máximo ${cap}.`:`${unitCount} cuevita${unitCount===1?'':'s'} · capacidad máxima ${cap} personas (${l.maxGuests} por unidad).`, unitName:l.id==='glamping'?'glampings':'cuevitas', unitHint:l.id==='glamping'?'Estándar 2–4 personas por unidad; se permite una 5.ª persona con colchoneta adicional.':'Máximo 2 personas por unidad, sin excepciones por edad.', unitCount, unitDec:()=>this.setLodgingQty(l.id,-1), unitInc:()=>this.setLodgingQty(l.id,1), unitDecDisabled:unitCount<=1, unitIncDisabled:unitCount>=maxUnits, guestCount:guests, guestDec:()=>this.setLodgingGuests(l.id,-1), guestInc:()=>this.setLodgingGuests(l.id,1), guestDecDisabled:guests<=min, guestIncDisabled:guests>=Math.min(cap,available), hasExtraGuest:extraGuests>0, extraGuestText:extraGuests>0?`${extraGuests} huésped${extraGuests===1?'':'es'} adicional${extraGuests===1?'':'es'} en colchoneta.`:'', qAdults:qa,qKids:qk, aDec:()=>this.setActAN(l.id,'a',-1),aInc:()=>this.setActAN(l.id,'a',1),kDec:()=>this.setActAN(l.id,'k',-1),kInc:()=>this.setActAN(l.id,'k',1), subLabel:nights>0?MXN(amount):'Selecciona salida', selBorder:on?ACC:BORDER, hasImg:!!l.img,noImg:!l.img,iconEl:l.icon?icon(l.icon,24):null, select:()=>this.toggleLodging(l.id), ring:on?ACC:MUTED,fill:on?ACC:'transparent',border:on?ACC:BORDER }; });
     // Selector inline de cantidad por actividad: aparece solo cuando la actividad está activa.
     const withQty = it => {
       const u = this.unitOf(it);
@@ -3593,7 +3640,9 @@ class Component extends DCLogic {
     };
     const groups = ['Aventura', 'Naturaleza y safari', 'Photo spots'].map(g => ({ name: g, items: CAT.filter(c => c.group === g && !c.lodging).map(mk).map(withQty) }));
     const tentStats=this.tentStats(s);
-    const extrasList = EXTRAS.filter(x => !x.camping || ((s.lodgingQty&&s.lodgingQty.camping)||0)>0).map(x => { const on = !!s.extras[x.id], q=x.multi?integer(s.extraQty[x.id]||(on?1:0),0,99):1; const maxQty=x.camping?this.maxTentQty(x.id,s):99; const capPer=x.camping?this.tentCapacity(x.id):0; const capSelected=x.camping?tentStats.cap:0; const campers=x.camping?tentStats.campers:0; return { ...x, priceShort: MXN(x.price), selected: on, showQty:!!x.multi&&on, qty:q, qtySubtotal:x.multi?MXN(x.price*Math.max(1,q)):MXN(x.price), qtyHint:x.id==='tienda4'?'Capacidad: hasta 4 personas por casa':'Capacidad: hasta 2 personas por casa', capacitySummary:x.camping?`Capacidad rentada: ${capSelected} persona${capSelected===1?'':'s'} · Campistas: ${campers}`:'', maxQtyLabel:x.camping?`Máximo útil para este tamaño: ${maxQty} casa${maxQty===1?'':'s'}`:'', incDisabled:!!x.camping&&q>=maxQty, decQty:()=>this.setExtraQty(x.id,-1), incQty:()=>this.setExtraQty(x.id,1), toggle: () => this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1, qtyWarn:'' }; if(x.multi) o.extraQty={...st.extraQty,[x.id]:next?Math.max(1,st.extraQty[x.id]||1):0}; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
+    const mapExtra = x => { const on = !!s.extras[x.id], q=x.multi?integer(s.extraQty[x.id]||(on?1:0),0,99):1; const maxQty=x.camping?this.maxTentQty(x.id,s):99; const capSelected=x.camping?tentStats.cap:0; const campers=x.camping?tentStats.campers:0; return { ...x, priceShort: MXN(x.price), selected: on, showQty:!!x.multi&&on, qty:q, qtySubtotal:x.multi?MXN(x.price*Math.max(1,q)):MXN(x.price), qtyHint:x.id==='tienda4'?'Capacidad: hasta 4 personas por casa':'Capacidad: hasta 2 personas por casa', capacitySummary:x.camping?`Capacidad rentada: ${capSelected} persona${capSelected===1?'':'s'} · Campistas: ${campers}`:'', maxQtyLabel:x.camping?`Máximo útil para este tamaño: ${maxQty} casa${maxQty===1?'':'s'}`:'', incDisabled:!!x.camping&&q>=maxQty, decQty:()=>this.setExtraQty(x.id,-1), incQty:()=>this.setExtraQty(x.id,1), toggle: () => x.camping?this.toggleCampTent(x.id):this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1, qtyWarn:'' }; if(x.multi) o.extraQty={...st.extraQty,[x.id]:next?Math.max(1,st.extraQty[x.id]||1):0}; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; };
+    const campTentOptions=EXTRAS.filter(x=>x.camping).map(mapExtra);
+    const extrasList = EXTRAS.filter(x => !x.camping).map(mapExtra);
     const cartRows = T.lines.map(l => ({ kicker: l.kicker, title: l.title, sub: l.sub, amount: l.quote ? 'Por cotizar' : MXN(l.amount), edit: () => this.go(l.step), canRemove: l.id !== 'entrada', remove: () => this.removeCartItem(l.id) }));
     const selCount = Object.values(s.acts).filter(Boolean).length + Object.values(s.extras).filter(Boolean).length + this.selectedLodgingIds(s).length + (s.comboAdded ? 1 : 0);
     const hasSel = selCount > 0 || !!s.startDate;
@@ -3687,10 +3736,11 @@ class Component extends DCLogic {
       dinersHint: `Máximo ${s.adults + s.kids} (tu grupo). No todos tienen que comer.`,
       qtyWarn:activityError||s.qtyWarn,hasQtyWarn:!!(activityError||s.qtyWarn),
       adults: s.adults, kids: s.kids, incA: () => this.setState(st => ({ adults: Math.min(60, st.adults + 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), decA: () => this.setState(st => ({ adults: Math.max(1, st.adults - 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), incK: () => this.setState(st => ({ kids: Math.min(60, st.kids + 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()), decK: () => this.setState(st => ({ kids: Math.max(0, st.kids - 1), totalKey: st.totalKey + 1 }), () => this.clampToGroup()),
-      setDia: () => this.setState(st => ({ stay:'dia',endDate:'',dateNotice:'',lodging:null,lodgingQty:{cabana:0,glamping:0,camping:0},lodgingGuests:{cabana:0,glamping:0},actAdults:{...st.actAdults,camping:0},actKids:{...st.actKids,camping:0},totalKey:st.totalKey+1 })), setNoche: () => this.setState({ stay: 'noche' }), isNoche: s.stay === 'noche',
+      setDia: () => this.setState(st => ({ stay:'dia',endDate:'',dateNotice:'',lodging:null,lodgingQty:{cabana:0,glamping:0,camping:0},lodgingGuests:{cabana:0,glamping:0},campTentMode:null,extras:{...st.extras,tienda2:false,tienda4:false},extraQty:{...st.extraQty,tienda2:0,tienda4:0},actAdults:{...st.actAdults,camping:0},actKids:{...st.actKids,camping:0},totalKey:st.totalKey+1 })), setNoche: () => this.setState({ stay: 'noche' }), isNoche: s.stay === 'noche',
       diaBorder: s.stay === 'dia' ? INK : BORDER, diaBg: s.stay === 'dia' ? INK : '#FFFDF8', diaColor: s.stay === 'dia' ? PAPER : INK,
       nocheBorder: s.stay === 'noche' ? INK : BORDER, nocheBg: s.stay === 'noche' ? INK : '#FFFDF8', nocheColor: s.stay === 'noche' ? PAPER : INK,
       lodgings,hasLodgingWarn:!!lodgingWarn,lodgingWarn,actGroups: groups, extrasList,
+      campTentMode:s.campTentMode,campTentOwn:s.campTentMode==='own',campTentRent:s.campTentMode==='rent',setCampTentOwn:()=>this.setCampTentMode('own'),setCampTentRent:()=>this.setCampTentMode('rent'),campTentOptions,campTentStats:tentStats,campTentHasShortage:s.campTentMode==='rent'&&tentStats.campers>0&&!tentStats.enough,campTentShortage:s.campTentMode==='rent'&&tentStats.campers>0&&!tentStats.enough?`Faltan ${tentStats.campers-tentStats.cap} lugar${tentStats.campers-tentStats.cap===1?'':'es'} de capacidad.`:'',campTentHasExcess:s.campTentMode==='rent'&&tentStats.campers>0&&tentStats.cap>0&&!tentStats.notExcessive,campTentExcess:s.campTentMode==='rent'&&tentStats.campers>0&&tentStats.cap>0&&!tentStats.notExcessive?`La capacidad seleccionada (${tentStats.cap}) es demasiado alta para ${tentStats.campers} campista${tentStats.campers===1?'':'s'}. Reduce casas.`:'',campTentValid:s.campTentMode==='rent'&&tentStats.valid,
       celebOn: s.celeb === true, celebNo: () => this.setState({ celeb: false }), celebSi: () => this.setState({ celeb: true }), celebText: s.celebText, setCeleb: e => this.setState({ celebText: e.target.value }),
       celebNoBg: s.celeb === false ? INK : 'transparent', celebNoColor: s.celeb === false ? PAPER : INK, celebSiBg: s.celeb === true ? INK : 'transparent', celebSiColor: s.celeb === true ? PAPER : INK,
       summaryLine: `${this.visitorsLabel()}${s.startDate ? ' · ' + this.dateLabel() : ''}`, totalTitle:T.hasQuote?'Total parcial estimado':'Total estimado',hasKnownTotal:!T.hasQuote,totalPending:T.hasQuote,totalPendingNote:T.hasQuote?'Incluye servicios por cotizar. El equipo confirmará el total y el anticipo.':'Importes estimados; sujetos a disponibilidad y confirmación del equipo.',totalLabel:MXN(T.total),depositLabel:T.deposit==null?'Por confirmar':MXN(T.deposit),balanceLabel:T.balance==null?'Por confirmar':MXN(T.balance), totalKey: 'k' + s.totalKey,

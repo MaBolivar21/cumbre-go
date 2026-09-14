@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.6.2">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260913-1.7.0">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -223,8 +223,8 @@ small,.small{font-size:12px;line-height:1.4}
 <sc-for as="t" hint-placeholder-count="6" list="{{ visitTypes }}">
 <button onclick="{{ t.select }}" style="width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border:2px solid {{ t.border }};border-radius:18px;background:{{ t.bg }};color:#171A18;transition:transform .12s" style-active="transform:scale(.98)">
 <div style="display:flex;flex-direction:column;gap:3px">
-<div style="font-size:18px;font-weight:800;letter-spacing:-.01em">{{ t.label }}</div>
-<div style="font-size:12px;color:rgba(23,26,24,.6)">{{ t.hint }}</div>
+<div style="display:flex;align-items:center;gap:8px"><span aria-hidden="true" style="font-size:22px;line-height:1">{{ t.emoji }}</span><span style="font-size:18px;font-weight:800;letter-spacing:-.01em">{{ t.label }}</span></div>
+<div style="font-size:12px;color:rgba(23,26,24,.6);padding-left:30px">{{ t.hint }}</div>
 </div>
 <div style="width:24px;height:24px;border-radius:999px;border:2px solid {{ t.ring }};background:{{ t.fill }};flex:none"></div>
 </button>
@@ -741,7 +741,7 @@ small,.small{font-size:12px;line-height:1.4}
 <sc-for as="r" hint-placeholder-count="4" list="{{ cartRows }}">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:#FFFDF8;box-shadow:0 1px 2px rgba(23,26,24,.06)">
 <div style="display:flex;flex-direction:column;gap:2px;flex:1"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(23,26,24,.55);font-weight:800">{{ r.kicker }}</div><div style="font-size:16px;font-weight:800;line-height:1.15">{{ r.title }}</div><div style="font-size:12px;color:rgba(23,26,24,.6)">{{ r.sub }}</div></div>
-<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none"><div style="font-size:14px;font-weight:800">{{ r.amount }}</div><button onclick="{{ r.edit }}" style="background:none;border:0;padding:0;font-size:12px;font-weight:600;color:#F26A2E">Editar</button></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:none"><div style="font-size:14px;font-weight:800">{{ r.amount }}</div><div style="display:flex;align-items:center;gap:8px"><button onclick="{{ r.edit }}" style="background:none;border:0;padding:0;font-size:12px;font-weight:600;color:#F26A2E">Editar</button><sc-if value="{{ r.canRemove }}"><button aria-label="Eliminar {{ r.title }} de mi aventura" onclick="{{ r.remove }}" title="Eliminar" style="width:34px;height:34px;border-radius:10px;border:1px solid rgba(180,52,52,.14);background:rgba(180,52,52,.08);color:#A83A32;padding:0;display:flex;align-items:center;justify-content:center;transition:transform .12s,background .2s" style-active="transform:scale(.92);background:rgba(180,52,52,.15)"><svg fill="none" height="17" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="17"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v5M14 11v5"></path></svg></button></sc-if></div></div>
 </div>
 </sc-for>
 <div style="padding:18px;border-radius:22px;background:#0B2B24;color:#F6F1E7;display:flex;flex-direction:column;gap:10px;margin-top:6px">
@@ -944,7 +944,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.6.2 · Supabase · Folios reales · Launch Candidate</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260913-1.7.0 · Supabase · Personalización · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2603,7 +2603,7 @@ module.exports = QRCode;
 })();
 </script>
 <script>
-/* CSG 1.6.2 — Date-only arithmetic and a calendar isolated from the app renderer.
+/* CSG 1.7.0 — Personalización de inicio, recomendaciones ampliadas y eliminación desde Mi aventura.
    Selection remains a draft until Confirmar; no input[type=date], showPicker or
    synthetic input.click() is used. No browser-native picker state can be lost. */
 (function () {
@@ -2747,7 +2747,7 @@ module.exports = QRCode;
 
 </script>
 <script>
-const BUILD_ID = 'CSG-20260913-1.6.2';
+const BUILD_ID = 'CSG-20260913-1.7.0';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2795,7 +2795,7 @@ function trafficMeta(){
     utm_campaign:q.get('utm_campaign'),
     source:q.get('utm_source')||q.get('source')||q.get('src')||'direct',
     user_agent:navigator.userAgent,
-    build:'CSG-20260913-1.6.2'
+    build:'CSG-20260913-1.7.0'
   };
 }
 function newQuoteFolio(){
@@ -2862,12 +2862,12 @@ const EXTRAS = [
   { id:'tienda4', name:'Casa de campaña · 4 personas', meta:'Solo con camping', price:600, camping:true, multi:true },
 ];
 const TYPES = [
-  { id:'pareja', label:'Pareja', hint:'Spot VIP, caballo, tirolesa', reco:['spot','caballo','tirolesa'] },
-  { id:'familia', label:'Familia', hint:'Safari, granjita, tirolesa', reco:['safari','granjita','tirolesa'] },
-  { id:'amigos', label:'Amigos', hint:'Gotcha, tirolesa, cuatrimoto', reco:['gotcha','tirolesa','cuatrimoto'] },
-  { id:'escuela', label:'Escuela', hint:'Safari, granjita, recorrido', reco:['safari','granjita','ruta'] },
-  { id:'empresa', label:'Empresa', hint:'Gotcha, ranger, alimentos', reco:['gotcha','ranger','alimentos'] },
-  { id:'celebracion', label:'Celebración', hint:'Spot VIP, alimentos, safari', reco:['spot','alimentos','safari'] },
+  { id:'pareja', emoji:'❤️', label:'Pareja', hint:'Vivamos esta experiencia juntos', reco:['spot','caballo','tirolesa'] },
+  { id:'familia', emoji:'👨‍👩‍👧‍👦', label:'Familia', hint:'Un recuerdo inolvidable para todos', reco:['safari','granjita','tirolesa'] },
+  { id:'amigos', emoji:'🥳', label:'Amigos', hint:'A disfrutar el momento', reco:['gotcha','tirolesa','cuatrimoto','ranger','puente','columpio'] },
+  { id:'escuela', emoji:'🎒', label:'Escuela', hint:'Vámonos de excursión', reco:['safari','granjita','ruta'] },
+  { id:'empresa', emoji:'💼', label:'Empresa', hint:'Un día fuera de la oficina', reco:['gotcha','ranger','alimentos'] },
+  { id:'celebracion', emoji:'🎉', label:'Celebración', hint:'Cumpleaños, camping, aniversarios, etc.', reco:['spot','alimentos','safari'] },
 ];
 const TITLES = { none:'¿Qué aventura quieres vivir?', pareja:'Una escapada para dos.', familia:'Una aventura para toda la familia.', amigos:'Adrenalina con tu banda.', escuela:'Naturaleza que se aprende viviéndola.', empresa:'Un día fuera de la oficina.', celebracion:'Celebra en la cumbre.' };
 const POLICIES = [
@@ -3373,6 +3373,47 @@ class Component extends DCLogic {
     });
     if (withToast) this.showToast(was ? 'Quitado de tu aventura' : '¡Agregado a tu aventura!');
   }
+  removeCartItem(id) {
+    if (!id || id === 'entrada') return;
+    this.setState(s => {
+      const patch = { totalKey: s.totalKey + 1, badgeKey: s.badgeKey + 1, qtyWarn: '' };
+      if (id.startsWith('lodg:')) {
+        const lid = id.slice(5);
+        const lodgingQty = { ...s.lodgingQty, [lid]: 0 };
+        const lodgingGuests = { ...s.lodgingGuests, [lid]: 0 };
+        const actAdults = { ...s.actAdults, [lid]: 0 };
+        const actKids = { ...s.actKids, [lid]: 0 };
+        patch.lodgingQty = lodgingQty; patch.lodgingGuests = lodgingGuests; patch.actAdults = actAdults; patch.actKids = actKids;
+        if (lid === 'camping') {
+          patch.extras = { ...s.extras, tienda2:false, tienda4:false };
+          patch.extraQty = { ...s.extraQty, tienda2:0, tienda4:0 };
+        }
+        const remaining = LODG.some(l => l.id !== lid && ((lodgingQty[l.id] || 0) > 0));
+        if (!remaining) { patch.stay = 'dia'; patch.endDate = ''; }
+        return patch;
+      }
+      if (id === 'combo') { patch.comboAdded = false; return patch; }
+      if (id === 'bebidasParque') { patch.drinks = null; return patch; }
+      const extra = EXTRAS.find(x => x.id === id);
+      if (extra) {
+        patch.extras = { ...s.extras, [id]: false };
+        patch.extraQty = { ...s.extraQty, [id]: 0 };
+        if (id === 'descBeb' && s.drinks === 'own') patch.drinks = null;
+        return patch;
+      }
+      const act = CAT.find(c => c.id === id);
+      if (act) {
+        patch.acts = { ...s.acts, [id]: false };
+        patch.actQty = { ...s.actQty, [id]: 0 };
+        patch.actAdults = { ...s.actAdults, [id]: 0 };
+        patch.actKids = { ...s.actKids, [id]: 0 };
+        patch.units = { ...s.units, [id]: 0 };
+        if (id === 'spot') { patch.spotStart=''; patch.spotEnd=''; patch.spotGuests=1; }
+        return patch;
+      }
+      return patch;
+    }, () => this.showToast('Eliminado de tu aventura'));
+  }
   // Participantes / unidades / comensales, siempre acotados por el tamaño del grupo.
   setActQty(id, d) {
     const c = CAT.find(x => x.id === id) || {};
@@ -3553,7 +3594,7 @@ class Component extends DCLogic {
     const groups = ['Aventura', 'Naturaleza y safari', 'Photo spots'].map(g => ({ name: g, items: CAT.filter(c => c.group === g && !c.lodging).map(mk).map(withQty) }));
     const tentStats=this.tentStats(s);
     const extrasList = EXTRAS.filter(x => !x.camping || ((s.lodgingQty&&s.lodgingQty.camping)||0)>0).map(x => { const on = !!s.extras[x.id], q=x.multi?integer(s.extraQty[x.id]||(on?1:0),0,99):1; const maxQty=x.camping?this.maxTentQty(x.id,s):99; const capPer=x.camping?this.tentCapacity(x.id):0; const capSelected=x.camping?tentStats.cap:0; const campers=x.camping?tentStats.campers:0; return { ...x, priceShort: MXN(x.price), selected: on, showQty:!!x.multi&&on, qty:q, qtySubtotal:x.multi?MXN(x.price*Math.max(1,q)):MXN(x.price), qtyHint:x.id==='tienda4'?'Capacidad: hasta 4 personas por casa':'Capacidad: hasta 2 personas por casa', capacitySummary:x.camping?`Capacidad rentada: ${capSelected} persona${capSelected===1?'':'s'} · Campistas: ${campers}`:'', maxQtyLabel:x.camping?`Máximo útil para este tamaño: ${maxQty} casa${maxQty===1?'':'s'}`:'', incDisabled:!!x.camping&&q>=maxQty, decQty:()=>this.setExtraQty(x.id,-1), incQty:()=>this.setExtraQty(x.id,1), toggle: () => this.setState(st => { const next = !st.extras[x.id]; const o = { extras: { ...st.extras, [x.id]: next }, totalKey: st.totalKey + 1, qtyWarn:'' }; if(x.multi) o.extraQty={...st.extraQty,[x.id]:next?Math.max(1,st.extraQty[x.id]||1):0}; if (x.id === 'descBeb') o.drinks = next ? 'own' : (st.drinks === 'own' ? null : st.drinks); return o; }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER }; });
-    const cartRows = T.lines.map(l => ({ kicker: l.kicker, title: l.title, sub: l.sub, amount: l.quote ? 'Por cotizar' : MXN(l.amount), edit: () => this.go(l.step) }));
+    const cartRows = T.lines.map(l => ({ kicker: l.kicker, title: l.title, sub: l.sub, amount: l.quote ? 'Por cotizar' : MXN(l.amount), edit: () => this.go(l.step), canRemove: l.id !== 'entrada', remove: () => this.removeCartItem(l.id) }));
     const selCount = Object.values(s.acts).filter(Boolean).length + Object.values(s.extras).filter(Boolean).length + this.selectedLodgingIds(s).length + (s.comboAdded ? 1 : 0);
     const hasSel = selCount > 0 || !!s.startDate;
     // Una línea por servicio con su precio: el equipo de reservaciones recibe el mismo

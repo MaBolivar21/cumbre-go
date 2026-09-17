@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260914-1.9.2.0">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260916-1.10.0">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -992,7 +992,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260914-1.9.2.0 · Supabase · Personalización · Launch Candidate</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260916-1.10.0 · Supabase · Personalización · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2795,7 +2795,7 @@ module.exports = QRCode;
 
 </script>
 <script>
-const BUILD_ID = 'CSG-20260914-1.9.2.0';
+const BUILD_ID = 'CSG-20260916-1.10.0';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2832,18 +2832,78 @@ function getSessionId(){
   try{ let v=localStorage.getItem(k); if(!v){v=newUUID(); localStorage.setItem(k,v);} return v; }
   catch(_){ return newUUID(); }
 }
+// ---- Attribution Tracking v1.10 ---------------------------------------------------
+// Conserva primer contacto y último contacto no-directo para que una cotización pueda
+// atribuirse aunque el visitante navegue, recargue o vuelva después sin los UTM en la URL.
+const ATTR_KEYS={first:'csg_attr_first_v1',last:'csg_attr_last_v1'};
+function jsonRead(storage,key){try{const v=storage.getItem(key);return v?JSON.parse(v):null;}catch(_){return null;}}
+function jsonWrite(storage,key,value){try{storage.setItem(key,JSON.stringify(value));}catch(_){}}
+function getVisitId(){
+  const k='csg_visit_id';
+  try{let v=sessionStorage.getItem(k);if(!v){v=newUUID();sessionStorage.setItem(k,v);}return v;}
+  catch(_){return newUUID();}
+}
+function referrerDomain(){
+  try{return document.referrer?new URL(document.referrer).hostname.replace(/^www\./,''):null;}
+  catch(_){return null;}
+}
+function currentTouch(){
+  const q=new URLSearchParams(location.search), ref=referrerDomain();
+  const fbclid=q.get('fbclid'),gclid=q.get('gclid'),ttclid=q.get('ttclid'),msclkid=q.get('msclkid'),wbraid=q.get('wbraid'),gbraid=q.get('gbraid');
+  const explicit=q.get('utm_source')||q.get('source')||q.get('src');
+  const paidClick=!!(fbclid||gclid||ttclid||msclkid||wbraid||gbraid);
+  let source=explicit||null;
+  if(!source){
+    if(fbclid)source='meta'; else if(gclid||wbraid||gbraid)source='google'; else if(ttclid)source='tiktok'; else if(msclkid)source='microsoft'; else if(ref)source=ref; else source='direct';
+  }
+  let medium=q.get('utm_medium')||null;
+  if(!medium)medium=paidClick?'cpc':(ref?'referral':'none');
+  return {
+    source:String(source).toLowerCase(),
+    medium:String(medium).toLowerCase(),
+    campaign:q.get('utm_campaign')||null,
+    content:q.get('utm_content')||null,
+    term:q.get('utm_term')||null,
+    utm_id:q.get('utm_id')||null,
+    click_ids:{fbclid,gclid,ttclid,msclkid,wbraid,gbraid},
+    referrer:document.referrer||null,
+    referrer_domain:ref,
+    landing_path:location.pathname+location.search,
+    captured_at:new Date().toISOString()
+  };
+}
+function meaningfulTouch(t){
+  if(!t)return false;
+  return t.source!=='direct'||t.medium!=='none'||!!(t.campaign||t.content||t.term||t.utm_id||Object.values(t.click_ids||{}).some(Boolean));
+}
+function captureAttribution(){
+  const cur=currentTouch();
+  let first=jsonRead(localStorage,ATTR_KEYS.first),last=jsonRead(localStorage,ATTR_KEYS.last);
+  if(!first){first=cur;jsonWrite(localStorage,ATTR_KEYS.first,first);}
+  // Una visita directa posterior no borra la última campaña conocida.
+  if(meaningfulTouch(cur)||!last){last=cur;jsonWrite(localStorage,ATTR_KEYS.last,last);}
+  return {model:'first_last_touch_v1',first_touch:first,last_touch:last,current_touch:cur};
+}
+const CSG_ATTRIBUTION=captureAttribution();
 function trafficMeta(){
-  const q=new URLSearchParams(location.search);
+  const a=CSG_ATTRIBUTION,last=a.last_touch||a.current_touch||{},cur=a.current_touch||{};
   return {
     path:location.pathname,
     host:location.host,
-    referrer:document.referrer||null,
-    utm_source:q.get('utm_source'),
-    utm_medium:q.get('utm_medium'),
-    utm_campaign:q.get('utm_campaign'),
-    source:q.get('utm_source')||q.get('source')||q.get('src')||'direct',
+    landing_page:cur.landing_path||location.pathname,
+    referrer:cur.referrer||document.referrer||null,
+    referrer_domain:cur.referrer_domain||null,
+    utm_source:last.source||'direct',
+    utm_medium:last.medium||'none',
+    utm_campaign:last.campaign||null,
+    utm_content:last.content||null,
+    utm_term:last.term||null,
+    utm_id:last.utm_id||null,
+    source:last.source||'direct',
+    visit_id:getVisitId(),
+    attribution:a,
     user_agent:navigator.userAgent,
-    build:'CSG-20260914-1.9.2.0'
+    build:'CSG-20260916-1.10.0'
   };
 }
 function newQuoteFolio(){
@@ -3215,11 +3275,11 @@ class Component extends DCLogic {
     if(T.hasQuote){this.setState({promoStatus:'error',promoMessage:'El descuento se habilita cuando todos los servicios tienen precio confirmado.',appliedPromo:null});return;}
     this.setState({promoBusy:true,promoStatus:'loading',promoMessage:'Validando beneficio…'});
     try{const result=await supabaseRpc('validate_promo',{p_code:code,p_subtotal:T.subtotal});const row=Array.isArray(result)?result[0]:result;
-      if(!row||!row.valid){this.setState(st=>({promoBusy:false,promoStatus:'error',promoMessage:(row&&row.message)||'Ese código no es válido o ya no está disponible.',appliedPromo:null,promoAnimKey:st.promoAnimKey+1}));return;}
-      this.setState(st=>({promoBusy:false,promoStatus:'success',promoInput:row.code||code,promoMessage:row.message||'Beneficio aplicado correctamente.',appliedPromo:row,promoOpen:true,promoAnimKey:st.promoAnimKey+1,totalKey:st.totalKey+1}));this.showToast('🎉 Descuento aplicado');
+      if(!row||!row.valid){this.setState(st=>({promoBusy:false,promoStatus:'error',promoMessage:(row&&row.message)||'Ese código no es válido o ya no está disponible.',appliedPromo:null,promoAnimKey:st.promoAnimKey+1}));this.trackEvent('promo_rejected',{promo_code:code,subtotal:T.subtotal,reason:(row&&row.message)||'invalid'});return;}
+      this.setState(st=>({promoBusy:false,promoStatus:'success',promoInput:row.code||code,promoMessage:row.message||'Beneficio aplicado correctamente.',appliedPromo:row,promoOpen:true,promoAnimKey:st.promoAnimKey+1,totalKey:st.totalKey+1}));this.trackEvent('promo_applied',{promo_code:row.code||code,promo_label:row.label||null,subtotal:T.subtotal,discount:Number(row.discount_amount||0),final_total:Number(row.final_total||T.subtotal)});this.showToast('🎉 Descuento aplicado');
     }catch(e){console.error('validate_promo failed',e);this.setState(st=>({promoBusy:false,promoStatus:'error',promoMessage:'No pudimos validar el código. Revisa tu conexión e inténtalo de nuevo.',appliedPromo:null,promoAnimKey:st.promoAnimKey+1}));}
   }
-  removePromoCode(){this.setState(st=>({appliedPromo:null,promoStatus:'idle',promoMessage:'',promoInput:'',promoAnimKey:st.promoAnimKey+1,totalKey:st.totalKey+1}));}
+  removePromoCode(){const p=this.state.appliedPromo,T=this.totals();if(p)this.trackEvent('promo_removed',{promo_code:p.code||null,discount:T.discount,subtotal:T.subtotal});this.setState(st=>({appliedPromo:null,promoStatus:'idle',promoMessage:'',promoInput:'',promoAnimKey:st.promoAnimKey+1,totalKey:st.totalKey+1}));}
   visitDateISO(){ return this.state.startDate || null; }
   quoteItems(){
     const s=this.state, T=this.totals(), items=[];
@@ -3249,7 +3309,11 @@ class Component extends DCLogic {
     return items;
   }
   async trackEvent(name,payload){
-    try{return await supabaseRpc('track_event',{p_session_id:this.state.sessionId,p_quote_id:this.state.quoteId||null,p_event_name:name,p_payload:payload||{}});}
+    try{
+      const meta=trafficMeta();
+      const enriched={...(payload||{}),visit_id:meta.visit_id,source:meta.source,utm_source:meta.utm_source,utm_medium:meta.utm_medium,utm_campaign:meta.utm_campaign,utm_content:meta.utm_content,utm_term:meta.utm_term,utm_id:meta.utm_id,landing_page:meta.landing_page,referrer_domain:meta.referrer_domain,attribution:meta.attribution,build:meta.build};
+      return await supabaseRpc('track_event',{p_session_id:this.state.sessionId,p_quote_id:this.state.quoteId||null,p_event_name:name,p_payload:enriched});
+    }
     catch(e){console.warn('track_event failed',name,e);return null;}
   }
   async saveQuote(){
@@ -3291,7 +3355,7 @@ class Component extends DCLogic {
       this.setState({savingQuote:false,saveError:'No pudimos registrar tu cotización. Revisa tu conexión e inténtalo de nuevo.'});
     }
   }
-  componentDidMount() { this._t = setTimeout(() => { if (this.state.screen === 'splash') this.go('home'); }, 2400); this.attachChips(); }
+  componentDidMount() { this.trackEvent('app_open',{entry_screen:'splash'}); this._t = setTimeout(() => { if (this.state.screen === 'splash') this.go('home'); }, 2400); this.attachChips(); }
   componentDidUpdate() { this.attachChips(); this.purgeCampingExtras(); }
   // Nivel 2 de defensa: al dejar camping, las casas de campaña salen del estado para que no
   // reaparezcan seleccionadas si el visitante vuelve a camping más tarde.
@@ -3447,6 +3511,7 @@ class Component extends DCLogic {
       if(issue){ this.setState(s=>({screen:issue.screen,prev:[...s.prev,s.screen].slice(-12),qtyWarn:issue.message})); return; }
     }
     this.setState(s => ({ screen, prev: [...s.prev, s.screen].slice(-12), ...extra }));
+    if(screen!=='splash'&&screen!=='generando') this.trackEvent('screen_view',{screen});
     if (screen === 'explorar' && (this.props.skeletonMs ?? 900) > 0) {
       this.setState({ loadingExplore: true });
       clearTimeout(this._t2); this._t2 = setTimeout(() => this.setState({ loadingExplore: false }), this.props.skeletonMs ?? 900);

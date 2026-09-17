@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Cumbre GO · Marketing ROI</title>
+<style>
+:root{
+  --forest:#0b3b32;--forest2:#114c40;--orange:#f56a2c;--cream:#f7f2e7;
+  --ink:#17221f;--muted:#6f756f;--line:#ded8ca;--white:#fffdfa;--good:#237a57;
+}
+*{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+.shell{max-width:1440px;margin:auto;padding:22px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.brand small{color:var(--orange);font-weight:800;letter-spacing:.12em} .brand h1{margin:3px 0 0;font-size:32px}
+.actions{display:flex;gap:8px;flex-wrap:wrap} .btn{border:0;border-radius:14px;padding:11px 16px;font-weight:800;cursor:pointer}
+.btn.primary{background:var(--orange);color:white} .btn.dark{background:var(--forest);color:white}
+.banner{background:#fff3df;border:1px solid #f3c889;padding:12px 16px;border-radius:14px;margin-bottom:18px;font-size:14px}
+.grid{display:grid;gap:14px} .cards{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:17px;box-shadow:0 5px 16px rgba(38,50,45,.06)}
+.card .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.card .value{font-size:28px;font-weight:900;color:var(--forest);margin-top:7px} .card .sub{font-size:12px;color:var(--muted);margin-top:5px}
+.section{margin-top:18px} .section h2{font-size:20px;margin:0 0 10px} .two{grid-template-columns:1.2fr .8fr}
+table{width:100%;border-collapse:collapse;font-size:13px} th,td{padding:10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2),th:nth-child(3),td:nth-child(3){text-align:left}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.tag{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;background:#eee8da} .tag.qa{background:#ffe7cc;color:#9d4d00} .tag.live{background:#daf0e5;color:#13603e}
+.funnel{display:flex;flex-direction:column;gap:9px} .stage{display:grid;grid-template-columns:145px 1fr 56px;align-items:center;gap:10px;font-size:13px}
+.bar{height:13px;border-radius:999px;background:#e5dfd2;overflow:hidden} .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),#ff9b65);border-radius:999px}
+.sim{display:grid;grid-template-columns:1fr 1fr;gap:12px} .field label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:5px}
+.field input,.field select{width:100%;border:1px solid var(--line);background:white;border-radius:12px;padding:11px}
+.simResult{background:var(--forest);color:white;border-radius:16px;padding:14px;margin-top:12px} .simResult b{font-size:20px}
+.promoGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px} .promo{background:white;border:1px solid var(--line);border-radius:14px;padding:12px}
+.promo strong{display:block} .promo small{color:var(--muted)} .activeDot{color:var(--good);font-weight:900}
+.lock{position:fixed;inset:0;background:rgba(7,25,21,.94);z-index:10;display:flex;align-items:center;justify-content:center;padding:20px}
+.lockbox{width:min(420px,100%);background:var(--cream);border-radius:24px;padding:26px} .lockbox h2{margin-top:0} .lockbox input{width:100%;padding:14px;border-radius:13px;border:1px solid var(--line);font-size:22px;letter-spacing:.12em;text-align:center}
+.error{color:#a12626;font-weight:700;font-size:13px;min-height:20px;margin:8px 0}
+.muted{color:var(--muted)} .hidden{display:none!important}
+@media(max-width:980px){.cards{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.promoGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.shell{padding:14px}.brand h1{font-size:26px}.cards{grid-template-columns:1fr 1fr}.card .value{font-size:22px}.promoGrid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="lock" class="lock">
+  <div class="lockbox">
+    <small style="color:#f56a2c;font-weight:900;letter-spacing:.12em">CUMBRE GO · EQUIPO</small>
+    <h2>Marketing ROI</h2>
+    <p class="muted">Ingresa el PIN administrativo para consultar métricas agregadas.</p>
+    <input id="pin" inputmode="numeric" maxlength="12" placeholder="••••••••">
+    <div id="loginError" class="error"></div>
+    <button id="enter" class="btn primary" style="width:100%">Entrar al dashboard</button>
+  </div>
+</div>
+
+<main class="shell">
+  <div class="top">
+    <div class="brand"><small>CUMBRE SALVAJE GO</small><h1>Marketing / ROI</h1></div>
+    <div class="actions">
+      <button class="btn dark" id="refresh">Actualizar</button>
+      <button class="btn primary" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+  </div>
+
+  <div class="banner"><b>Modo pre-campaña / QA.</b> Los eventos actuales provienen principalmente de pruebas técnicas. No deben presentarse como rendimiento real de publicidad. El ROAS mostrado es <b>potencial</b> porque usa valor cotizado, no pagos confirmados.</div>
+
+  <section class="grid cards" id="cards"></section>
+
+  <section class="section grid two">
+    <div class="card">
+      <h2>Funnel de adquisición</h2>
+      <div class="funnel" id="funnel"></div>
+    </div>
+    <div class="card">
+      <h2>Simulador de inversión</h2>
+      <p class="muted" style="margin-top:-3px;font-size:13px">No modifica Supabase. Sirve para explicar escenarios en la reunión.</p>
+      <div class="sim">
+        <div class="field"><label>Campaña</label><select id="simCampaign"></select></div>
+        <div class="field"><label>Inversión hipotética MXN</label><input id="simSpend" type="number" min="1" step="100" value="3000"></div>
+      </div>
+      <div id="simResult" class="simResult"></div>
+    </div>
+  </section>
+
+  <section class="section card">
+    <h2>Campañas</h2>
+    <div style="overflow:auto"><table><thead><tr><th>Fuente</th><th>Campaña</th><th>Estado</th><th>Visitas</th><th>Cotizaciones</th><th>WhatsApp</th><th>$ cotizado</th><th>Ticket prom.</th><th>Gasto real</th><th>Costo/cot.</th><th>ROAS pot.</th></tr></thead><tbody id="campaignRows"></tbody></table></div>
+  </section>
+
+  <section class="section grid two">
+    <div class="card">
+      <h2>Dispositivos</h2>
+      <div style="overflow:auto"><table><thead><tr><th>Dispositivo</th><th>SO</th><th>Navegador</th><th>Visitas</th><th>Cot.</th><th>WhatsApp</th><th>$ cotizado</th></tr></thead><tbody id="deviceRows"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>Promociones</h2>
+      <div class="promoGrid" id="promos"></div>
+    </div>
+  </section>
+
+  <p class="muted" id="updated" style="font-size:12px;text-align:right"></p>
+</main>
+
+<script>
+const SUPABASE_URL='https://xnztlanptbdgpdjhbnzv.supabase.co';
+const SUPABASE_KEY='sb_publishable_JcKnBtzboji75Em1M0wa8w_3_fb0LB3';
+let PIN=sessionStorage.getItem('roi_pin')||'';
+let DATA=null;
+
+const mxn=n=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(Number(n||0));
+const num=n=>new Intl.NumberFormat('es-MX').format(Number(n||0));
+const pct=n=>`${Number(n||0).toFixed(1)}%`;
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+
+async function rpc(pin){
+ const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_marketing_roi_dashboard`,{
+  method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+  body:JSON.stringify({p_pin:pin})
+ });
+ if(!r.ok) throw new Error(await r.text()||'No se pudo consultar el dashboard');
+ return await r.json();
+}
+
+function qa(c){
+ const x=(c.campaign||'').toLowerCase();
+ return !!c.is_qa || x.includes('test') || x.includes('demo') || c.source==='mvp_test';
+}
+
+function render(){
+ const s=DATA.summary_paid||{};
+ const cards=[
+  ['Inversión registrada',mxn(s.spend_actual),'Gasto real cargado'],
+  ['Visitas pagadas',num(s.visits),'Sesiones con UTM'],
+  ['Cotizaciones',num(s.quotes),'Generadas desde pauta'],
+  ['WhatsApp',num(s.whatsapp_clicks),'Clics post-cotización'],
+  ['Valor cotizado',mxn(s.total_quoted),'Intención comercial'],
+  ['Ticket promedio',mxn(s.avg_quoted_ticket),'Por cotización'],
+  ['Costo / cotización',mxn(s.cost_per_quote),'Con gasto real'],
+  ['ROAS potencial',Number(s.quoted_roas_potential||0).toFixed(2)+'x','Cotizado ÷ gasto']
+ ];
+ document.querySelector('#cards').innerHTML=cards.map(x=>`<div class="card"><div class="label">${x[0]}</div><div class="value">${x[1]}</div><div class="sub">${x[2]}</div></div>`).join('');
+
+ const paid=(DATA.campaigns||[]).filter(c=>c.medium!=='none');
+ const funnelTotals=paid.reduce((a,c)=>{for(const k of ['visits','builder_starts','cart_views','lead_forms','quotes','whatsapp_clicks']) a[k]+=Number(c[k]||0);return a;},{visits:0,builder_starts:0,cart_views:0,lead_forms:0,quotes:0,whatsapp_clicks:0});
+ const stages=[['Visitas','visits'],['Configurador','builder_starts'],['Carrito','cart_views'],['Datos / lead','lead_forms'],['Cotizaciones','quotes'],['WhatsApp','whatsapp_clicks']];
+ const max=Math.max(1,funnelTotals.visits);
+ document.querySelector('#funnel').innerHTML=stages.map(([n,k])=>`<div class="stage"><b>${n}</b><div class="bar"><i style="width:${Math.min(100,(funnelTotals[k]/max)*100)}%"></i></div><strong>${num(funnelTotals[k])}</strong></div>`).join('');
+
+ document.querySelector('#campaignRows').innerHTML=(DATA.campaigns||[]).map(c=>`
+  <tr><td>${esc(c.source)}</td><td>${esc(c.campaign)}</td><td>${qa(c)?'<span class="tag qa">QA / DEMO</span>':'<span class="tag live">PRODUCCIÓN</span>'}</td>
+  <td>${num(c.visits)}</td><td>${num(c.quotes)}</td><td>${num(c.whatsapp_clicks)}</td><td>${mxn(c.total_quoted)}</td>
+  <td>${mxn(c.avg_quoted_ticket)}</td><td>${mxn(c.spend_actual)}</td><td>${mxn(c.cost_per_quote)}</td><td>${Number(c.quoted_roas_potential||0).toFixed(2)}x</td></tr>`).join('');
+
+ document.querySelector('#deviceRows').innerHTML=(DATA.devices||[]).map(d=>`<tr><td>${esc(d.device_type)}</td><td>${esc(d.os)}</td><td>${esc(d.browser)}</td><td>${num(d.visits)}</td><td>${num(d.quotes)}</td><td>${num(d.whatsapp_clicks)}</td><td>${mxn(d.total_quoted)}</td></tr>`).join('');
+
+ document.querySelector('#promos').innerHTML=(DATA.promos||[]).map(p=>`<div class="promo"><strong>${esc(p.code)} ${p.active?'<span class="activeDot">●</span>':''}</strong><small>${esc(p.label)} · ${p.discount_type==='percent'?Number(p.discount_value)+'%':mxn(p.discount_value)}<br>Min. ${mxn(p.min_total)} · Usos: ${num(p.uses)}</small></div>`).join('');
+
+ const select=document.querySelector('#simCampaign');
+ select.innerHTML=paid.map((c,i)=>`<option value="${i}">${esc(c.source)} · ${esc(c.campaign)}${qa(c)?' · QA':''}</option>`).join('');
+ simulate();
+
+ document.querySelector('#updated').textContent='Actualizado: '+new Date(DATA.generated_at).toLocaleString('es-MX');
+}
+
+function simulate(){
+ const paid=(DATA?.campaigns||[]).filter(c=>c.medium!=='none');
+ const c=paid[Number(document.querySelector('#simCampaign').value||0)];
+ const spend=Number(document.querySelector('#simSpend').value||0);
+ if(!c){document.querySelector('#simResult').innerHTML='No hay campañas etiquetadas todavía.';return;}
+ const cpq=c.quotes>0?spend/Number(c.quotes):0;
+ const cpw=c.whatsapp_clicks>0?spend/Number(c.whatsapp_clicks):0;
+ const roas=spend>0?Number(c.total_quoted||0)/spend:0;
+ document.querySelector('#simResult').innerHTML=`<small>SIMULACIÓN · ${esc(c.campaign)}</small><br><b>${mxn(spend)} de inversión</b><br><span>Costo/cotización: <strong>${mxn(cpq)}</strong> · Costo/WhatsApp: <strong>${mxn(cpw)}</strong> · ROAS potencial: <strong>${roas.toFixed(2)}x</strong></span>`;
+}
+
+async function load(){
+ try{
+  DATA=await rpc(PIN);sessionStorage.setItem('roi_pin',PIN);document.querySelector('#lock').classList.add('hidden');render();
+ }catch(e){
+  sessionStorage.removeItem('roi_pin');document.querySelector('#lock').classList.remove('hidden');document.querySelector('#loginError').textContent='PIN incorrecto o sesión no disponible.';
+ }
+}
+document.querySelector('#enter').onclick=()=>{PIN=document.querySelector('#pin').value.trim();load();};
+document.querySelector('#pin').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#enter').click();});
+document.querySelector('#refresh').onclick=load;
+document.querySelector('#simCampaign').addEventListener('change',simulate);
+document.querySelector('#simSpend').addEventListener('input',simulate);
+if(PIN) load();
+</script>
+</body></html>

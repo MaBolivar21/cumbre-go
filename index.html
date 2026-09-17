@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260916-1.10.1">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260916-1.10.2">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -992,7 +992,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260916-1.10.1 · Supabase · Personalización · Launch Candidate</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260916-1.10.2 · Supabase · Personalización · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2795,7 +2795,7 @@ module.exports = QRCode;
 
 </script>
 <script>
-const BUILD_ID = 'CSG-20260916-1.10.1';
+const BUILD_ID = 'CSG-20260916-1.10.2';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2832,7 +2832,7 @@ function getSessionId(){
   try{ let v=localStorage.getItem(k); if(!v){v=newUUID(); localStorage.setItem(k,v);} return v; }
   catch(_){ return newUUID(); }
 }
-// ---- Attribution Tracking v1.10.1 -------------------------------------------------
+// ---- Attribution Tracking v1.10.2 + Device Analytics -----------------------------
 // Conserva primer contacto y último contacto no-directo para que una cotización pueda
 // atribuirse aunque el visitante navegue, recargue o vuelva después sin los UTM en la URL.
 const ATTR_KEYS={first:'csg_attr_first_v1',last:'csg_attr_last_v1'};
@@ -2903,8 +2903,86 @@ function cleanAttributionParamsFromURL(){
   }catch(_){}
 }
 cleanAttributionParamsFromURL();
+// Device Analytics: datos técnicos básicos para optimizar UX y campañas.
+// No usa GPS ni intenta identificar personalmente al visitante.
+function detectDeviceAnalytics(){
+  const ua=String(navigator.userAgent||'');
+  const low=ua.toLowerCase();
+  const uad=navigator.userAgentData||null;
+  const touchPoints=Number(navigator.maxTouchPoints||0);
+  const sw=Number((window.screen&&screen.width)||0), sh=Number((window.screen&&screen.height)||0);
+  const vw=Number(window.innerWidth||0), vh=Number(window.innerHeight||0);
+
+  let os='Other';
+  if(/android/i.test(ua)) os='Android';
+  else if(/iphone|ipod/i.test(ua)) os='iOS';
+  else if(/ipad/i.test(ua) || (/macintosh/i.test(ua)&&touchPoints>1)) os='iPadOS';
+  else if(/windows nt/i.test(ua)) os='Windows';
+  else if(/cros/i.test(ua)) os='ChromeOS';
+  else if(/mac os x|macintosh/i.test(ua)) os='macOS';
+  else if(/linux/i.test(ua)) os='Linux';
+  if(uad&&uad.platform){
+    const p=String(uad.platform);
+    if(/android/i.test(p)) os='Android';
+    else if(/windows/i.test(p)) os='Windows';
+    else if(/chrome os/i.test(p)) os='ChromeOS';
+    else if(/mac/i.test(p) && os!=='iPadOS') os='macOS';
+  }
+
+  let browser='Other';
+  if(navigator.brave) browser='Brave';
+  else if(/samsungbrowser/i.test(ua)) browser='Samsung Internet';
+  else if(/edg\//i.test(ua)||/edga/i.test(ua)||/edgios/i.test(ua)) browser='Edge';
+  else if(/opr\//i.test(ua)||/opera/i.test(ua)) browser='Opera';
+  else if(/fxios/i.test(ua)||/firefox/i.test(ua)) browser='Firefox';
+  else if(/crios/i.test(ua)||/chrome\//i.test(ua)) browser='Chrome';
+  else if(/safari\//i.test(ua)) browser='Safari';
+  if(uad&&Array.isArray(uad.brands)){
+    const names=uad.brands.map(x=>String(x.brand||''));
+    if(names.some(x=>/Microsoft Edge/i.test(x))) browser='Edge';
+    else if(names.some(x=>/Opera/i.test(x))) browser='Opera';
+    else if(names.some(x=>/Google Chrome/i.test(x))) browser='Chrome';
+  }
+
+  const mobileHint=!!(uad&&uad.mobile);
+  const mobileUA=/mobi|iphone|ipod|android.*mobile/i.test(ua);
+  const tabletUA=/ipad|tablet|kindle|silk|playbook/i.test(ua) || (/android/i.test(ua)&&!/mobile/i.test(ua));
+  let deviceType='desktop';
+  if(tabletUA || (touchPoints>1 && Math.min(sw||vw,sh||vh)>=600 && Math.min(sw||vw,sh||vh)<=1180)) deviceType='tablet';
+  else if(mobileHint||mobileUA) deviceType='mobile';
+
+  let deviceModel=null;
+  if(os==='Android'){
+    const m=ua.match(/Android[^;)]*;\s*([^;)]+?)(?:\s+Build\/|; wv\)|\))/i);
+    if(m&&m[1]){
+      const raw=m[1].replace(/^[a-z]{2}[-_][A-Z]{2};\s*/,'').trim();
+      if(raw && !/^(wv|mobile|k)$/i.test(raw)) deviceModel=raw.slice(0,80);
+    }
+  } else if(os==='iOS') deviceModel='iPhone';
+  else if(os==='iPadOS') deviceModel='iPad';
+
+  return {
+    device_type:deviceType,
+    os,
+    browser,
+    device_model:deviceModel,
+    viewport:`${vw}x${vh}`,
+    screen_size:`${sw}x${sh}`,
+    pixel_ratio:Number(window.devicePixelRatio||1),
+    touch_points:touchPoints
+  };
+}
+let CSG_DEVICE_DETAILS={};
+try{
+  if(navigator.userAgentData&&typeof navigator.userAgentData.getHighEntropyValues==='function'){
+    navigator.userAgentData.getHighEntropyValues(['model','platformVersion']).then(v=>{
+      CSG_DEVICE_DETAILS={model:(v&&v.model)||null,platform_version:(v&&v.platformVersion)||null};
+    }).catch(()=>{});
+  }
+}catch(_){}
 function trafficMeta(){
-  const a=CSG_ATTRIBUTION,last=a.last_touch||a.current_touch||{},cur=a.current_touch||{};
+  const a=CSG_ATTRIBUTION,last=a.last_touch||a.current_touch||{},cur=a.current_touch||{},device=detectDeviceAnalytics();
+  const resolvedModel=CSG_DEVICE_DETAILS.model||device.device_model||null;
   return {
     path:location.pathname,
     host:location.host,
@@ -2920,8 +2998,17 @@ function trafficMeta(){
     source:last.source||'direct',
     visit_id:getVisitId(),
     attribution:a,
+    device_type:device.device_type,
+    os:device.os,
+    browser:device.browser,
+    device_model:resolvedModel,
+    platform_version:CSG_DEVICE_DETAILS.platform_version||null,
+    viewport:device.viewport,
+    screen_size:device.screen_size,
+    pixel_ratio:device.pixel_ratio,
+    touch_points:device.touch_points,
     user_agent:navigator.userAgent,
-    build:'CSG-20260916-1.10.1'
+    build:'CSG-20260916-1.10.2'
   };
 }
 function newQuoteFolio(){
@@ -3329,7 +3416,7 @@ class Component extends DCLogic {
   async trackEvent(name,payload){
     try{
       const meta=trafficMeta();
-      const enriched={...(payload||{}),visit_id:meta.visit_id,source:meta.source,utm_source:meta.utm_source,utm_medium:meta.utm_medium,utm_campaign:meta.utm_campaign,utm_content:meta.utm_content,utm_term:meta.utm_term,utm_id:meta.utm_id,landing_page:meta.landing_page,referrer_domain:meta.referrer_domain,attribution:meta.attribution,build:meta.build};
+      const enriched={...(payload||{}),visit_id:meta.visit_id,source:meta.source,utm_source:meta.utm_source,utm_medium:meta.utm_medium,utm_campaign:meta.utm_campaign,utm_content:meta.utm_content,utm_term:meta.utm_term,utm_id:meta.utm_id,landing_page:meta.landing_page,referrer_domain:meta.referrer_domain,attribution:meta.attribution,device_type:meta.device_type,os:meta.os,browser:meta.browser,device_model:meta.device_model,platform_version:meta.platform_version,viewport:meta.viewport,screen_size:meta.screen_size,pixel_ratio:meta.pixel_ratio,touch_points:meta.touch_points,build:meta.build};
       return await supabaseRpc('track_event',{p_session_id:this.state.sessionId,p_quote_id:this.state.quoteId||null,p_event_name:name,p_payload:enriched});
     }
     catch(e){console.warn('track_event failed',name,e);return null;}

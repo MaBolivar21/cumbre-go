@@ -1,5 +1,19 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260916-1.10.2">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260920-1.10.3">
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1625826365834172');
+fbq('track','PageView');
+</script>
+<!-- End Meta Pixel Code -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#F6F1E7;--color-surface:#FFFDF8;--color-text:#171A18;--color-accent:#F26A2E;--color-accent-600:#d9551c;--color-accent-700:#b8430f;--radius-sm:12px;--radius-md:16px;--radius-lg:22px}
@@ -128,7 +142,7 @@ small,.small{font-size:12px;line-height:1.4}
 .cal-footnote{font-size:10px;text-align:center;color:#666b63;line-height:1.3;margin:10px 0 0}
 @media(max-width:350px){.csg-calendar{padding:14px 10px}.cal-header h2{font-size:21px}.cal-grid{border-spacing:2px}.cal-nav h3{font-size:16px}}
 
-</style></head><body><div id="app"><div id="appRoot" class="production-device"></div></div>
+</style></head><body><noscript><img alt="" height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1625826365834172&amp;ev=PageView&amp;noscript=1"/></noscript><div id="app"><div id="appRoot" class="production-device"></div></div>
 <template id="dc-template">
 <div style="height:100%;display:flex;flex-direction:column;background:#F6F1E7;color:#171A18;font-family:'Archivo',system-ui,sans-serif;position:relative;overflow:hidden">
 <!-- SPLASH -->
@@ -992,7 +1006,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260916-1.10.2 · Supabase · Personalización · Launch Candidate</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260920-1.10.3 · Supabase · Meta Pixel · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2795,7 +2809,7 @@ module.exports = QRCode;
 
 </script>
 <script>
-const BUILD_ID = 'CSG-20260916-1.10.2';
+const BUILD_ID = 'CSG-20260920-1.10.3';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -2832,7 +2846,7 @@ function getSessionId(){
   try{ let v=localStorage.getItem(k); if(!v){v=newUUID(); localStorage.setItem(k,v);} return v; }
   catch(_){ return newUUID(); }
 }
-// ---- Attribution Tracking v1.10.2 + Device Analytics -----------------------------
+// ---- Attribution Tracking v1.10.3 + Device Analytics + Meta Pixel ----------------
 // Conserva primer contacto y último contacto no-directo para que una cotización pueda
 // atribuirse aunque el visitante navegue, recargue o vuelva después sin los UTM en la URL.
 const ATTR_KEYS={first:'csg_attr_first_v1',last:'csg_attr_last_v1'};
@@ -2903,6 +2917,52 @@ function cleanAttributionParamsFromURL(){
   }catch(_){}
 }
 cleanAttributionParamsFromURL();
+// Meta recibe únicamente hitos del embudo y nunca los datos personales del formulario.
+// Supabase conserva la atribución detallada y sigue funcionando aunque el píxel sea bloqueado.
+function metaPixelOnceKey(eventName,identity){
+  return `csg_meta_${eventName}_${String(identity||'session').replace(/[^a-zA-Z0-9_-]/g,'_')}`;
+}
+function sendMetaPixelEvent(eventName,params,eventId,onceIdentity){
+  try{
+    if(typeof window.fbq!=='function')return false;
+    const key=onceIdentity?metaPixelOnceKey(eventName,onceIdentity):null;
+    if(key&&sessionStorage.getItem(key)==='1')return false;
+    if(eventId)window.fbq('track',eventName,params||{},{eventID:String(eventId)});
+    else window.fbq('track',eventName,params||{});
+    if(key)sessionStorage.setItem(key,'1');
+    return true;
+  }catch(_){return false;}
+}
+function trackMetaFunnelEvent(internalName,payload,context){
+  const p=payload||{},ctx=context||{};
+  const quoteId=p.quote_id||ctx.quoteId||null;
+  if(internalName==='screen_view'&&p.screen==='detalle'){
+    const contentId=p.content_id||'experiencia';
+    sendMetaPixelEvent('ViewContent',{content_name:String(contentId),content_category:'experiencias'},null,`detail_${contentId}`);
+    return;
+  }
+  if(internalName==='screen_view'&&p.screen==='datos'){
+    const visitId=p.visit_id||ctx.visitId||'session';
+    sendMetaPixelEvent('InitiateCheckout',{content_name:'Cotización Cumbre GO',content_category:'experiencias'},`checkout-${visitId}`,visitId);
+    return;
+  }
+  if(internalName==='quote_generated'){
+    const identity=quoteId||p.folio||ctx.visitId||'session';
+    sendMetaPixelEvent('Lead',{content_name:'Cotización generada',content_category:'experiencias',value:Number(p.total)||0,currency:'MXN'},`lead-${identity}`,identity);
+    return;
+  }
+  if(internalName==='whatsapp_clicked'){
+    const identity=quoteId||ctx.visitId||'session';
+    sendMetaPixelEvent('Contact',{content_name:'Cotización por WhatsApp',content_category:'experiencias',value:Number(p.total)||0,currency:'MXN'},`contact-${identity}`,identity);
+  }
+}
+function cookieValue(name){
+  try{
+    const prefix=`${name}=`;
+    const part=document.cookie.split(';').map(v=>v.trim()).find(v=>v.startsWith(prefix));
+    return part?decodeURIComponent(part.slice(prefix.length)):null;
+  }catch(_){return null;}
+}
 // Device Analytics: datos técnicos básicos para optimizar UX y campañas.
 // No usa GPS ni intenta identificar personalmente al visitante.
 function detectDeviceAnalytics(){
@@ -3007,8 +3067,10 @@ function trafficMeta(){
     screen_size:device.screen_size,
     pixel_ratio:device.pixel_ratio,
     touch_points:device.touch_points,
+    meta_fbp:cookieValue('_fbp'),
+    meta_fbc:cookieValue('_fbc'),
     user_agent:navigator.userAgent,
-    build:'CSG-20260916-1.10.2'
+    build:'CSG-20260920-1.10.3'
   };
 }
 function newQuoteFolio(){
@@ -3416,8 +3478,10 @@ class Component extends DCLogic {
   async trackEvent(name,payload){
     try{
       const meta=trafficMeta();
-      const enriched={...(payload||{}),visit_id:meta.visit_id,source:meta.source,utm_source:meta.utm_source,utm_medium:meta.utm_medium,utm_campaign:meta.utm_campaign,utm_content:meta.utm_content,utm_term:meta.utm_term,utm_id:meta.utm_id,landing_page:meta.landing_page,referrer_domain:meta.referrer_domain,attribution:meta.attribution,device_type:meta.device_type,os:meta.os,browser:meta.browser,device_model:meta.device_model,platform_version:meta.platform_version,viewport:meta.viewport,screen_size:meta.screen_size,pixel_ratio:meta.pixel_ratio,touch_points:meta.touch_points,build:meta.build};
-      return await supabaseRpc('track_event',{p_session_id:this.state.sessionId,p_quote_id:this.state.quoteId||null,p_event_name:name,p_payload:enriched});
+      const eventQuoteId=(payload&&payload.quote_id)||this.state.quoteId||null;
+      const enriched={...(payload||{}),visit_id:meta.visit_id,source:meta.source,utm_source:meta.utm_source,utm_medium:meta.utm_medium,utm_campaign:meta.utm_campaign,utm_content:meta.utm_content,utm_term:meta.utm_term,utm_id:meta.utm_id,landing_page:meta.landing_page,referrer_domain:meta.referrer_domain,attribution:meta.attribution,device_type:meta.device_type,os:meta.os,browser:meta.browser,device_model:meta.device_model,platform_version:meta.platform_version,viewport:meta.viewport,screen_size:meta.screen_size,pixel_ratio:meta.pixel_ratio,touch_points:meta.touch_points,meta_fbp:meta.meta_fbp,meta_fbc:meta.meta_fbc,build:meta.build};
+      trackMetaFunnelEvent(name,enriched,{visitId:meta.visit_id,quoteId:eventQuoteId});
+      return await supabaseRpc('track_event',{p_session_id:this.state.sessionId,p_quote_id:eventQuoteId,p_event_name:name,p_payload:enriched});
     }
     catch(e){console.warn('track_event failed',name,e);return null;}
   }
@@ -3450,7 +3514,7 @@ class Component extends DCLogic {
     try{
       const row=await this.saveQuote();
       this.setState(st=>({folio:row.folio,quoteId:row.quote_id,savingQuote:false,saveError:'',qrKey:st.qrKey+1,appliedPromo:row.promo_code&&st.appliedPromo?{...st.appliedPromo,code:row.promo_code}:st.appliedPromo}));
-      this.trackEvent('quote_generated',{folio:row.folio,subtotal:row.subtotal_estimated,discount:row.discount_amount,total:row.total_estimated,promo_code:row.promo_code||null});
+      this.trackEvent('quote_generated',{quote_id:row.quote_id,folio:row.folio,subtotal:row.subtotal_estimated,discount:row.discount_amount,total:row.total_estimated,promo_code:row.promo_code||null});
       this.go('generando',{folio:row.folio,quoteId:row.quote_id,savingQuote:false});
       clearTimeout(this._t2); this._t2=setTimeout(()=>this.go('pase'),900);
     }catch(e){
@@ -3616,7 +3680,7 @@ class Component extends DCLogic {
       if(issue){ this.setState(s=>({screen:issue.screen,prev:[...s.prev,s.screen].slice(-12),qtyWarn:issue.message})); return; }
     }
     this.setState(s => ({ screen, prev: [...s.prev, s.screen].slice(-12), ...extra }));
-    if(screen!=='splash'&&screen!=='generando') this.trackEvent('screen_view',{screen});
+    if(screen!=='splash'&&screen!=='generando') this.trackEvent('screen_view',{screen,content_id:screen==='detalle'?(extra.detId||this.state.detId||null):null});
     if (screen === 'explorar' && (this.props.skeletonMs ?? 900) > 0) {
       this.setState({ loadingExplore: true });
       clearTimeout(this._t2); this._t2 = setTimeout(() => this.setState({ loadingExplore: false }), this.props.skeletonMs ?? 900);
@@ -3990,7 +4054,7 @@ class Component extends DCLogic {
       generate: () => this.generateQuote(), generateDisabled:s.savingQuote, generateOpacity:s.savingQuote?0.6:1, generateLabel:s.savingQuote?'Guardando cotización…':'Generar mi Pase de Aventura', hasSaveError:!!s.saveError, saveError:s.saveError,
       folio: s.folio || 'CS-—', qrPending: this.qr(s.folio || 'pending', false), qrAnimated: this.qr(s.folio || 'pending', true),
       // No client-side payment or reservation confirmation. Only a future trusted backend may confirm.
-      waMessage, waHref: 'https://wa.me/523331436632?text=' + encodeURIComponent(waMessage), trackWhatsApp:()=>this.trackEvent('whatsapp_clicked',{folio:s.folio||null,subtotal:T.subtotal,discount:T.discount,total:T.total,promo_code:s.appliedPromo&&T.discount>0?s.appliedPromo.code:null}),
+      waMessage, waHref: 'https://wa.me/523331436632?text=' + encodeURIComponent(waMessage), trackWhatsApp:()=>this.trackEvent('whatsapp_clicked',{quote_id:s.quoteId||null,folio:s.folio||null,subtotal:T.subtotal,discount:T.discount,total:T.total,promo_code:s.appliedPromo&&T.discount>0?s.appliedPromo.code:null}),
       copyLabel: s.copied ? 'Mensaje copiado' : 'Copiar mensaje', copyMsg: () => { try { navigator.clipboard && navigator.clipboard.writeText(waMessage); } catch (e) {} this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
       noPass: !s.folio, hasPass: !!s.folio, passKind:'Pase de Aventura',passStatus:'Solicitud pendiente de confirmar',passTagBg:PAPER,passTagColor:INK,
       openPass: () => { this.setState({ qrKey: s.qrKey + 1 }); this.go('pase'); }, timeline: tl,

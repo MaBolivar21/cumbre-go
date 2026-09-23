@@ -113,7 +113,7 @@ let token=null, refreshToken=null, currentUser=null, rows=[], selectedId=null, s
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function money(v){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(Number(v||0))}
 function dateMx(v){if(!v)return '—';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}
-function dt(v){if(!v)return '—';return new Date(v).toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'})}
+function dt(v){if(!v)return '—';return new Date(v).toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'})}\nfunction dtLocalInput(v){if(!v)return '';const d=new Date(v),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())}
 function stateBadge(s){return '<span class="badge st-'+esc(s)+'">'+esc(STATE_LABEL[s]||s)+'</span>'}
 function priorityBadge(p){if(!p||p==='normal')return '';return '<span class="badge prio-'+esc(p)+'">'+(p==='urgente'?'Urgente':'Revisar')+'</span>'}
 function uuid(){return crypto.randomUUID?crypto.randomUUID():([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16))}
@@ -225,8 +225,8 @@ function renderDetail(d){
         '<div><label class="label">Estado</label><select id="dEstado">'+STATES.map(x=>'<option value="'+x+'" '+(x===o.estado_comercial?'selected':'')+'>'+STATE_LABEL[x]+'</option>').join('')+'</select></div>'+
         '<div><label class="label">Prioridad</label><select id="dPrioridad"><option value="normal" '+(o.prioridad==='normal'?'selected':'')+'>Normal</option><option value="revisar" '+(o.prioridad==='revisar'?'selected':'')+'>Revisar</option><option value="urgente" '+(o.prioridad==='urgente'?'selected':'')+'>Urgente</option></select></div>'+
         '<div class="full"><label class="label">Próxima acción</label><input id="dAccion" class="field" value="'+esc(o.proxima_accion||'')+'" placeholder="Ej. Confirmar disponibilidad y enviar instrucciones"></div>'+
-        '<div><label class="label">Próximo seguimiento</label><input id="dSeguimiento" class="field" type="datetime-local" value="'+(o.proximo_seguimiento_at?new Date(o.proximo_seguimiento_at).toISOString().slice(0,16):'')+'"></div>'+
-        '<div><label class="label">Último contacto</label><input id="dUltimo" class="field" type="datetime-local" value="'+(o.ultimo_contacto_at?new Date(o.ultimo_contacto_at).toISOString().slice(0,16):'')+'"></div>'+
+        '<div><label class="label">Próximo seguimiento</label><input id="dSeguimiento" class="field" type="datetime-local" value="'+dtLocalInput(o.proximo_seguimiento_at)+'"></div>'+
+        '<div><label class="label">Último contacto</label><input id="dUltimo" class="field" type="datetime-local" value="'+dtLocalInput(o.ultimo_contacto_at)+'"></div>'+
         '<div><label class="label">Total validado MXN</label><input id="dTotal" class="field" type="number" min="0" step="1" value="'+(o.total_validado_mxn??'')+'" placeholder="'+esc(s.estimado_cliente_mxn)+'"></div>'+
         '<div><label class="label">Anticipo pagado MXN</label><input id="dAnticipo" class="field" type="number" min="0" step="1" value="'+esc(o.anticipo_pagado_mxn||0)+'"></div>'+
         '<div><label class="label">Hora de llegada</label><input id="dHora" class="field" type="time" value="'+esc(o.hora_llegada||'')+'"></div>'+

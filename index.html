@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260920-1.10.3">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260923-1.10.4">
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -1006,7 +1006,7 @@ small,.small{font-size:12px;line-height:1.4}
 </div>
 <div style="font-size:11px;color:rgba(23,26,24,.55);line-height:1.45">Al reservar o ingresar al parque aceptas el reglamento completo. La seguridad siempre tiene prioridad.</div>
 </div>
-<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260920-1.10.3 · Supabase · Meta Pixel · Launch Candidate</div></div>
+<div data-build-id="" style="font-size:10px;color:#637267;text-align:center;padding:8px 12px 92px">Versión CSG-20260923-1.10.4 · Supabase · Meta Pixel · Launch Candidate</div></div>
 </sc-if>
 <!-- TAB BAR -->
 <sc-if hint-placeholder-val="{{ false }}" value="{{ showTabs }}">
@@ -2809,7 +2809,7 @@ module.exports = QRCode;
 
 </script>
 <script>
-const BUILD_ID = 'CSG-20260920-1.10.3';
+const BUILD_ID = 'CSG-20260923-1.10.4';
 // pending until the owner explicitly confirms whether MXN 700 is per stay or per person.
 // Supported values: 'pending', 'stay', 'person'. No silent migration of the old per-person rate.
 const SPOT_RATE_BASIS = 'stay';
@@ -3070,7 +3070,7 @@ function trafficMeta(){
     meta_fbp:cookieValue('_fbp'),
     meta_fbc:cookieValue('_fbc'),
     user_agent:navigator.userAgent,
-    build:'CSG-20260920-1.10.3'
+    build:'CSG-20260923-1.10.4'
   };
 }
 function newQuoteFolio(){
@@ -3188,7 +3188,7 @@ class Component extends DCLogic {
     lodgingGuests: {cabana:0,glamping:0}, campTentMode:null, spotStart:'', spotEnd:'', spotGuests:1, tacoQty:{}, tacosOpen:false,
     promoOpen:false, promoInput:'', promoBusy:false, promoStatus:'idle', promoMessage:'', appliedPromo:null, promoAnimKey:0,
     name: '', phone: '', email: '', formError: '', acceptPolicies: false, policyError: false,
-    folio: null, quoteId: null, sessionId: getSessionId(), savingQuote: false, saveError: '', confirmed: false, loadingExplore: false, copied: false, qrKey: 0,
+    folio: null, quoteId: null, quoteRequestKey: null, sessionId: getSessionId(), savingQuote: false, saveError: '', confirmed: false, loadingExplore: false, copied: false, qrKey: 0,
     momentIdx: 0, frameIdx: 0, saved: {}, toast: '', toastKey: 0, badgeKey: 0, totalKey: 0,
     menuQty: {}, menuPick: {}, menuExtra: {}, quesadillaGQty: {}, quesadillaOpen: false, platilloQty:{}, platilloOpen:false, drinks: null, drinkPeople: 1, drinkNote: '', comboAdded: false, menuOpen: false, menuZoom: false,
   };
@@ -3488,7 +3488,12 @@ class Component extends DCLogic {
   async saveQuote(){
     const dateError=this.dateRangeIssue(); if(dateError)throw new Error(dateError);
     const s=this.state, T=this.totals(), meta=trafficMeta();
-    const result=await supabaseRpc('submit_quote_v2',{
+    const requestKey=s.quoteRequestKey || ((window.crypto&&window.crypto.randomUUID)?window.crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`);
+    if(!s.quoteRequestKey)this.setState({quoteRequestKey:requestKey});
+    const result=await supabaseRpc('submit_quote_v3',{
+      p_request_key:requestKey,
+      p_policy_accepted:!!s.acceptPolicies,
+      p_policy_version:'csg-policies-2026-09-20-v1',
       p_session_id:s.sessionId,
       p_visit_date:this.visitDateISO(),
       p_adults:s.adults,
@@ -3513,7 +3518,7 @@ class Component extends DCLogic {
     this.setState({savingQuote:true,saveError:''});
     try{
       const row=await this.saveQuote();
-      this.setState(st=>({folio:row.folio,quoteId:row.quote_id,savingQuote:false,saveError:'',qrKey:st.qrKey+1,appliedPromo:row.promo_code&&st.appliedPromo?{...st.appliedPromo,code:row.promo_code}:st.appliedPromo}));
+      this.setState(st=>({folio:row.folio,quoteId:row.quote_id,quoteRequestKey:null,savingQuote:false,saveError:'',qrKey:st.qrKey+1,appliedPromo:row.promo_code&&st.appliedPromo?{...st.appliedPromo,code:row.promo_code}:st.appliedPromo}));
       this.trackEvent('quote_generated',{quote_id:row.quote_id,folio:row.folio,subtotal:row.subtotal_estimated,discount:row.discount_amount,total:row.total_estimated,promo_code:row.promo_code||null});
       this.go('generando',{folio:row.folio,quoteId:row.quote_id,savingQuote:false});
       clearTimeout(this._t2); this._t2=setTimeout(()=>this.go('pase'),900);

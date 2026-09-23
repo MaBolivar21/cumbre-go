@@ -3488,7 +3488,7 @@ class Component extends DCLogic {
   async saveQuote(){
     const dateError=this.dateRangeIssue(); if(dateError)throw new Error(dateError);
     const s=this.state, T=this.totals(), meta=trafficMeta();
-    const requestKey=s.quoteRequestKey || ((window.crypto&&window.crypto.randomUUID)?window.crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`);
+    const requestKey=s.quoteRequestKey || newUUID();
     if(!s.quoteRequestKey)this.setState({quoteRequestKey:requestKey});
     const result=await supabaseRpc('submit_quote_v3',{
       p_request_key:requestKey,

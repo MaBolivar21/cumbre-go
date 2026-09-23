@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0B2B24">
+<title>Cumbre GO · CRM</title>
+<style>
+:root{--ink:#15201c;--forest:#0b2b24;--forest2:#123f34;--paper:#f6f1e7;--card:#fffdf8;--line:#ded8cb;--orange:#f26a2e;--muted:#6c746f;--green:#2f765d;--red:#a33a2c;--amber:#9b681d;--blue:#315f80;--shadow:0 12px 30px rgba(15,32,25,.08)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--paper);color:var(--ink)}
+button,input,select,textarea{font:inherit}.hidden{display:none!important}
+.top{position:sticky;top:0;z-index:20;background:var(--forest);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:0 2px 14px rgba(0,0,0,.12)}
+.brand{display:flex;align-items:center;gap:12px}.brand img{width:54px;height:40px;object-fit:contain}.brand small{display:block;color:#f2a276;font-weight:800;letter-spacing:.12em;font-size:10px}.brand strong{font-size:22px}
+.top-actions{display:flex;align-items:center;gap:10px;font-size:13px}.top a,.top button{color:#fff}.ghost{background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:9px 12px;cursor:pointer}
+.shell{max-width:1440px;margin:0 auto;padding:24px}.nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}.tab{border:1px solid var(--line);background:#fff8;border-radius:999px;padding:9px 15px;font-weight:800;cursor:pointer}.tab.active{background:var(--forest);border-color:var(--forest);color:white}
+.metrics{display:grid;grid-template-columns:repeat(6,minmax(140px,1fr));gap:12px;margin-bottom:18px}.metric{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}.metric span{display:block;font-size:12px;color:var(--muted);font-weight:700}.metric b{display:block;font-size:25px;margin-top:7px}.metric.money b{font-size:20px}
+.grid{display:grid;grid-template-columns:minmax(380px,.9fr) minmax(520px,1.4fr);gap:18px}.panel{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}.panel-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.panel-head h2{font-size:18px;margin:0}.panel-body{padding:18px 20px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:10px}.field,select,textarea{width:100%;background:white;border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:var(--ink)}textarea{min-height:82px;resize:vertical}.btn{border:0;background:var(--forest);color:white;font-weight:800;border-radius:12px;padding:11px 14px;cursor:pointer}.btn.secondary{background:#e8ede8;color:var(--forest)}.btn.orange{background:var(--orange)}.btn:disabled{opacity:.55;cursor:not-allowed}
+.list{display:flex;flex-direction:column;border-top:1px solid var(--line)}.row{padding:15px 18px;border-bottom:1px solid var(--line);cursor:pointer;background:transparent}.row:hover,.row.active{background:#eef2ed}.row-top,.row-meta{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.row-name{font-weight:900}.row-meta{font-size:12px;color:var(--muted);margin-top:6px}.amount{font-weight:900;white-space:nowrap}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}.st-nuevo{background:#eef1ee;color:#345146}.st-contactado{background:#e9f1f7;color:#315f80}.st-cotizado{background:#edf3e4;color:#55743e}.st-esperando_pago{background:#fff0d9;color:#8b5b17}.st-reservado{background:#dff1e7;color:#246449}.st-completado{background:#e6ece9;color:#4b5a53}.st-no_concretado{background:#f5e5e1;color:#903f31}.prio-urgente{background:#f8dfda;color:#9b3326}.prio-revisar{background:#fff0d9;color:#8b5b17}
+.empty{padding:46px;text-align:center;color:var(--muted)}.detail-title{display:flex;align-items:center;justify-content:space-between;gap:12px}.detail-title h1{font-size:26px;margin:4px 0}.folio{font-size:12px;color:var(--muted);font-weight:800}.cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.mini{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.mini label{display:block;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:900}.mini div{margin-top:5px;font-weight:800}.section{margin-top:20px}.section h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 10px}.service{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:10px 0}.service:first-child{border-top:0}.service strong{display:block}.service small{color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.linkbtn{display:inline-block;text-decoration:none;background:#e8ede8;color:var(--forest);font-weight:900;padding:10px 13px;border-radius:12px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.form-grid .full{grid-column:1/-1}.label{font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px;display:block}.timeline{display:flex;flex-direction:column;gap:10px}.event{border-left:3px solid #c8d3cc;padding:6px 0 6px 12px}.event b{font-size:13px}.event small{display:block;color:var(--muted);margin-top:3px}
+.agenda-toolbar{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.agenda-day{margin:18px 0}.agenda-day h3{font-size:14px;color:var(--muted)}.agenda-card{border:1px solid var(--line);border-radius:16px;padding:14px;margin:9px 0;background:white;display:grid;grid-template-columns:90px 1.2fr 1fr 1fr;gap:12px;align-items:center}.agenda-card .time{font-weight:900;font-size:18px}.warn{color:var(--red);font-weight:900;font-size:12px}
+.login{min-height:100vh;background:linear-gradient(130deg,var(--forest),#173d32);display:grid;place-items:center;padding:20px}.login-card{width:min(440px,100%);background:var(--card);border-radius:26px;padding:28px;box-shadow:0 28px 80px rgba(0,0,0,.22)}.login-card img{width:100px;display:block;margin:0 auto 12px}.login-card h1{margin:4px 0 8px;text-align:center}.login-card p{text-align:center;color:var(--muted);margin-bottom:22px}.login-card .field{margin-bottom:10px}.error{background:#f8e3df;color:#8e362b;border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}.notice{background:#edf3e4;color:#48633a;border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}
+@media(max-width:1100px){.metrics{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr}.agenda-card{grid-template-columns:80px 1fr 1fr}}
+@media(max-width:720px){.shell{padding:14px}.top{padding:12px 14px}.brand strong{font-size:18px}.top-actions span{display:none}.metrics{grid-template-columns:repeat(2,1fr)}.filters,.form-grid,.cards2{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.agenda-card{grid-template-columns:1fr}.grid{display:block}.panel{margin-bottom:14px}.detail-title{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="login" class="login">
+  <div class="login-card">
+    <img src="img/logo-cumbre-transparente.png" alt="Cumbre Salvaje">
+    <h1>Cumbre GO · Operación</h1>
+    <p>Acceso exclusivo para personal autorizado.</p>
+    <input id="email" class="field" type="email" placeholder="Correo">
+    <input id="password" class="field" type="password" placeholder="Contraseña">
+    <button id="loginBtn" class="btn" style="width:100%">Entrar</button>
+    <div id="loginMsg"></div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+<header class="top">
+  <div class="brand"><img src="img/logo-cumbre-transparente.png" alt=""><div><small>CUMBRE GO · EQUIPO</small><strong>Operación comercial</strong></div></div>
+  <div class="top-actions"><a href="/" style="text-decoration:none;font-weight:800">Ver Cumbre GO</a><span id="staffName"></span><button id="logoutBtn" class="ghost">Salir</button></div>
+</header>
+<main class="shell">
+  <div class="nav">
+    <button class="tab active" data-view="inicio">Inicio</button>
+    <button class="tab" data-view="solicitudes">Solicitudes</button>
+    <button class="tab" data-view="agenda">Agenda</button>
+  </div>
+
+  <section id="view-inicio">
+    <div class="metrics" id="metrics"></div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-head"><h2>Prioridades de hoy</h2><button class="btn secondary" id="refreshHome">Actualizar</button></div>
+        <div id="priorityList" class="list"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Resumen operativo</h2></div>
+        <div class="panel-body" id="homeSummary"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-solicitudes" class="hidden">
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-head"><h2>Bandeja comercial</h2><button class="btn secondary" id="refreshList">Actualizar</button></div>
+        <div class="panel-body">
+          <div class="filters">
+            <input id="search" class="field" placeholder="Nombre, folio, teléfono">
+            <select id="estadoFilter"><option value="">Todos los estados</option></select>
+            <select id="tipoFilter"><option value="">Normal y grupal</option><option value="normal">Normal</option><option value="grupal">Grupal</option></select>
+          </div>
+          <select id="prioridadFilter" style="margin-bottom:10px"><option value="">Todas las prioridades</option><option value="normal">Normal</option><option value="revisar">Revisar</option><option value="urgente">Urgente</option></select>
+        </div>
+        <div id="requestList" class="list"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Detalle</h2><button class="btn secondary hidden" id="reloadDetail">Recargar detalle</button></div>
+        <div id="detail" class="panel-body"><div class="empty">Selecciona una solicitud para trabajarla.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-agenda" class="hidden">
+    <div class="panel">
+      <div class="panel-head"><h2>Agenda de reservas</h2></div>
+      <div class="panel-body">
+        <div class="agenda-toolbar">
+          <div><label class="label">Desde</label><input type="date" id="agendaStart" class="field"></div>
+          <div><label class="label">Hasta</label><input type="date" id="agendaEnd" class="field"></div>
+          <button class="btn" id="loadAgenda">Cargar agenda</button>
+        </div>
+        <div class="metrics" id="agendaMetrics" style="margin-top:16px"></div>
+        <div id="agendaRows"></div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<script>
+const SUPABASE_URL='https://xnztlanptbdgpdjhbnzv.supabase.co';
+const SUPABASE_KEY='sb_publishable_JcKnBtzboji75Em1M0wa8w_3_fb0LB3';
+const STATES=['nuevo','contactado','cotizado','esperando_pago','reservado','completado','no_concretado'];
+const STATE_LABEL={nuevo:'Nuevo',contactado:'Contactado',cotizado:'Cotizado',esperando_pago:'Esperando pago',reservado:'Reservado',completado:'Completado',no_concretado:'No concretado'};
+let token=null, refreshToken=null, currentUser=null, rows=[], selectedId=null, selectedDetail=null;
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function money(v){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(Number(v||0))}
+function dateMx(v){if(!v)return '—';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}
+function dt(v){if(!v)return '—';return new Date(v).toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'})}
+function stateBadge(s){return '<span class="badge st-'+esc(s)+'">'+esc(STATE_LABEL[s]||s)+'</span>'}
+function priorityBadge(p){if(!p||p==='normal')return '';return '<span class="badge prio-'+esc(p)+'">'+(p==='urgente'?'Urgente':'Revisar')+'</span>'}
+function uuid(){return crypto.randomUUID?crypto.randomUUID():([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16))}
+function todayISO(){const d=new Date();const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day}
+function plusDays(iso,n){const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+
+async function auth(path,body){
+  const r=await fetch(SUPABASE_URL+'/auth/v1/'+path,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify(body)});
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(data.msg||data.message||'No fue posible iniciar sesión.');
+  return data;
+}
+async function rpc(name,payload={}){
+  const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+token},body:JSON.stringify(payload)});
+  const text=await r.text();
+  if(r.status===401&&refreshToken){await refreshSession();return rpc(name,payload)}
+  if(!r.ok){let msg=text;try{msg=JSON.parse(text).message||text}catch(_){}throw new Error(msg)}
+  return text?JSON.parse(text):null;
+}
+async function refreshSession(){
+  const data=await auth('token?grant_type=refresh_token',{refresh_token:refreshToken});
+  saveSession(data);
+}
+function saveSession(data){token=data.access_token;refreshToken=data.refresh_token;currentUser=data.user||currentUser;localStorage.setItem('cumbre_crm_session',JSON.stringify({access_token:token,refresh_token:refreshToken,user:currentUser}))}
+function clearSession(){token=refreshToken=currentUser=null;localStorage.removeItem('cumbre_crm_session')}
+function restore(){try{const s=JSON.parse(localStorage.getItem('cumbre_crm_session')||'null');if(s){token=s.access_token;refreshToken=s.refresh_token;currentUser=s.user;return true}}catch(_){}return false}
+
+async function boot(){
+  try{
+    const access=await rpc('cumbre_crm_access',{});
+    document.getElementById('staffName').textContent=access.nombre||'Personal';
+    document.getElementById('login').classList.add('hidden');document.getElementById('app').classList.remove('hidden');
+    await loadHome();
+  }catch(e){clearSession();document.getElementById('login').classList.remove('hidden');document.getElementById('app').classList.add('hidden')}
+}
+async function login(){
+  const b=document.getElementById('loginBtn');b.disabled=true;document.getElementById('loginMsg').innerHTML='';
+  try{const data=await auth('token?grant_type=password',{email:document.getElementById('email').value.trim(),password:document.getElementById('password').value});saveSession(data);await boot()}
+  catch(e){document.getElementById('loginMsg').innerHTML='<div class="error">'+esc(e.message)+'</div>'}
+  finally{b.disabled=false}
+}
+
+function metricsHtml(m){
+  return [
+    ['Solicitudes nuevas',m.solicitudes_nuevas||0,''],
+    ['Necesitan atención',m.necesitan_atencion||0,''],
+    ['Esperando pago',m.esperando_pago||0,''],
+    ['Reservadas',m.reservadas||0,''],
+    ['Pipeline potencial',money(m.pipeline_potencial_mxn),'money'],
+    ['Saldo por cobrar',money(m.saldo_por_cobrar_mxn),'money']
+  ].map(x=>'<div class="metric '+x[2]+'"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');
+}
+function rowHtml(r){
+  return '<div class="row '+(r.id===selectedId?'active':'')+'" data-id="'+r.id+'">'+
+    '<div class="row-top"><div><div class="row-name">'+esc(r.nombre)+'</div><div style="margin-top:5px">'+stateBadge(r.estado_comercial)+' '+priorityBadge(r.prioridad)+'</div></div><div class="amount">'+money(r.total_validado_mxn??r.estimado_cliente_mxn)+'</div></div>'+
+    '<div class="row-meta"><span>'+esc(r.folio)+' · '+dateMx(r.fecha_visita)+' · '+esc(r.visitantes_total)+' visitantes</span><span>'+esc(r.flujo==='grupal'?'Grupo':'Normal')+'</span></div>'+
+    (r.proxima_accion?'<div style="margin-top:8px;font-size:12px"><b>Siguiente:</b> '+esc(r.proxima_accion)+'</div>':'')+
+  '</div>';
+}
+function bindRows(root){root.querySelectorAll('.row').forEach(el=>el.onclick=()=>{showView('solicitudes');loadDetail(el.dataset.id)})}
+
+async function loadHome(){
+  const data=await rpc('cumbre_crm_list_v2',{p_search:'',p_estado:'',p_tipo:'',p_prioridad:'',p_offset:0});
+  rows=data.rows||[];
+  document.getElementById('metrics').innerHTML=metricsHtml(data.metrics||{});
+  const pri=[...rows].sort((a,b)=>{
+    const score=x=>(x.prioridad==='urgente'?0:x.prioridad==='revisar'?1:x.estado_comercial==='nuevo'?2:x.proximo_seguimiento_at&&new Date(x.proximo_seguimiento_at)<=new Date()?3:4);
+    return score(a)-score(b)||new Date(b.created_at)-new Date(a.created_at)
+  }).slice(0,8);
+  document.getElementById('priorityList').innerHTML=pri.length?pri.map(rowHtml).join(''):'<div class="empty">No hay pendientes prioritarios.</div>';
+  bindRows(document.getElementById('priorityList'));
+  const m=data.metrics||{};
+  document.getElementById('homeSummary').innerHTML=
+    '<div class="cards2">'+
+    '<div class="mini"><label>Leads abiertos</label><div>'+((m.solicitudes_nuevas||0)+(m.esperando_pago||0))+'</div></div>'+
+    '<div class="mini"><label>Dinero potencial</label><div>'+money(m.pipeline_potencial_mxn)+'</div></div>'+
+    '</div><p style="color:var(--muted);line-height:1.55">La prioridad es trabajar cada lead hasta definir una siguiente acción. “Reservado” solo debe usarse cuando administración haya confirmado la reserva; el anticipo pagado es dinero realmente validado, no intención del cliente.</p>';
+}
+async function loadList(){
+  const data=await rpc('cumbre_crm_list_v2',{p_search:document.getElementById('search').value.trim(),p_estado:document.getElementById('estadoFilter').value,p_tipo:document.getElementById('tipoFilter').value,p_prioridad:document.getElementById('prioridadFilter').value,p_offset:0});
+  rows=data.rows||[];
+  document.getElementById('requestList').innerHTML=rows.length?rows.map(rowHtml).join(''):'<div class="empty">No encontramos solicitudes.</div>';
+  bindRows(document.getElementById('requestList'));
+}
+async function loadDetail(id){
+  selectedId=id;document.getElementById('detail').innerHTML='<div class="empty">Cargando…</div>';document.getElementById('reloadDetail').classList.remove('hidden');
+  try{selectedDetail=await rpc('cumbre_crm_detail_v2',{p_id:id});renderDetail(selectedDetail);document.querySelectorAll('.row').forEach(r=>r.classList.toggle('active',r.dataset.id===id))}
+  catch(e){document.getElementById('detail').innerHTML='<div class="error">'+esc(e.message)+'</div>'}
+}
+function renderDetail(d){
+  const s=d.solicitud,o=d.operacion||{},items=d.quote_items||[],ev=d.seguimiento||[];
+  const wa='https://wa.me/'+String(s.telefono||'').replace(/\D/g,'');
+  let services=items.length?items.map(i=>'<div class="service"><div><strong>'+esc(i.item_name)+'</strong><small>'+esc(i.quantity)+' × '+money(i.unit_price)+(i.participants?' · '+esc(i.participants)+' participantes':'')+'</small></div><b>'+money(i.line_total)+'</b></div>').join(''):'<div class="empty" style="padding:20px">Sin desglose disponible.</div>';
+  const timeline=ev.length?ev.map(e=>'<div class="event"><b>'+esc(e.autor_nombre||'Sistema')+' · '+esc(STATE_LABEL[e.estado_nuevo]||e.estado_nuevo)+'</b><small>'+dt(e.created_at)+'</small><div style="margin-top:4px">'+esc(e.nota||'')+'</div></div>').join(''):'<div style="color:var(--muted)">Aún no hay seguimiento registrado.</div>';
+  document.getElementById('detail').innerHTML=
+    '<div class="detail-title"><div><div class="folio">'+esc(s.folio)+'</div><h1>'+esc(s.nombre)+'</h1><div>'+stateBadge(o.estado_comercial||'nuevo')+' '+priorityBadge(o.prioridad)+'</div></div><div class="amount">'+money(o.total_validado_mxn??s.estimado_cliente_mxn)+'</div></div>'+
+    '<div class="cards2">'+
+      '<div class="mini"><label>Fecha de visita</label><div>'+dateMx(s.fecha_visita)+'</div></div>'+
+      '<div class="mini"><label>Visitantes</label><div>'+esc(s.visitantes_total)+' personas</div></div>'+
+      '<div class="mini"><label>Tipo</label><div>'+(s.flujo==='grupal'?'Visita grupal':'Visita normal')+'</div></div>'+
+      '<div class="mini"><label>Estancia</label><div>'+esc(s.estancia==='noche'?'Con noche':'Visita de día')+(s.hospedaje?' · '+esc(s.hospedaje):'')+'</div></div>'+
+      '<div class="mini"><label>Anticipo pagado</label><div>'+money(o.anticipo_pagado_mxn)+'</div></div>'+
+      '<div class="mini"><label>Saldo pendiente</label><div>'+money(o.saldo_pendiente_mxn)+'</div></div>'+
+    '</div>'+
+    '<div class="actions"><a class="linkbtn" target="_blank" href="'+wa+'">Abrir WhatsApp</a>'+(s.email?'<a class="linkbtn" href="mailto:'+encodeURIComponent(s.email)+'">Escribir correo</a>':'')+'</div>'+
+    '<div class="section"><h3>Aventura solicitada</h3>'+services+'</div>'+
+    '<div class="section"><h3>Gestión comercial</h3>'+
+      '<div class="form-grid">'+
+        '<div><label class="label">Estado</label><select id="dEstado">'+STATES.map(x=>'<option value="'+x+'" '+(x===o.estado_comercial?'selected':'')+'>'+STATE_LABEL[x]+'</option>').join('')+'</select></div>'+
+        '<div><label class="label">Prioridad</label><select id="dPrioridad"><option value="normal" '+(o.prioridad==='normal'?'selected':'')+'>Normal</option><option value="revisar" '+(o.prioridad==='revisar'?'selected':'')+'>Revisar</option><option value="urgente" '+(o.prioridad==='urgente'?'selected':'')+'>Urgente</option></select></div>'+
+        '<div class="full"><label class="label">Próxima acción</label><input id="dAccion" class="field" value="'+esc(o.proxima_accion||'')+'" placeholder="Ej. Confirmar disponibilidad y enviar instrucciones"></div>'+
+        '<div><label class="label">Próximo seguimiento</label><input id="dSeguimiento" class="field" type="datetime-local" value="'+(o.proximo_seguimiento_at?new Date(o.proximo_seguimiento_at).toISOString().slice(0,16):'')+'"></div>'+
+        '<div><label class="label">Último contacto</label><input id="dUltimo" class="field" type="datetime-local" value="'+(o.ultimo_contacto_at?new Date(o.ultimo_contacto_at).toISOString().slice(0,16):'')+'"></div>'+
+        '<div><label class="label">Total validado MXN</label><input id="dTotal" class="field" type="number" min="0" step="1" value="'+(o.total_validado_mxn??'')+'" placeholder="'+esc(s.estimado_cliente_mxn)+'"></div>'+
+        '<div><label class="label">Anticipo pagado MXN</label><input id="dAnticipo" class="field" type="number" min="0" step="1" value="'+esc(o.anticipo_pagado_mxn||0)+'"></div>'+
+        '<div><label class="label">Hora de llegada</label><input id="dHora" class="field" type="time" value="'+esc(o.hora_llegada||'')+'"></div>'+
+        '<div class="full"><label class="label">Nota de seguimiento</label><textarea id="dNota" placeholder="Qué se hizo, qué respondió el cliente o qué queda pendiente"></textarea></div>'+
+        '<div class="full"><button id="saveDetail" class="btn orange">Guardar seguimiento</button><span id="saveMsg" style="margin-left:10px;font-size:12px"></span></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="section"><h3>Historial</h3><div class="timeline">'+timeline+'</div></div>'+
+    '<div class="section"><h3>Origen</h3><div style="font-size:12px;color:var(--muted)">Fuente: '+esc(s.atribucion?.source||'direct')+' · Folio de cotización: '+esc(d.quote?.folio||'—')+'</div></div>';
+  document.getElementById('saveDetail').onclick=saveDetail;
+}
+function localToIso(v){return v?new Date(v).toISOString():null}
+async function saveDetail(){
+  const b=document.getElementById('saveDetail'),msg=document.getElementById('saveMsg');b.disabled=true;msg.textContent='Guardando…';
+  try{
+    const patch={
+      estado_comercial:document.getElementById('dEstado').value,
+      prioridad:document.getElementById('dPrioridad').value,
+      proxima_accion:document.getElementById('dAccion').value.trim()||null,
+      proximo_seguimiento_at:localToIso(document.getElementById('dSeguimiento').value),
+      ultimo_contacto_at:localToIso(document.getElementById('dUltimo').value),
+      total_validado_mxn:document.getElementById('dTotal').value===''?null:Number(document.getElementById('dTotal').value),
+      anticipo_pagado_mxn:Number(document.getElementById('dAnticipo').value||0),
+      hora_llegada:document.getElementById('dHora').value||null
+    };
+    await rpc('cumbre_crm_update_v2',{p_id:selectedId,p_revision:selectedDetail.solicitud.revision,p_patch:patch,p_nota:document.getElementById('dNota').value.trim(),p_action_key:uuid()});
+    msg.textContent='Guardado';await Promise.all([loadDetail(selectedId),loadHome(),loadList()]);
+  }catch(e){msg.textContent='';alert(e.message)}finally{b.disabled=false}
+}
+
+async function loadAgenda(){
+  const data=await rpc('cumbre_crm_agenda_v2',{p_start:document.getElementById('agendaStart').value,p_end:document.getElementById('agendaEnd').value});
+  const m=data.metrics||{};
+  document.getElementById('agendaMetrics').innerHTML=[
+    ['Reservas',m.reservas||0],['Visitantes',m.visitantes_esperados||0],['Saldo por cobrar',money(m.saldo_por_cobrar_mxn),'money'],['Grupos',m.grupos||0],['Con alerta',m.reservas_con_alerta||0]
+  ].map(x=>'<div class="metric '+(x[2]||'')+'"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');
+  const groups={};(data.rows||[]).forEach(r=>(groups[r.fecha_visita]??=[]).push(r));
+  const keys=Object.keys(groups).sort();
+  document.getElementById('agendaRows').innerHTML=keys.length?keys.map(k=>'<div class="agenda-day"><h3>'+dateMx(k)+'</h3>'+groups[k].map(r=>'<div class="agenda-card"><div class="time">'+esc(r.hora_llegada||'Por definir')+'</div><div><b>'+esc(r.nombre)+'</b><div style="font-size:12px;color:var(--muted)">'+esc(r.folio)+' · '+esc(r.visitantes_total)+' visitantes</div></div><div>'+stateBadge(r.estado_comercial)+'<div style="margin-top:5px;font-size:12px">'+esc(r.hospedaje||'Sin hospedaje')+'</div></div><div><b>'+money(r.saldo_pendiente_mxn)+'</b><div style="font-size:11px;color:var(--muted)">saldo</div>'+(r.alertas?.length?'<div class="warn">'+r.alertas.length+' alerta(s)</div>':'')+'</div></div>').join('')+'</div>').join(''):'<div class="empty">No hay reservas confirmadas en este rango.</div>';
+}
+
+function showView(name){
+  ['inicio','solicitudes','agenda'].forEach(v=>document.getElementById('view-'+v).classList.toggle('hidden',v!==name));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===name));
+  if(name==='solicitudes')loadList();
+  if(name==='agenda')loadAgenda();
+}
+
+document.getElementById('loginBtn').onclick=login;document.getElementById('password').onkeydown=e=>{if(e.key==='Enter')login()};
+document.getElementById('logoutBtn').onclick=()=>{clearSession();location.reload()};
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showView(t.dataset.view));
+document.getElementById('refreshHome').onclick=loadHome;document.getElementById('refreshList').onclick=loadList;document.getElementById('reloadDetail').onclick=()=>selectedId&&loadDetail(selectedId);
+['estadoFilter','tipoFilter','prioridadFilter'].forEach(id=>document.getElementById(id).onchange=loadList);
+let st;document.getElementById('search').oninput=()=>{clearTimeout(st);st=setTimeout(loadList,300)};
+document.getElementById('loadAgenda').onclick=loadAgenda;
+document.getElementById('estadoFilter').innerHTML+='<option value="nuevo">Nuevo</option><option value="contactado">Contactado</option><option value="cotizado">Cotizado</option><option value="esperando_pago">Esperando pago</option><option value="reservado">Reservado</option><option value="completado">Completado</option><option value="no_concretado">No concretado</option>';
+document.getElementById('agendaStart').value=todayISO();document.getElementById('agendaEnd').value=plusDays(todayISO(),7);
+if(restore())boot();
+</script>
+</body>
+</html>

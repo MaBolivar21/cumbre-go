@@ -1,5 +1,16 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0B2B24"><title>Cumbre Salvaje GO</title><meta name="cumbre-build" content="CSG-20260923-1.10.4">
+<!-- PostHog: web analytics and product events -->
+<script>
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}p||((p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",p.onerror=function(){p=null},(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r));var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],Object.defineProperty(u,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e}}),Object.defineProperty(u.people,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(){return u.toString(1)+".people (stub)"}}),o="vu fu pu gu bu init Hu zu qu ju Gu Xa Bu Qu Du eh ih nh sh rh oh capture getExtension Uu cu hh calculateEventProperties uh register register_once register_for_session unregister unregister_for_session gh Nu dh getFeatureFlag getFeatureFlagPayload getFeatureFlagResult getAllFeatureFlags isFeatureEnabled reloadFeatureFlags updateFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey cancelPendingSurvey canRenderSurvey canRenderSurveyAsync mh identify setPersonProperties unsetPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags reset yh shutdown setIdentity clearIdentity get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException addExceptionStep captureLog startExceptionAutocapture stopExceptionAutocapture loadToolbar get_property getSessionProperty fh Xu createPersonProfile setInternalOrTestUser ph wu opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Ju debug Ya Os getPageViewId captureTraceFeedback captureTraceMetric Ru".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_xd2DAgvLEhCLFy6QwpU92s3BF4ygFVvw5SgwRuYMLjeC', {
+    api_host: 'https://us.i.posthog.com',
+    defaults: '2026-05-30',
+    person_profiles: 'identified_only',
+    disable_session_recording: true
+});
+</script>
+<!-- End PostHog -->
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -3481,6 +3492,13 @@ class Component extends DCLogic {
       const eventQuoteId=(payload&&payload.quote_id)||this.state.quoteId||null;
       const enriched={...(payload||{}),visit_id:meta.visit_id,source:meta.source,utm_source:meta.utm_source,utm_medium:meta.utm_medium,utm_campaign:meta.utm_campaign,utm_content:meta.utm_content,utm_term:meta.utm_term,utm_id:meta.utm_id,landing_page:meta.landing_page,referrer_domain:meta.referrer_domain,attribution:meta.attribution,device_type:meta.device_type,os:meta.os,browser:meta.browser,device_model:meta.device_model,platform_version:meta.platform_version,viewport:meta.viewport,screen_size:meta.screen_size,pixel_ratio:meta.pixel_ratio,touch_points:meta.touch_points,meta_fbp:meta.meta_fbp,meta_fbc:meta.meta_fbc,build:meta.build};
       trackMetaFunnelEvent(name,enriched,{visitId:meta.visit_id,quoteId:eventQuoteId});
+      // Send only commercial funnel fields to PostHog; keep contact and quote IDs in Supabase.
+      if(window.posthog && ['app_open','screen_view','quote_generated','whatsapp_clicked'].includes(name)){
+        const phProps={build:meta.build};
+        if(name==='screen_view'){phProps.screen=payload.screen;phProps.content_id=payload.content_id||null;}
+        if(name==='quote_generated'||name==='whatsapp_clicked'){phProps.total=Number(payload.total)||0;phProps.currency='MXN';}
+        window.posthog.capture(name,phProps);
+      }
       return await supabaseRpc('track_event',{p_session_id:this.state.sessionId,p_quote_id:eventQuoteId,p_event_name:name,p_payload:enriched});
     }
     catch(e){console.warn('track_event failed',name,e);return null;}

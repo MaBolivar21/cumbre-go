@@ -116,7 +116,7 @@ function amountLabel(v,isGroup){return v==null&&isGroup?'Cotización personaliza
 const GROUP_LABEL={escuela_colegio:'Escuela / Colegio',empresa_equipo:'Empresa / Equipo',familia_amigos:'Familia / Amigos',asociacion_grupo:'Asociación / Grupo',otro:'Otro'};
 const NEED_LABEL={cotizador_normal:'Elegir actividades y conocer precio',organizar_grupo:'Organizar visita completa',propuesta_personalizada:'Propuesta personalizada',no_seguro:'Por definir'};
 function stayLabel(v){return v==='noche'?'Con noche':v==='dia'?'Visita de día':'Por definir'}
-function dateMx(v){if(!v)return '—';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}
+function dateMx(v){if(!v)return 'Fecha por definir';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}
 function dt(v){if(!v)return '—';return new Date(v).toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'})}
 function dtLocalInput(v){if(!v)return '';const d=new Date(v),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())}
 function stateBadge(s){return '<span class="badge st-'+esc(s)+'">'+esc(STATE_LABEL[s]||s)+'</span>'}
@@ -226,7 +226,7 @@ function renderDetail(d){
     :(Array.isArray(s.servicios)&&s.servicios.length
       ?s.servicios.map(i=>'<div class="service"><div><strong>'+esc(i.title||i.id)+'</strong><small>Requiere validación y cotización</small></div><b>Por cotizar</b></div>').join('')
       :'<div class="empty" style="padding:20px">Sin desglose disponible.</div>');
-  const timeline=ev.length?ev.map(e=>'<div class="event"><b>'+esc(e.autor_nombre||'Sistema')+' · '+esc(STATE_LABEL[e.estado_nuevo]||e.estado_nuevo)+'</b><small>'+dt(e.created_at)+'</small><div style="margin-top:4px">'+esc(e.nota||'')+'</div></div>').join(''):'<div style="color:var(--muted)">Aún no hay seguimiento registrado.</div>';
+  const timeline=ev.length?ev.map(e=>'<div class="event"><b>'+esc(e.autor_nombre||'Sistema')+' · '+esc(STATE_LABEL[e.estado_nuevo]||e.estado_nuevo)+'</b><small>'+dt(e.created_at)+'</small><div style="margin-top:4px">'+esc(e.nota||'')+'</div>'+(e.metadata&&Object.prototype.hasOwnProperty.call(e.metadata,'fecha_visita')?'<div style="margin-top:4px;font-size:12px"><b>Fecha de visita:</b> '+esc(dateMx(e.metadata.fecha_visita))+'</div>':'')+'</div>').join(''):'<div style="color:var(--muted)">Aún no hay seguimiento registrado.</div>';
   document.getElementById('detail').innerHTML=
     '<div class="detail-title"><div><div class="folio">'+esc(s.folio)+'</div><h1>'+esc(s.nombre)+'</h1><div>'+stateBadge(o.estado_comercial||'nuevo')+' '+priorityBadge(o.prioridad)+'</div></div><div class="amount">'+amountLabel(o.total_validado_mxn??s.estimado_cliente_mxn,s.flujo==='grupal')+'</div></div>'+
     '<div class="cards2">'+
@@ -243,6 +243,7 @@ function renderDetail(d){
     groupClientNotesHtml(s)+
     '<div class="section"><h3>Gestión comercial</h3>'+
       '<div class="form-grid">'+
+        (s.flujo==='grupal'?'<div class="full"><label class="label" for="dFechaVisita">Fecha de visita del grupo</label><input id="dFechaVisita" class="field" type="date" value="'+esc(s.fecha_visita||'')+'"><label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px"><input id="dFechaSinDefinir" type="checkbox" '+(!s.fecha_visita?'checked':'')+'> Fecha por definir</label><small style="display:block;color:var(--muted);margin-top:6px">Puedes dar seguimiento sin fecha. Para confirmar la reserva, captura la fecha acordada.</small></div>':'')+
         '<div><label class="label">Estado</label><select id="dEstado">'+STATES.map(x=>'<option value="'+x+'" '+(x===o.estado_comercial?'selected':'')+'>'+STATE_LABEL[x]+'</option>').join('')+'</select></div>'+
         '<div><label class="label">Prioridad</label><select id="dPrioridad"><option value="normal" '+(o.prioridad==='normal'?'selected':'')+'>Normal</option><option value="revisar" '+(o.prioridad==='revisar'?'selected':'')+'>Revisar</option><option value="urgente" '+(o.prioridad==='urgente'?'selected':'')+'>Urgente</option></select></div>'+
         '<div class="full"><label class="label">Próxima acción</label><input id="dAccion" class="field" value="'+esc(o.proxima_accion||'')+'" placeholder="Ej. Confirmar disponibilidad y enviar instrucciones"></div>'+
@@ -258,6 +259,8 @@ function renderDetail(d){
     '<div class="section"><h3>Historial</h3><div class="timeline">'+timeline+'</div></div>'+
     '<div class="section"><h3>Origen</h3><div style="font-size:12px;color:var(--muted)">Fuente: '+esc(s.atribucion?.source||'direct')+' · Folio de cotización: '+esc(d.quote?.folio||'—')+'</div></div>';
   document.getElementById('saveDetail').onclick=saveDetail;
+  const visitDate=document.getElementById('dFechaVisita'),unknownDate=document.getElementById('dFechaSinDefinir');
+  if(visitDate&&unknownDate){visitDate.onchange=()=>{unknownDate.checked=!visitDate.value};unknownDate.onchange=()=>{if(unknownDate.checked)visitDate.value='';else visitDate.focus()}}
 }
 function localToIso(v){return v?new Date(v).toISOString():null}
 async function saveDetail(){
@@ -273,6 +276,13 @@ async function saveDetail(){
       anticipo_pagado_mxn:Number(document.getElementById('dAnticipo').value||0),
       hora_llegada:document.getElementById('dHora').value||null
     };
+    if(selectedDetail.solicitud.flujo==='grupal'){
+      const unknown=document.getElementById('dFechaSinDefinir').checked;
+      const visitDate=unknown?null:document.getElementById('dFechaVisita').value;
+      if(!unknown&&!visitDate)throw new Error('Selecciona una fecha o marca Fecha por definir.');
+      if(['reservado','completado'].includes(patch.estado_comercial)&&!visitDate)throw new Error('Captura la fecha acordada antes de confirmar la reserva.');
+      if(visitDate!==(selectedDetail.solicitud.fecha_visita||null))patch.fecha_visita=visitDate;
+    }
     await rpc('cumbre_crm_update_v2',{p_id:selectedId,p_revision:selectedDetail.solicitud.revision,p_patch:patch,p_nota:document.getElementById('dNota').value.trim(),p_action_key:uuid()});
     msg.textContent='Guardado';await Promise.all([loadDetail(selectedId),loadHome(),loadList()]);
   }catch(e){msg.textContent='';alert(e.message)}finally{b.disabled=false}

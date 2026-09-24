@@ -71,13 +71,14 @@ function buildGroupPayload(){
   const a=aEl?aEl.value:'',c=cEl?cEl.value:'';
   const notes={message:document.getElementById('notes').value.trim()};
   if(groupCommerce.promo){notes.promo_code=groupCommerce.promo.code;notes.promo_status='pending_quote'}
-  return {schema_version:1,contact:{name:document.getElementById('name').value.trim(),phone:document.getElementById('phone').value.replace(/\D/g,''),email:document.getElementById('email').value.trim()},group:{type:state.groupType,need:state.need,date:document.getElementById('date').value,visitors_total:state.total,adults:a===''?null:Number(a),children:c===''?null:Number(c),stay:state.stay},activities:[...state.activities],notes,attribution:attribution(),consent:{policies:true,contact:true,version:POLICY_VERSION}};
+  return {schema_version:1,contact:{name:document.getElementById('name').value.trim(),phone:document.getElementById('phone').value.replace(/\D/g,''),email:document.getElementById('email').value.trim()},group:{type:state.groupType,need:state.need,date:requestedGroupDate(),date_unknown:state.dateUnknown,visitors_total:state.total,adults:a===''?null:Number(a),children:c===''?null:Number(c),stay:state.stay},activities:[...state.activities],notes,attribution:attribution(),consent:{policies:true,contact:true,version:POLICY_VERSION}};
 }
 function validateGroupPayload(p){
   if(!GROUPS.some(x=>x[0]===p.group.type)||!NEEDS.some(x=>x[0]===p.group.need))throw new Error('Revisa el tipo de grupo y la visita que necesitas.');
   if(!p.contact.name||p.contact.phone.length<10||p.contact.phone.length>15)throw new Error('Revisa el nombre y WhatsApp de contacto.');
-  if(p.contact.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.contact.email))throw new Error('Revisa el correo de contacto.');
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(p.group.date))throw new Error('Selecciona una fecha tentativa.');
+  if(p.contact.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.contact.email))throw new Error('Revisa el correo.');
+  if(p.group.date_unknown===true){if(p.group.date!==null)throw new Error('Revisa la fecha de visita.')}
+  else if(!validGroupDate(p.group.date))throw new Error('Selecciona una fecha válida o indica que aún no está definida.');
   if(!Number.isInteger(p.group.visitors_total)||p.group.visitors_total<1||p.group.visitors_total>2000)throw new Error('Revisa el total de visitantes.');
   for(const v of [p.group.adults,p.group.children])if(v!==null&&(!Number.isInteger(v)||v<0||v>p.group.visitors_total))throw new Error('Revisa el desglose de visitantes.');
   if(p.group.adults!==null&&p.group.children!==null&&p.group.adults+p.group.children!==p.group.visitors_total)throw new Error('El desglose debe coincidir con el total.');
@@ -109,7 +110,7 @@ async function submitGroupRequest(){
     err.innerHTML='<div class="error">'+esc(message)+'</div>';
   }finally{groupCommerce.saving=false;btn.disabled=false;btn.innerHTML='SOLICITAR PROPUESTA <span>→</span>';updateGroupPromoView()}
 }
-function groupDateText(iso){return new Date(iso+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'})}
+function groupDateText(iso){if(!iso)return 'Fecha por definir';const d=new Date(iso+'T12:00:00');return Number.isFinite(d.getTime())?d.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}):'Fecha por definir'}
 function groupFollowupUrl(folio){return 'https://wa.me/'+GROUP_WHATSAPP_NUMBER+'?text='+encodeURIComponent('Hola, equipo de Cumbre Salvaje. Quiero dar seguimiento a mi solicitud grupal. Folio: '+folio)}
 function groupWhatsAppText(receipt){
   const p=receipt.payload,g=p.group;

@@ -109,7 +109,7 @@ input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
 .group-size-btn.plus{background:var(--orange);color:#fff;border-color:var(--orange)}
 .group-size-center{text-align:center}.group-size-input{width:100%;border:0;background:transparent;text-align:center;font-size:56px;line-height:1;font-weight:800;color:var(--text);outline:none;-moz-appearance:textfield}.group-size-input::-webkit-outer-spin-button,.group-size-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.group-size-unit{margin-top:6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800}
 .group-size-quick-label{margin-top:22px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800}
-.group-size-quick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}.group-size-quick .chip{padding:0;height:48px;font-size:13px}
+.group-size-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.group-size-quick .chip{padding:0;height:48px;font-size:13px}
 @media(max-width:360px){.group-size-quick{grid-template-columns:repeat(3,1fr)}.group-size-input{font-size:48px}}
 </style>
 <link rel="stylesheet" href="/group-commercial.css?v=1">
@@ -160,7 +160,6 @@ input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
         <button class="chip" type="button" onclick="setTotal(20)">20</button>
         <button class="chip" type="button" onclick="setTotal(40)">40</button>
         <button class="chip" type="button" onclick="setTotal(60)">60</button>
-        <button class="chip" type="button" onclick="setTotal(80)">80</button>
         <button class="chip" type="button" onclick="setTotal(100);document.getElementById('totalInput').focus()">100+</button>
       </div>
     </div>
@@ -299,7 +298,7 @@ function actLabel(id){return ACTS.find(x=>x[0]===id)?.[1]||id}
 
 // Keep both needs inside this form; only the order of date and experiences changes.
 // Preserve the existing API value 'cotizador_normal' for compatibility with stored requests.
-function flowSteps(){return state.need==='cotizador_normal'?[1,2,3,5,4,6,7]:[1,2,3,4,5,6,7]}
+function flowSteps(){return state.need==='cotizador_normal'?[1,3,2,5,4,6,7]:[1,3,2,4,5,6,7]}
 function stepBefore(screen){const steps=flowSteps();return steps[steps.indexOf(screen)-1]??0}
 function stepAfter(screen){const steps=flowSteps();return steps[steps.indexOf(screen)+1]??7}
 function renderProgress(){
@@ -331,7 +330,7 @@ function pickGroup(id){
   document.querySelectorAll('#groupChoices .group-photo-choice').forEach(x=>x.classList.toggle('active',x.dataset.id===id));
   document.getElementById('b1').disabled=false;
 }
-function nextType(){if(!state.groupType)return;go(2)}
+function nextType(){if(!state.groupType)return;go(3)}
 
 function setTotal(v){
   state.total=Math.max(1,Math.min(2000,Math.round(Number(v)||1)));
@@ -342,7 +341,7 @@ function bump(d){setTotal(state.total+d)}
 function nextSize(){
   const input=document.getElementById('totalInput');
   setTotal(input?input.value:state.total);
-  go(3);
+  go(stepAfter(2));
 }
 
 document.getElementById('needChoices').innerHTML=NEEDS.map(x=>
@@ -357,7 +356,7 @@ function pickNeed(id){
 }
 function nextNeed(){
   if(!state.need)return;
-  go(stepAfter(3));
+  go(2);
 }
 function pickStay(v){
   state.stay=v;
@@ -427,7 +426,7 @@ document.getElementById('date').min=new Date().toISOString().slice(0,10);
 const totalInput=document.getElementById('totalInput');
 if(totalInput){totalInput.addEventListener('input',()=>{const n=Number(totalInput.value);if(Number.isFinite(n)&&n>=1&&n<=2000)state.total=Math.round(n)});totalInput.addEventListener('blur',()=>setTotal(totalInput.value))}
 const presetGroup=new URLSearchParams(location.search).get('type');
-if(presetGroup&&GROUPS.some(x=>x[0]===presetGroup)){pickGroup(presetGroup);go(2)}
+if(presetGroup&&GROUPS.some(x=>x[0]===presetGroup)){pickGroup(presetGroup);go(3)}
 renderProgress();
 </script>
 </body>

@@ -208,6 +208,16 @@ async function loadDetail(id){
   try{selectedDetail=await rpc('cumbre_crm_detail_v2',{p_id:id});renderDetail(selectedDetail);document.querySelectorAll('.row').forEach(r=>r.classList.toggle('active',r.dataset.id===id))}
   catch(e){document.getElementById('detail').innerHTML='<div class="error">'+esc(e.message)+'</div>'}
 }
+function groupClientNotesHtml(s){
+  if(s.flujo!=='grupal')return '';
+  const notes=s.notas_cliente&&typeof s.notas_cliente==='object'?s.notas_cliente:{};
+  const code=typeof notes.promo_code==='string'?notes.promo_code.slice(0,40):'';
+  const message=typeof notes.message==='string'?notes.message:'';
+  if(!code&&!message)return '';
+  return '<div class="section"><h3>Solicitud del grupo</h3>'+
+    (code?'<div class="notice"><b>Promoción solicitada: '+esc(code)+'</b><br>Pendiente de validación administrativa. No representa un descuento aplicado.</div>':'')+
+    (message?'<div style="white-space:pre-wrap;overflow-wrap:anywhere">'+esc(message)+'</div>':'')+'</div>';
+}
 function renderDetail(d){
   const s=d.solicitud,o=d.operacion||{},items=d.quote_items||[],ev=d.seguimiento||[];
   const wa='https://wa.me/'+String(s.telefono||'').replace(/\D/g,'');
@@ -230,6 +240,7 @@ function renderDetail(d){
     '</div>'+
     '<div class="actions"><a class="linkbtn" target="_blank" href="'+wa+'">Abrir WhatsApp</a>'+(s.email?'<a class="linkbtn" href="mailto:'+encodeURIComponent(s.email)+'">Escribir correo</a>':'')+'</div>'+
     '<div class="section"><h3>Aventura solicitada</h3>'+services+'</div>'+
+    groupClientNotesHtml(s)+
     '<div class="section"><h3>Gestión comercial</h3>'+
       '<div class="form-grid">'+
         '<div><label class="label">Estado</label><select id="dEstado">'+STATES.map(x=>'<option value="'+x+'" '+(x===o.estado_comercial?'selected':'')+'>'+STATE_LABEL[x]+'</option>').join('')+'</select></div>'+

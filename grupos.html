@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F6F1E7">
+<meta name="cumbre-group-build" content="group-routing-schools-companies-v1">
 <title>Cumbre GO · Visitas Grupales</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,7 +119,7 @@ input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
 
 <section id="s1" class="screen">
   <div class="topbar"><button class="back" onclick="go(0)">←</button><div class="kicker">Visitas grupales</div></div>
-  <div class="head"><h1>¿Qué tipo de grupo viene?</h1><p>Esto nos ayuda a entender el contexto de la visita, no a limitarla.</p></div>
+  <div class="head"><h1>¿Qué tipo de grupo viene?</h1><p>Selecciona si organizas la visita para una escuela o una empresa.</p></div>
   <div class="progress" data-progress="1"></div>
   <div class="scroll"><div id="groupChoices" class="choice-list"></div></div>
   <div class="footer"><button id="b1" class="primary" onclick="nextType()" disabled>Continuar <span>→</span></button></div>
@@ -152,13 +153,13 @@ input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
   <div class="progress" data-progress="3"></div>
   <div class="scroll">
     <div id="needChoices" class="choice-list"></div>
-    <div id="normalRoute" class="notice-orange route-box"><b>Este caso puede resolverse más rápido en el cotizador normal.</b><br>Ahí pueden elegir actividades y ver un total estimado de inmediato.</div>
+    <div id="normalRoute" class="notice-orange route-box"><b>Elige las experiencias de tu escuela o empresa aquí.</b><br>Después indica la fecha y tus datos para recibir una cotización personalizada.</div>
   </div>
   <div class="footer"><button id="b3" class="primary" onclick="nextNeed()" disabled>Continuar <span>→</span></button></div>
 </section>
 
 <section id="s4" class="screen">
-  <div class="topbar"><button class="back" onclick="go(3)">←</button><div class="kicker">Fecha tentativa</div></div>
+  <div class="topbar"><button class="back" onclick="go(stepBefore(4))">←</button><div class="kicker">Fecha tentativa</div></div>
   <div class="head"><h1>¿Cuándo quieren visitarnos?</h1><p>La fecha sirve para revisar disponibilidad y operación. Todavía no confirma una reserva.</p></div>
   <div class="progress" data-progress="4"></div>
   <div class="scroll">
@@ -177,15 +178,15 @@ input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
 </section>
 
 <section id="s5" class="screen">
-  <div class="topbar"><button class="back" onclick="go(4)">←</button><div class="kicker">Experiencias</div></div>
+  <div class="topbar"><button class="back" onclick="go(stepBefore(5))">←</button><div class="kicker">Experiencias</div></div>
   <div class="head"><h1>¿Qué les gustaría vivir?</h1><p>Pueden elegir varias. La disponibilidad, capacidad y precio final los validará el equipo.</p></div>
   <div class="progress" data-progress="5"></div>
   <div class="scroll"><div id="activities" class="photo-grid"></div><div style="height:20px"></div></div>
-  <div class="footer"><button class="primary" onclick="go(6)">Continuar <span>→</span></button></div>
+  <div class="footer"><button class="primary" onclick="go(stepAfter(5))">Continuar <span>→</span></button></div>
 </section>
 
 <section id="s6" class="screen">
-  <div class="topbar"><button class="back" onclick="go(5)">←</button><div class="kicker">Contacto</div></div>
+  <div class="topbar"><button class="back" onclick="go(stepBefore(6))">←</button><div class="kicker">Contacto</div></div>
   <div class="head"><h1>¿Con quién hablamos?</h1><p>Estos datos llegarán al equipo de reservaciones para continuar la propuesta.</p></div>
   <div class="progress" data-progress="6"></div>
   <div class="scroll">
@@ -234,13 +235,10 @@ const POLICY_VERSION='group-mvp-2026-09-23-v1';
 
 const GROUPS=[
   ['escuela_colegio','🎒','Escuela / Colegio','Excursiones, grupos académicos y visitas educativas'],
-  ['empresa_equipo','💼','Empresa / Equipo','Convivencias, integración y experiencias corporativas'],
-  ['familia_amigos','👨‍👩‍👧‍👦','Familia / Amigos','Un grupo privado que necesita coordinación especial'],
-  ['asociacion_grupo','🤝','Asociación / Grupo organizado','Clubes, asociaciones y comunidades'],
-  ['otro','✨','Otro','Cuéntanos qué tipo de grupo es']
+  ['empresa_equipo','💼','Empresas','Convivencias, integración y experiencias corporativas']
 ];
 const NEEDS=[
-  ['cotizador_normal','⚡','Elegir actividades y conocer precio','Quiero armar la experiencia y ver un estimado rápido'],
+  ['cotizador_normal','⚡','Elegir actividades y conocer precio','Quiero elegir las experiencias y solicitar su cotización'],
   ['organizar_grupo','🗓️','Organizar una visita completa','Necesitamos coordinar personas, horarios y servicios'],
   ['propuesta_personalizada','✦','Una propuesta personalizada','Queremos que Cumbre Salvaje nos ayude a diseñarla'],
   ['no_seguro','?','Aún no estoy seguro','Necesito orientación para decidir el formato']
@@ -269,14 +267,21 @@ function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 function label(list,id){return list.find(x=>x[0]===id)?.[2]||id||'—'}
 function actLabel(id){return ACTS.find(x=>x[0]===id)?.[1]||id}
 
+// Keep both needs inside this form; only the order of date and experiences changes.
+// Preserve the existing API value 'cotizador_normal' for compatibility with stored requests.
+function flowSteps(){return state.need==='cotizador_normal'?[1,2,3,5,4,6,7]:[1,2,3,4,5,6,7]}
+function stepBefore(screen){const steps=flowSteps();return steps[steps.indexOf(screen)-1]??0}
+function stepAfter(screen){const steps=flowSteps();return steps[steps.indexOf(screen)+1]??7}
 function renderProgress(){
+  const steps=flowSteps();
   document.querySelectorAll('[data-progress]').forEach(el=>{
-    const n=Number(el.dataset.progress);
+    const n=steps.indexOf(Number(el.dataset.progress))+1;
     el.innerHTML=[1,2,3,4,5,6,7].map(i=>'<span class="'+(i<=n?'on':'')+'"></span>').join('');
   });
 }
 function go(n){
   state.screen=n;
+  renderProgress();
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
   const t=document.getElementById('s'+n);
   if(t)t.classList.add('active');
@@ -289,6 +294,7 @@ document.getElementById('groupChoices').innerHTML=GROUPS.map(x=>
   '<div class="choice-main"><div class="choice-title"><span>'+x[1]+'</span>'+x[2]+'</div><div class="choice-copy">'+x[3]+'</div></div><div class="radio"></div></button>'
 ).join('');
 function pickGroup(id){
+  if(!GROUPS.some(group=>group[0]===id))return;
   state.groupType=id;
   document.querySelectorAll('#groupChoices .choice').forEach(x=>x.classList.toggle('active',x.dataset.id===id));
   document.getElementById('b1').disabled=false;
@@ -315,8 +321,7 @@ function pickNeed(id){
 }
 function nextNeed(){
   if(!state.need)return;
-  if(state.need==='cotizador_normal'){location.href='/';return}
-  go(4);
+  go(stepAfter(3));
 }
 function pickStay(v){
   state.stay=v;
@@ -324,7 +329,7 @@ function pickStay(v){
 }
 function nextDate(){
   if(!document.getElementById('date').value){alert('Selecciona una fecha tentativa.');return}
-  go(5);
+  go(stepAfter(4));
 }
 
 document.getElementById('activities').innerHTML=ACTS.map(x=>

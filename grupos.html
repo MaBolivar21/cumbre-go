@@ -61,9 +61,9 @@ textarea.field{height:108px;padding-top:13px;resize:none;line-height:1.4}
 .photo-copy{position:absolute;z-index:2;left:13px;right:13px;bottom:12px}.photo-copy b{font-size:16px;line-height:1.05}.photo-copy small{display:block;color:rgba(255,255,255,.78);font-size:10px;margin-top:4px}
 .checkmark{position:absolute;z-index:3;top:10px;right:10px;width:28px;height:28px;border-radius:999px;background:rgba(255,253,248,.92);display:flex;align-items:center;justify-content:center;color:transparent;font-weight:900}.photo-card.active .checkmark{background:var(--orange);color:white}
 .hero{position:absolute;inset:0;background:var(--forest);overflow:hidden}
-.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,.18) 0%,rgba(11,43,36,.40) 38%,rgba(11,43,36,.96) 100%)}
-.hero-logo{position:absolute;z-index:2;top:58px;left:20px;width:92px;filter:drop-shadow(0 5px 10px rgba(0,0,0,.12))}
+.hero-logo{position:absolute;z-index:2;top:58px;left:20px;width:82px;height:auto;object-fit:contain;display:block;filter:drop-shadow(0 4px 10px rgba(0,0,0,.12))}
 .hero-copy{position:absolute;z-index:2;left:20px;right:20px;bottom:126px;color:var(--bg)}
 .hero-copy .eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#F6B26B;font-weight:800;margin-bottom:10px}
 .hero-copy h1{font-size:37px;line-height:.98;letter-spacing:-.035em;margin:0;font-weight:800}
@@ -80,9 +80,20 @@ textarea.field{height:108px;padding-top:13px;resize:none;line-height:1.4}
 .success-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:36px 24px;text-align:center}
 .success-icon{width:74px;height:74px;border-radius:999px;background:var(--forest);color:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:30px}
 .success-tag{display:inline-flex;align-self:center;padding:7px 11px;border-radius:999px;background:#EAF4E8;color:#244937;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-.folio{font-size:31px;font-weight:800;letter-spacing:-.025em;margin:12px 0 4px}.success-wrap h2{font-size:28px;line-height:1.05;margin:10px 0}.success-wrap p{font-size:13px;line-height:1.5;color:var(--muted);margin:0 auto;max-width:320px}
+.folio{font-size:31px;font-weight:800;letter-spacing:-.025em;margin:12px 0 4px}
+.qr-card{width:220px;margin:20px auto 0;background:var(--surface);border-radius:20px;padding:14px;box-shadow:0 8px 24px rgba(23,26,24,.08)}
+.qr-box{width:192px;height:192px;margin:0 auto;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:12px;overflow:hidden}
+.qr-box img{display:block;width:192px;height:192px}
+.qr-help{font-size:11px;line-height:1.4;color:var(--muted);margin-top:9px}
+.success-wrap h2{font-size:28px;line-height:1.05;margin:10px 0}.success-wrap p{font-size:13px;line-height:1.5;color:var(--muted);margin:0 auto;max-width:320px}
 .mini-label{padding:0 20px 10px;font-size:12px;color:var(--muted);font-weight:600}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}
+.split>div{display:flex;flex-direction:column;min-width:0}
+.split>div .label{min-height:28px;line-height:1.15;margin:15px 0 8px}
+.split>div .field{min-width:0}
+input[type="date"].field{-webkit-appearance:none;appearance:none;line-height:normal;padding:0 14px;display:block}
+input[type="date"].field::-webkit-date-and-time-value{text-align:left}
+input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
 .route-box{display:none}.route-box.show{display:block}
 </style>
 </head>
@@ -91,7 +102,7 @@ textarea.field{height:108px;padding-top:13px;resize:none;line-height:1.4}
 
 <section id="s0" class="screen active">
   <div class="hero">
-    <img src="img/24-portada-amigos-ranger-puente.jpg" alt="Grupo disfrutando Cumbre Salvaje">
+    <img class="hero-bg" src="img/24-portada-amigos-ranger-puente.jpg" alt="Grupo disfrutando Cumbre Salvaje">
     <img class="hero-logo" src="img/logo-cumbre-transparente.png" alt="Cumbre Salvaje">
     <div class="hero-copy">
       <div class="eyebrow">VISITAS GRUPALES · CUMBRE GO</div>
@@ -126,8 +137,8 @@ textarea.field{height:108px;padding-top:13px;resize:none;line-height:1.4}
       </div>
       <div class="quick"><button class="chip" onclick="setTotal(20)">20</button><button class="chip" onclick="setTotal(40)">40</button><button class="chip" onclick="setTotal(60)">60</button><button class="chip" onclick="setTotal(100)">100</button><button class="chip" onclick="setTotal(150)">150+</button></div>
       <div class="split">
-        <div><span class="label" style="margin-top:15px">Adultos / acompañantes</span><input id="adults" class="field" type="number" min="0" max="2000" placeholder="Opcional"></div>
-        <div><span class="label" style="margin-top:15px">Menores / alumnos</span><input id="children" class="field" type="number" min="0" max="2000" placeholder="Opcional"></div>
+        <div><span class="label">Adultos / acompañantes</span><input id="adults" class="field" type="number" min="0" max="2000" placeholder="Opcional"></div>
+        <div><span class="label">Menores / alumnos</span><input id="children" class="field" type="number" min="0" max="2000" placeholder="Opcional"></div>
       </div>
     </div>
     <div class="note">No usamos un número mínimo para decidir si una visita es “grupal”. Lo importante es la coordinación que necesiten.</div>
@@ -209,11 +220,13 @@ textarea.field{height:108px;padding-top:13px;resize:none;line-height:1.4}
     <div class="folio" id="folio"></div>
     <h2>Ya tenemos su visita.</h2>
     <p>El equipo de Cumbre Salvaje revisará la información y dará seguimiento para preparar una cotización personalizada. El folio identifica la solicitud; no representa pago ni reserva confirmada.</p>
+    <div class="qr-card"><div id="qrBox" class="qr-box"></div><div class="qr-help">QR de seguimiento de la solicitud. No acredita pago ni autoriza la entrada.</div></div>
   </div>
   <div class="footer"><button class="primary" onclick="location.href='/'">Volver a Cumbre GO <span>→</span></button></div>
 </section>
 
 </main></div>
+<script src="/qr.js"></script>
 <script>
 const SUPABASE_URL='https://xnztlanptbdgpdjhbnzv.supabase.co';
 const SUPABASE_KEY='sb_publishable_JcKnBtzboji75Em1M0wa8w_3_fb0LB3';
@@ -345,6 +358,21 @@ function renderSummary(){
       '<div class="services">'+(acts.length?acts.map(x=>'<span class="service-pill">'+esc(actLabel(x))+'</span>').join(''):'<span class="service-pill">Experiencias por definir</span>')+'</div></div>';
 }
 
+function qrRequestURL(folio){
+  return location.origin+'/?folio='+encodeURIComponent(folio);
+}
+function renderQr(folio){
+  const box=document.getElementById('qrBox');
+  if(!box||!folio||!window.CumbreQRCode)return;
+  const url=qrRequestURL(folio);
+  const code=new window.CumbreQRCode(-1,0);
+  code.addData(url);code.make();
+  const size=code.getModuleCount(),quiet=4,dim=size+quiet*2;
+  let path='';
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++)if(code.isDark(y,x))path+='M'+(x+quiet)+' '+(y+quiet)+'h1v1h-1z';
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+dim+' '+dim+'" width="192" height="192" shape-rendering="crispEdges"><rect width="'+dim+'" height="'+dim+'" fill="white"/><path d="'+path+'" fill="black"/></svg>';
+  box.innerHTML='<img alt="QR de consulta del folio '+esc(folio)+'" src="data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)+'">';
+}
 function attribution(){
   const q=new URLSearchParams(location.search);
   const o={source:q.get('utm_source')||q.get('source')||'direct'};
@@ -389,6 +417,7 @@ async function submitGroup(){
     let data={};try{data=raw?JSON.parse(raw):{}}catch(_){}
     if(!r.ok)throw new Error(data.message||'No pudimos enviar la solicitud.');
     document.getElementById('folio').textContent=data.folio||'';
+    renderQr(data.folio||'');
     go('success');
   }catch(e){
     err.innerHTML='<div class="error">'+esc(e.message||'No pudimos enviar la solicitud.')+'</div>';

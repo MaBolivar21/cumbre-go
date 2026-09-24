@@ -1,0 +1,28 @@
+/* Scoped to group summary, confirmation and sharing. */
+#s7 .promo-card{border:2px solid rgba(242,106,46,.20);border-radius:20px;background:linear-gradient(135deg,#FFFDF8 0%,#FFF4EC 100%);overflow:hidden;flex:0 0 auto;min-height:72px;width:100%}
+#s7 .promo-card.is-open{border-color:#F26A2E}
+#s7 .promo-card.is-success{border-color:#44705A;background:linear-gradient(135deg,#F6FBF5 0%,#EAF4E8 100%)}
+#s7 .promo-card.is-error{border-color:#C64A20}
+#s7 .promo-head{width:100%;border:0;background:transparent;padding:15px 16px;display:flex;align-items:center;gap:12px;text-align:left;color:#171A18}
+#s7 .promo-gift{width:42px;height:42px;border-radius:14px;background:#F26A2E;color:white;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none;box-shadow:0 8px 20px rgba(242,106,46,.24)}
+#s7 .promo-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+#s7 .promo-copy strong{font-size:14px;line-height:1.25}#s7 .promo-copy span{font-size:11px;line-height:1.35;color:rgba(23,26,24,.62)}
+#s7 .promo-chevron{font-size:18px;color:#A54010}#s7 .promo-card.is-open .promo-chevron{transform:rotate(180deg)}
+#s7 .promo-body{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px}
+#s7 .promo-row{display:flex;gap:8px;align-items:stretch}#s7 .promo-row input{flex:1;min-width:0;height:50px;border:2px solid rgba(23,26,24,.12);background:#FFFDF8;border-radius:14px;padding:0 12px;font-size:16px;text-transform:uppercase;outline:none}#s7 .promo-row input:focus{border-color:#F26A2E}#s7 .promo-row button{min-width:80px;border:0;border-radius:14px;background:#171A18;color:#FFFDF8;font-size:13px;font-weight:800;padding:0 12px}#s7 .promo-row button:disabled{opacity:.45}
+#s7 .promo-message{font-size:12px;line-height:1.4;padding:10px 12px;border-radius:12px;background:#F6F1E7;color:#51564F}#s7 .promo-message.error{background:#FDEDE4;color:#7A2F0D;margin:0}
+#s7 .promo-applied{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-radius:14px;background:#EAF4E8;color:#244937;overflow-wrap:anywhere}#s7 .promo-applied strong{font-size:13px}#s7 .promo-applied span{font-size:11px}#s7 .promo-remove{border:0;background:transparent;color:#7A2F0D;text-decoration:underline;font-size:11px;font-weight:700;padding:8px 0}
+#s7 .promo-help{font-size:11px;line-height:1.45;color:var(--muted);margin:0}
+#s7 [hidden]{display:none!important}
+#s7 .scroll{min-height:0}
+#success .success-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#success .success-wrap{flex:none;justify-content:flex-start;padding:28px 24px 24px}
+#success .success-wrap>*{flex-shrink:0}
+#success .footer,#groupWhatsapp .footer{position:static;flex:none;background:var(--bg)}
+#success .footer .secondary{margin-top:10px}
+#groupWhatsapp .scroll{min-height:0;padding:0 20px 20px}
+#groupWhatsapp .wa-message{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--surface);padding:18px;border-radius:22px;font-size:14px;line-height:1.55}
+#groupWhatsapp .wa-destination{margin:12px 0;padding:14px 16px;background:var(--surface);border-radius:18px;font-size:13px;line-height:1.5}
+#groupWhatsapp .wa-copy-status{font-size:12px;line-height:1.4;min-height:18px;margin-top:8px;color:var(--muted)}
+#groupWhatsapp .primary,#success .wa-action{background:#44705A;color:#FFFDF8;box-shadow:0 12px 28px rgba(68,112,90,.22);text-decoration:none}
+@media(prefers-reduced-motion:reduce){#success,#groupWhatsapp{animation:none}}

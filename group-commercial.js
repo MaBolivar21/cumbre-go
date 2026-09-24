@@ -67,7 +67,8 @@ async function addGroupPromo(){
   finally{if(ticket===groupCommerce.sequence){groupCommerce.promoBusy=false;updateGroupPromoView()}}
 }
 function buildGroupPayload(){
-  const a=document.getElementById('adults').value,c=document.getElementById('children').value;
+  const aEl=document.getElementById('adults'),cEl=document.getElementById('children');
+  const a=aEl?aEl.value:'',c=cEl?cEl.value:'';
   const notes={message:document.getElementById('notes').value.trim()};
   if(groupCommerce.promo){notes.promo_code=groupCommerce.promo.code;notes.promo_status='pending_quote'}
   return {schema_version:1,contact:{name:document.getElementById('name').value.trim(),phone:document.getElementById('phone').value.replace(/\D/g,''),email:document.getElementById('email').value.trim()},group:{type:state.groupType,need:state.need,date:document.getElementById('date').value,visitors_total:state.total,adults:a===''?null:Number(a),children:c===''?null:Number(c),stay:state.stay},activities:[...state.activities],notes,attribution:attribution(),consent:{policies:true,contact:true,version:POLICY_VERSION}};

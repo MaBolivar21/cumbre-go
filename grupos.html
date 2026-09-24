@@ -96,6 +96,21 @@ input[type="date"].field{-webkit-appearance:none;appearance:none;line-height:nor
 input[type="date"].field::-webkit-date-and-time-value{text-align:left}
 input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
 .route-box{display:none}.route-box.show{display:block}
+.group-photo-list{padding:0 20px;display:flex;flex-direction:column;gap:14px}
+.group-photo-choice{height:148px;border:2px solid transparent;border-radius:22px;overflow:hidden;position:relative;background:var(--forest);padding:0;text-align:left;color:#fff;box-shadow:0 10px 26px rgba(23,26,24,.10)}
+.group-photo-choice img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.group-photo-choice:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,43,36,.88) 0%,rgba(11,43,36,.56) 58%,rgba(11,43,36,.18) 100%)}
+.group-photo-choice.active{border-color:var(--orange)}
+.group-photo-copy{position:absolute;z-index:2;left:20px;right:20px;bottom:18px}.group-photo-copy b{display:block;font-size:23px;line-height:1.05}.group-photo-copy span{display:block;margin-top:6px;font-size:12px;color:rgba(255,255,255,.82)}
+.group-photo-check{position:absolute;z-index:3;right:14px;top:14px;width:30px;height:30px;border-radius:999px;background:rgba(255,255,255,.90);color:transparent;display:flex;align-items:center;justify-content:center;font-weight:900}.group-photo-choice.active .group-photo-check{background:var(--orange);color:#fff}
+.group-size-card{margin:0 20px;background:var(--surface);border-radius:24px;padding:24px 22px;box-shadow:0 1px 2px rgba(23,26,24,.05)}
+.group-size-main{display:grid;grid-template-columns:58px 1fr 58px;gap:16px;align-items:center}
+.group-size-btn{width:58px;height:58px;border-radius:999px;border:1px solid rgba(23,26,24,.12);background:var(--bg);font-size:27px;font-weight:700;color:var(--text)}
+.group-size-btn.plus{background:var(--orange);color:#fff;border-color:var(--orange)}
+.group-size-center{text-align:center}.group-size-input{width:100%;border:0;background:transparent;text-align:center;font-size:56px;line-height:1;font-weight:800;color:var(--text);outline:none;-moz-appearance:textfield}.group-size-input::-webkit-outer-spin-button,.group-size-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.group-size-unit{margin-top:6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.group-size-quick-label{margin-top:22px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.group-size-quick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}.group-size-quick .chip{padding:0;height:48px;font-size:13px}
+@media(max-width:360px){.group-size-quick{grid-template-columns:repeat(3,1fr)}.group-size-input{font-size:48px}}
 </style>
 <link rel="stylesheet" href="/group-commercial.css?v=1">
 </head>
@@ -122,7 +137,7 @@ input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
   <div class="topbar"><button class="back" onclick="go(0)">←</button><div class="kicker">Visitas grupales</div></div>
   <div class="head"><h1>¿Qué tipo de grupo viene?</h1><p>Selecciona si organizas la visita para una escuela o una empresa.</p></div>
   <div class="progress" data-progress="1"></div>
-  <div class="scroll"><div id="groupChoices" class="choice-list"></div></div>
+  <div class="scroll"><div id="groupChoices" class="group-photo-list"></div></div>
   <div class="footer"><button id="b1" class="primary" onclick="nextType()" disabled>Continuar <span>→</span></button></div>
 </section>
 
@@ -131,19 +146,25 @@ input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
   <div class="head"><h1>¿Cuántas personas vienen?</h1><p>Usamos el total como dato principal. El desglose es opcional.</p></div>
   <div class="progress" data-progress="2"></div>
   <div class="scroll">
-    <div class="field-card">
-      <span class="label">Total de visitantes</span>
-      <div class="counter-wrap">
-        <div><div style="font-size:13px;color:var(--muted)">Personas</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Puedes ajustar el total exacto.</div></div>
-        <div class="counter"><button onclick="bump(-1)">−</button><strong id="totalView">20</strong><button class="plus" onclick="bump(1)">+</button></div>
+    <div class="group-size-card">
+      <div class="group-size-main">
+        <button class="group-size-btn" type="button" onclick="bump(-1)" aria-label="Restar una persona">−</button>
+        <div class="group-size-center">
+          <input id="totalInput" class="group-size-input" type="number" min="1" max="2000" inputmode="numeric" value="20" aria-label="Total de visitantes">
+          <div class="group-size-unit">personas</div>
+        </div>
+        <button class="group-size-btn plus" type="button" onclick="bump(1)" aria-label="Agregar una persona">+</button>
       </div>
-      <div class="quick"><button class="chip" onclick="setTotal(20)">20</button><button class="chip" onclick="setTotal(40)">40</button><button class="chip" onclick="setTotal(60)">60</button><button class="chip" onclick="setTotal(100)">100</button><button class="chip" onclick="setTotal(150)">150+</button></div>
-      <div class="split">
-        <div><span class="label">Adultos / acompañantes</span><input id="adults" class="field" type="number" min="0" max="2000" placeholder="Opcional"></div>
-        <div><span class="label">Menores / alumnos</span><input id="children" class="field" type="number" min="0" max="2000" placeholder="Opcional"></div>
+      <div class="group-size-quick-label">Accesos rápidos</div>
+      <div class="group-size-quick">
+        <button class="chip" type="button" onclick="setTotal(20)">20</button>
+        <button class="chip" type="button" onclick="setTotal(40)">40</button>
+        <button class="chip" type="button" onclick="setTotal(60)">60</button>
+        <button class="chip" type="button" onclick="setTotal(80)">80</button>
+        <button class="chip" type="button" onclick="setTotal(100);document.getElementById('totalInput').focus()">100+</button>
       </div>
     </div>
-    <div class="note">No usamos un número mínimo para decidir si una visita es “grupal”. Lo importante es la coordinación que necesiten.</div>
+    <div class="note">Nuestro equipo coordinará contigo la logística según el tamaño y características del grupo.</div>
   </div>
   <div class="footer"><button class="primary" onclick="nextSize()">Continuar <span>→</span></button></div>
 </section>
@@ -243,8 +264,8 @@ const SUPABASE_KEY='sb_publishable_JcKnBtzboji75Em1M0wa8w_3_fb0LB3';
 const POLICY_VERSION='group-mvp-2026-09-23-v1';
 
 const GROUPS=[
-  ['escuela_colegio','🎒','Escuela / Colegio','Excursiones, grupos académicos y visitas educativas'],
-  ['empresa_equipo','💼','Empresas','Convivencias, integración y experiencias corporativas']
+  ['escuela_colegio','🎒','Escuela / Colegio','Grupos escolares y visitas educativas','img/18-granjita-familia.jpg'],
+  ['empresa_equipo','💼','Empresa / Equipo','Convivencias, integración y eventos','img/13-ranger.jpg']
 ];
 const NEEDS=[
   ['cotizador_normal','⚡','Elegir actividades y conocer precio','Quiero elegir las experiencias y solicitar su cotización'],
@@ -301,22 +322,26 @@ function go(n){
 }
 
 document.getElementById('groupChoices').innerHTML=GROUPS.map(x=>
-  '<button class="choice" data-id="'+x[0]+'" onclick="pickGroup(\''+x[0]+'\')">'+
-  '<div class="choice-main"><div class="choice-title"><span>'+x[1]+'</span>'+x[2]+'</div><div class="choice-copy">'+x[3]+'</div></div><div class="radio"></div></button>'
+  '<button class="group-photo-choice" data-id="'+x[0]+'" onclick="pickGroup(\''+x[0]+'\')">'+
+  '<img src="'+x[4]+'" alt=""><span class="group-photo-check">✓</span><div class="group-photo-copy"><b>'+x[2]+'</b><span>'+x[3]+'</span></div></button>'
 ).join('');
 function pickGroup(id){
   if(!GROUPS.some(group=>group[0]===id))return;
   state.groupType=id;
-  document.querySelectorAll('#groupChoices .choice').forEach(x=>x.classList.toggle('active',x.dataset.id===id));
+  document.querySelectorAll('#groupChoices .group-photo-choice').forEach(x=>x.classList.toggle('active',x.dataset.id===id));
   document.getElementById('b1').disabled=false;
 }
 function nextType(){if(!state.groupType)return;go(2)}
 
-function setTotal(v){state.total=Math.max(1,Math.min(2000,Number(v)||1));document.getElementById('totalView').textContent=state.total;document.querySelectorAll('.quick .chip').forEach(x=>x.classList.toggle('active',Number(x.textContent.replace('+',''))===state.total))}
+function setTotal(v){
+  state.total=Math.max(1,Math.min(2000,Math.round(Number(v)||1)));
+  const input=document.getElementById('totalInput');if(input&&String(input.value)!==String(state.total))input.value=state.total;
+  document.querySelectorAll('.group-size-quick .chip').forEach(x=>x.classList.toggle('active',Number(x.textContent.replace('+',''))===state.total));
+}
 function bump(d){setTotal(state.total+d)}
 function nextSize(){
-  const a=document.getElementById('adults').value,c=document.getElementById('children').value;
-  if(a!==''&&c!==''&&Number(a)+Number(c)!==state.total){alert('El desglose de adultos y menores debe coincidir con el total de visitantes.');return}
+  const input=document.getElementById('totalInput');
+  setTotal(input?input.value:state.total);
   go(3);
 }
 
@@ -399,6 +424,10 @@ function attribution(){
 async function submitGroup(){return submitGroupRequest()}
 
 document.getElementById('date').min=new Date().toISOString().slice(0,10);
+const totalInput=document.getElementById('totalInput');
+if(totalInput){totalInput.addEventListener('input',()=>{const n=Number(totalInput.value);if(Number.isFinite(n)&&n>=1&&n<=2000)state.total=Math.round(n)});totalInput.addEventListener('blur',()=>setTotal(totalInput.value))}
+const presetGroup=new URLSearchParams(location.search).get('type');
+if(presetGroup&&GROUPS.some(x=>x[0]===presetGroup)){pickGroup(presetGroup);go(2)}
 renderProgress();
 </script>
 </body>

@@ -4030,7 +4030,11 @@ class Component extends DCLogic {
       recoKicker: cur ? `Para ${cur.label.toLowerCase()}` : 'Lo más pedido',
       recos: (cur ? cur.reco : ['tirolesa','safari','spot']).map(id => mk(CAT.find(c => c.id === id))),
       homeCats: [ { name:'Aventura', img:IMG.tiro2, pos:'center 25%', span:'span 2', go: goCat('aventura') }, { name:'Safari y fauna', img:IMG.tigre, pos:'center 22%', span:'auto', go: goCat('naturaleza') }, { name:'Granjita', img:IMG.granja, pos:'center 30%', span:'auto', go: goCat('naturaleza') }, { name:'Photo spots', img:IMG.spot, pos:'center 40%', span:'auto', go: goCat('especiales') }, { name:'Alimentos y bebidas', img:IMG.food, pos:'center 40%', span:'auto', go: goCat('alimentos') }, { name:'Hospedaje', img:IMG.cueva, pos:'center 40%', span:'auto', go: goCat('hospedaje') }, { name:'Herpetario', img:IMG.herp, pos:'center 43%', span:'auto', sub:'Reptiles exóticos y serpientes venenosas', hasSub:true, go: () => this.go('detalle', { detId: 'herpetario' }) } ],
-      visitTypes: TYPES.map(t => { const on = s.visitType === t.id; return { ...t, select: () => this.go('home', { visitType: t.id }), ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER, bg: '#FFFDF8' }; }),
+      visitTypes: TYPES.map(t => { const on = s.visitType === t.id; return { ...t, select: () => {
+        const groupType=t.id==='escuela'?'escuela_colegio':(t.id==='empresa'?'empresa_equipo':null);
+        if(groupType){ location.assign('/?flow=grupos&type='+encodeURIComponent(groupType)); return; }
+        this.go('home', { visitType: t.id });
+      }, ring: on ? ACC : MUTED, fill: on ? ACC : 'transparent', border: on ? ACC : BORDER, bg: '#FFFDF8' }; }),
       cats: catDefs.map(c => ({ ...c, select: () => this.setState({ cat: c.id }, () => centerChip(c.id)), bg: s.cat === c.id ? INK : '#FFFDF8', color: s.cat === c.id ? PAPER : INK })),
       chipsRef: chips.ref,
       howRef: this.howCtl().ref,

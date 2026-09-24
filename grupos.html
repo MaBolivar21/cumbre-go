@@ -2,169 +2,401 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0B2B24">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F6F1E7">
 <title>Cumbre GO · Visitas Grupales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--forest:#0b2b24;--paper:#f6f1e7;--card:#fffdf8;--ink:#17201d;--orange:#f26a2e;--line:#ddd6c8;--muted:#69716c;--green:#2f765d;--shadow:0 14px 34px rgba(15,36,29,.10)}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--paper);color:var(--ink)}
-button,input,select,textarea{font:inherit}.wrap{max-width:980px;margin:0 auto;padding:22px 18px 70px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:12px}.brand img{width:72px}.brand small{display:block;color:var(--muted);font-weight:800;letter-spacing:.12em}.brand strong{font-size:22px}.back{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 14px;font-weight:800;cursor:pointer}
-.hero{background:linear-gradient(130deg,var(--forest),#17483a);color:#fff;border-radius:28px;padding:28px;box-shadow:var(--shadow);margin-bottom:18px}.hero h1{font-size:36px;line-height:1.02;margin:0 0 10px}.hero p{margin:0;color:#dbe8e2;max-width:720px;line-height:1.55}
-.progress{display:flex;gap:8px;margin:16px 0}.dot{height:7px;flex:1;border-radius:999px;background:#d8d1c4}.dot.on{background:var(--orange)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow)}.hidden{display:none!important}.title{font-size:24px;font-weight:900;margin:0 0 6px}.sub{color:var(--muted);line-height:1.5;margin-bottom:18px}
-.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.choice{border:2px solid var(--line);background:white;border-radius:18px;padding:16px;text-align:left;cursor:pointer}.choice.active{border-color:var(--orange);background:#fff4ed}.choice b{display:block}.choice span{display:block;color:var(--muted);font-size:13px;margin-top:4px}
-.actions{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:900;cursor:pointer}.btn.primary{background:var(--orange);color:#fff}.btn.dark{background:var(--forest);color:#fff}.btn.soft{background:#e8ede8;color:var(--forest)}.btn:disabled{opacity:.5;cursor:not-allowed}
-.field{width:100%;border:1px solid var(--line);background:white;border-radius:13px;padding:12px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900;margin-bottom:6px;display:block}.counter{display:flex;align-items:center;gap:10px}.counter button{width:42px;height:42px;border:1px solid var(--line);border-radius:12px;background:#fff;font-weight:900;cursor:pointer}.counter input{width:110px;text-align:center}
-.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font-weight:800;cursor:pointer}
-.activities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.act{border:2px solid var(--line);border-radius:18px;overflow:hidden;background:white;cursor:pointer}.act.active{border-color:var(--orange)}.act img{width:100%;height:110px;object-fit:cover;display:block}.act div{padding:10px 12px;font-weight:800}
-.note{background:#eef3ef;border-radius:14px;padding:13px;color:#456057;font-size:13px;line-height:1.5}.warn{background:#fff1df;border-radius:14px;padding:13px;color:#80571a;font-size:13px;line-height:1.5}
-.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini{border:1px solid var(--line);border-radius:15px;padding:12px;background:white}.mini label{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:900;letter-spacing:.08em}.mini div{margin-top:5px;font-weight:850}.services{margin-top:14px}.service{padding:10px 0;border-top:1px solid var(--line)}.success{text-align:center;padding:18px}.success .folio{font-size:29px;font-weight:950;margin:10px 0}.success .tag{display:inline-block;background:#e2efe8;color:#285f49;padding:7px 11px;border-radius:999px;font-weight:900}
-.err{background:#f8dfda;color:#91392c;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13px}
-@media(max-width:760px){.choices,.grid2,.summary,.activities{grid-template-columns:1fr}.hero h1{font-size:30px}.wrap{padding:14px 12px 50px}.brand strong{font-size:18px}}
+:root{--bg:#F6F1E7;--surface:#FFFDF8;--text:#171A18;--forest:#0B2B24;--orange:#F26A2E;--orange2:#d9551c;--muted:rgba(23,26,24,.62);--line:rgba(23,26,24,.10)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;min-height:100%;background:#e6e0d3;overflow:hidden}
+body{font-family:"Archivo",system-ui,sans-serif;color:var(--text);display:flex;justify-content:center;align-items:flex-start}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+#app{width:100%;height:100%;display:flex;justify-content:center;align-items:flex-start}
+.device{width:402px;height:100dvh;max-height:874px;min-height:620px;background:var(--bg);overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(23,26,24,.18)}
+@media(max-width:480px){html,body{background:var(--bg)}.device{width:100vw;height:100dvh;max-height:none;min-height:0;box-shadow:none}}
+@supports(padding:max(0px)){.device{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg);animation:fadeUp .32s ease both}
+.screen.active{display:flex}
+.scroll{flex:1;overflow:auto;padding-bottom:122px;scrollbar-width:none}.scroll::-webkit-scrollbar{display:none}
+.topbar{padding:56px 20px 0;display:flex;align-items:center;gap:12px;flex:none}
+.back{width:40px;height:40px;border-radius:999px;border:0;background:var(--surface);box-shadow:0 1px 3px rgba(23,26,24,.12);display:flex;align-items:center;justify-content:center;padding:0;color:var(--text)}
+.kicker{font-size:12px;font-weight:600;color:var(--muted)}
+.head{padding:22px 20px 14px}
+.head h1{font-size:30px;font-weight:800;line-height:1.03;letter-spacing:-.025em;margin:0}
+.head p{font-size:13px;line-height:1.45;color:var(--muted);margin:9px 0 0}
+.progress{padding:0 20px 4px;display:flex;gap:5px;flex:none}
+.progress span{height:5px;border-radius:999px;background:#d9d2c6;flex:1;transition:background .2s}.progress span.on{background:var(--orange)}
+.footer{position:absolute;left:0;right:0;bottom:0;padding:16px 20px calc(18px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(246,241,231,0),var(--bg) 30%);z-index:5}
+.primary{width:100%;height:58px;border-radius:18px;background:var(--orange);color:var(--bg);border:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:16px;font-weight:800;box-shadow:0 14px 34px rgba(242,106,46,.28)}
+.primary:active{transform:scale(.985);background:var(--orange2)}
+.primary:disabled{opacity:.45;box-shadow:none}
+.secondary{width:100%;height:50px;border-radius:16px;background:var(--surface);border:1px solid var(--line);color:var(--text);font-size:14px;font-weight:700}
+.choice-list{padding:0 20px;display:flex;flex-direction:column;gap:10px}
+.choice{width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border:2px solid transparent;border-radius:18px;background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(23,26,24,.04);transition:.16s}
+.choice.active{border-color:var(--orange);background:#FFF4EC}
+.choice-main{display:flex;flex-direction:column;gap:3px;min-width:0}.choice-title{font-size:18px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}.choice-copy{font-size:12px;color:var(--muted);line-height:1.35;padding-left:31px}
+.radio{width:24px;height:24px;border-radius:999px;border:2px solid rgba(23,26,24,.2);background:transparent;flex:none;position:relative}.choice.active .radio{border-color:var(--orange)}.choice.active .radio:after{content:"";position:absolute;inset:4px;border-radius:999px;background:var(--orange)}
+.field-card{margin:0 20px;background:var(--surface);border-radius:22px;padding:18px;box-shadow:0 1px 2px rgba(23,26,24,.05)}
+.label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:7px;display:block}
+.field{width:100%;height:52px;border:1.5px solid rgba(23,26,24,.13);background:var(--surface);color:var(--text);border-radius:14px;padding:0 14px;font-size:16px;outline:none}
+.field:focus,textarea.field:focus{border-color:var(--orange)}
+textarea.field{height:108px;padding-top:13px;resize:none;line-height:1.4}
+.counter-wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.counter{display:flex;align-items:center;background:var(--bg);padding:4px;border-radius:999px;gap:1px}.counter button{width:44px;height:44px;border:0;border-radius:50%;background:var(--surface);color:var(--text);font-size:22px}.counter button.plus{background:var(--orange);color:white}.counter strong{min-width:46px;text-align:center;font-size:18px}
+.quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.chip{height:34px;border:0;border-radius:999px;padding:0 12px;background:#EEE8DC;color:var(--text);font-size:12px;font-weight:700}.chip.active{background:var(--forest);color:var(--bg)}
+.note{margin:12px 20px 0;padding:13px 14px;border-radius:14px;background:#EEF2E9;color:#244937;font-size:12px;line-height:1.45}
+.notice-orange{margin:12px 20px 0;padding:13px 14px;border-radius:14px;background:#FFF0E5;color:#7A3A15;font-size:12px;line-height:1.45}
+.photo-grid{padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.photo-card{height:188px;border:2px solid transparent;border-radius:22px;position:relative;overflow:hidden;background:var(--forest);padding:0;color:white;text-align:left;box-shadow:0 10px 26px rgba(23,26,24,.10);transition:.16s}
+.photo-card.active{border-color:var(--orange);transform:translateY(-1px)}
+.photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.photo-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,.02) 28%,rgba(11,43,36,.9) 100%)}
+.photo-copy{position:absolute;z-index:2;left:13px;right:13px;bottom:12px}.photo-copy b{font-size:16px;line-height:1.05}.photo-copy small{display:block;color:rgba(255,255,255,.78);font-size:10px;margin-top:4px}
+.checkmark{position:absolute;z-index:3;top:10px;right:10px;width:28px;height:28px;border-radius:999px;background:rgba(255,253,248,.92);display:flex;align-items:center;justify-content:center;color:transparent;font-weight:900}.photo-card.active .checkmark{background:var(--orange);color:white}
+.hero{position:absolute;inset:0;background:var(--forest);overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,43,36,.18) 0%,rgba(11,43,36,.40) 38%,rgba(11,43,36,.96) 100%)}
+.hero-logo{position:absolute;z-index:2;top:58px;left:20px;width:92px;filter:drop-shadow(0 5px 10px rgba(0,0,0,.12))}
+.hero-copy{position:absolute;z-index:2;left:20px;right:20px;bottom:126px;color:var(--bg)}
+.hero-copy .eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#F6B26B;font-weight:800;margin-bottom:10px}
+.hero-copy h1{font-size:37px;line-height:.98;letter-spacing:-.035em;margin:0;font-weight:800}
+.hero-copy p{font-size:14px;line-height:1.45;color:rgba(246,241,231,.82);margin:12px 0 0;max-width:330px}
+.hero .footer{background:linear-gradient(180deg,rgba(11,43,36,0),rgba(11,43,36,.88) 38%,rgba(11,43,36,.98))}
+.hero .secondary{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18);color:white;margin-top:9px}
+.summary{padding:0 20px;display:flex;flex-direction:column;gap:10px}
+.summary-card{background:var(--surface);border-radius:18px;padding:15px 16px;box-shadow:0 1px 2px rgba(23,26,24,.05)}
+.summary-row{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.summary-row span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:800}.summary-row b{font-size:14px;text-align:right}
+.summary-price{background:var(--forest);color:var(--bg);border-radius:22px;padding:19px}.summary-price small{display:block;color:#F6B26B;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:800}.summary-price strong{display:block;font-size:25px;line-height:1.05;margin-top:5px}.summary-price p{font-size:12px;color:rgba(246,241,231,.72);line-height:1.45;margin:8px 0 0}
+.services{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.service-pill{padding:7px 10px;border-radius:999px;background:#EEE8DC;font-size:11px;font-weight:700}
+.consent{display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.42;color:var(--muted);padding:3px 1px}.consent input{margin-top:2px;accent-color:var(--orange)}
+.error{margin-top:9px;border-radius:12px;padding:10px 12px;background:#FDEDE4;color:#7A2F0D;font-size:12px;line-height:1.4}
+.success-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:36px 24px;text-align:center}
+.success-icon{width:74px;height:74px;border-radius:999px;background:var(--forest);color:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:30px}
+.success-tag{display:inline-flex;align-self:center;padding:7px 11px;border-radius:999px;background:#EAF4E8;color:#244937;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.folio{font-size:31px;font-weight:800;letter-spacing:-.025em;margin:12px 0 4px}.success-wrap h2{font-size:28px;line-height:1.05;margin:10px 0}.success-wrap p{font-size:13px;line-height:1.5;color:var(--muted);margin:0 auto;max-width:320px}
+.mini-label{padding:0 20px 10px;font-size:12px;color:var(--muted);font-weight:600}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.route-box{display:none}.route-box.show{display:block}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="brand"><img src="img/logo-cumbre-transparente.png" alt="Cumbre Salvaje"><div><small>CUMBRE GO</small><strong>Visitas Grupales</strong></div></div>
-    <button class="back" onclick="location.href='/'">Cotizador normal</button>
-  </div>
+<div id="app"><main class="device">
 
+<section id="s0" class="screen active">
   <div class="hero">
-    <h1>Organiza una experiencia para todo tu grupo.</h1>
-    <p>Escuelas, empresas, asociaciones, familias y grupos organizados. Cuéntanos qué necesitan y el equipo de Cumbre Salvaje preparará una propuesta personalizada.</p>
+    <img src="img/24-portada-amigos-ranger-puente.jpg" alt="Grupo disfrutando Cumbre Salvaje">
+    <img class="hero-logo" src="img/logo-cumbre-transparente.png" alt="Cumbre Salvaje">
+    <div class="hero-copy">
+      <div class="eyebrow">VISITAS GRUPALES · CUMBRE GO</div>
+      <h1>Planea una visita grupal.</h1>
+      <p>Cuéntanos quiénes vienen y qué quieren vivir. El equipo de Cumbre Salvaje preparará una propuesta pensada para su grupo.</p>
+    </div>
+    <div class="footer">
+      <button class="primary" onclick="go(1)">COMENZAR <span>→</span></button>
+      <button class="secondary" onclick="location.href='/'">Volver a Cumbre GO</button>
+    </div>
   </div>
+</section>
 
-  <div class="progress" id="progress"></div>
+<section id="s1" class="screen">
+  <div class="topbar"><button class="back" onclick="go(0)">←</button><div class="kicker">Visitas grupales</div></div>
+  <div class="head"><h1>¿Qué tipo de grupo viene?</h1><p>Esto nos ayuda a entender el contexto de la visita, no a limitarla.</p></div>
+  <div class="progress" data-progress="1"></div>
+  <div class="scroll"><div id="groupChoices" class="choice-list"></div></div>
+  <div class="footer"><button id="b1" class="primary" onclick="nextType()" disabled>Continuar <span>→</span></button></div>
+</section>
 
-  <section class="card" id="step1">
-    <h2 class="title">¿Qué tipo de grupo viene?</h2>
-    <p class="sub">Esto nos ayuda a entender la logística que puede requerir tu visita.</p>
-    <div class="choices" id="groupChoices"></div>
-    <div class="actions"><span></span><button class="btn primary" onclick="next1()">Continuar</button></div>
-  </section>
-
-  <section class="card hidden" id="step2">
-    <h2 class="title">¿Qué necesitas organizar?</h2>
-    <p class="sub">No usamos el tamaño del grupo para decidir por ti. Elegimos el flujo según lo que realmente necesitas.</p>
-    <div class="choices" id="needChoices"></div>
-    <div id="normalRecommendation" class="warn hidden" style="margin-top:14px">
-      Si solo quieres elegir actividades y conocer el precio, el cotizador normal de Cumbre GO es más rápido.
-      <div class="actions" style="margin-top:10px"><button class="btn dark" onclick="location.href='/'">Ir al cotizador normal</button><button class="btn soft" onclick="continueGroupAnyway()">Prefiero cotización grupal</button></div>
-    </div>
-    <div class="actions"><button class="btn soft" onclick="go(1)">Atrás</button><button id="step2Next" class="btn primary" onclick="next2()">Continuar</button></div>
-  </section>
-
-  <section class="card hidden" id="step3">
-    <h2 class="title">Cuéntanos del grupo</h2>
-    <p class="sub">El total de visitantes es el dato principal. El desglose de adultos y menores es opcional.</p>
-    <div class="grid2">
-      <div><label class="label">Fecha tentativa</label><input id="date" type="date" class="field"></div>
-      <div><label class="label">Estancia</label><select id="stay" class="field"><option value="por_definir">Por definir</option><option value="dia">Visita de día</option><option value="noche">Con noche</option></select></div>
-      <div>
-        <label class="label">Total de visitantes</label>
-        <div class="counter"><button onclick="bump(-1)">−</button><input id="total" type="number" min="1" max="2000" value="20" class="field"><button onclick="bump(1)">+</button></div>
-        <div class="quick"><button class="pill" onclick="setTotal(20)">20</button><button class="pill" onclick="setTotal(40)">40</button><button class="pill" onclick="setTotal(60)">60</button><button class="pill" onclick="setTotal(100)">100+</button></div>
+<section id="s2" class="screen">
+  <div class="topbar"><button class="back" onclick="go(1)">←</button><div class="kicker">Tamaño del grupo</div></div>
+  <div class="head"><h1>¿Cuántas personas vienen?</h1><p>Usamos el total como dato principal. El desglose es opcional.</p></div>
+  <div class="progress" data-progress="2"></div>
+  <div class="scroll">
+    <div class="field-card">
+      <span class="label">Total de visitantes</span>
+      <div class="counter-wrap">
+        <div><div style="font-size:13px;color:var(--muted)">Personas</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Puedes ajustar el total exacto.</div></div>
+        <div class="counter"><button onclick="bump(-1)">−</button><strong id="totalView">20</strong><button class="plus" onclick="bump(1)">+</button></div>
       </div>
-      <div><label class="label">Adultos / docentes / acompañantes (opcional)</label><input id="adults" type="number" min="0" max="2000" class="field" placeholder="Ej. 10"></div>
-      <div><label class="label">Menores / alumnos (opcional)</label><input id="children" type="number" min="0" max="2000" class="field" placeholder="Ej. 75"></div>
-      <div></div>
+      <div class="quick"><button class="chip" onclick="setTotal(20)">20</button><button class="chip" onclick="setTotal(40)">40</button><button class="chip" onclick="setTotal(60)">60</button><button class="chip" onclick="setTotal(100)">100</button><button class="chip" onclick="setTotal(150)">150+</button></div>
+      <div class="split">
+        <div><span class="label" style="margin-top:15px">Adultos / acompañantes</span><input id="adults" class="field" type="number" min="0" max="2000" placeholder="Opcional"></div>
+        <div><span class="label" style="margin-top:15px">Menores / alumnos</span><input id="children" class="field" type="number" min="0" max="2000" placeholder="Opcional"></div>
+      </div>
     </div>
-    <div class="actions"><button class="btn soft" onclick="go(2)">Atrás</button><button class="btn primary" onclick="next3()">Continuar</button></div>
-  </section>
+    <div class="note">No usamos un número mínimo para decidir si una visita es “grupal”. Lo importante es la coordinación que necesiten.</div>
+  </div>
+  <div class="footer"><button class="primary" onclick="nextSize()">Continuar <span>→</span></button></div>
+</section>
 
-  <section class="card hidden" id="step4">
-    <h2 class="title">¿Qué les gustaría vivir?</h2>
-    <p class="sub">Selecciona lo que les interesa. El equipo validará disponibilidad, logística y propuesta final.</p>
-    <div class="activities" id="activities"></div>
-    <div class="actions"><button class="btn soft" onclick="go(3)">Atrás</button><button class="btn primary" onclick="go(5)">Continuar</button></div>
-  </section>
+<section id="s3" class="screen">
+  <div class="topbar"><button class="back" onclick="go(2)">←</button><div class="kicker">Qué necesitan</div></div>
+  <div class="head"><h1>¿Cómo podemos ayudarles?</h1><p>Elige lo que mejor describe lo que quieren organizar.</p></div>
+  <div class="progress" data-progress="3"></div>
+  <div class="scroll">
+    <div id="needChoices" class="choice-list"></div>
+    <div id="normalRoute" class="notice-orange route-box"><b>Este caso puede resolverse más rápido en el cotizador normal.</b><br>Ahí pueden elegir actividades y ver un total estimado de inmediato.</div>
+  </div>
+  <div class="footer"><button id="b3" class="primary" onclick="nextNeed()" disabled>Continuar <span>→</span></button></div>
+</section>
 
-  <section class="card hidden" id="step5">
-    <h2 class="title">Datos de contacto</h2>
-    <p class="sub">La solicitud llegará al equipo de reservaciones para seguimiento.</p>
-    <div class="grid2">
-      <div><label class="label">Nombre</label><input id="name" class="field" maxlength="100" placeholder="Nombre de contacto"></div>
-      <div><label class="label">WhatsApp</label><input id="phone" class="field" inputmode="tel" placeholder="10 dígitos"></div>
-      <div><label class="label">Correo (opcional)</label><input id="email" type="email" class="field" maxlength="150" placeholder="correo@ejemplo.com"></div>
-      <div></div>
-      <div style="grid-column:1/-1"><label class="label">Comentarios / necesidades especiales</label><textarea id="notes" class="field" rows="4" maxlength="2000" placeholder="Horarios, alimentos, celebración, transporte, logística, necesidades especiales..."></textarea></div>
+<section id="s4" class="screen">
+  <div class="topbar"><button class="back" onclick="go(3)">←</button><div class="kicker">Fecha tentativa</div></div>
+  <div class="head"><h1>¿Cuándo quieren visitarnos?</h1><p>La fecha sirve para revisar disponibilidad y operación. Todavía no confirma una reserva.</p></div>
+  <div class="progress" data-progress="4"></div>
+  <div class="scroll">
+    <div class="field-card">
+      <span class="label">Fecha tentativa</span>
+      <input id="date" type="date" class="field">
+      <span class="label" style="margin-top:18px">Tipo de estancia</span>
+      <div id="stayChoices" class="choice-list" style="padding:0">
+        <button class="choice" data-stay="dia" onclick="pickStay('dia')"><div class="choice-main"><div class="choice-title">☀️ Visita de día</div><div class="choice-copy">Actividades y servicios durante el día.</div></div><div class="radio"></div></button>
+        <button class="choice" data-stay="noche" onclick="pickStay('noche')"><div class="choice-main"><div class="choice-title">🌙 Con noche</div><div class="choice-copy">La propuesta puede incluir hospedaje o camping.</div></div><div class="radio"></div></button>
+        <button class="choice active" data-stay="por_definir" onclick="pickStay('por_definir')"><div class="choice-main"><div class="choice-title">✨ Por definir</div><div class="choice-copy">El equipo puede ayudarnos a decidirlo.</div></div><div class="radio"></div></button>
+      </div>
     </div>
-    <div class="actions"><button class="btn soft" onclick="go(4)">Atrás</button><button class="btn primary" onclick="next5()">Revisar solicitud</button></div>
-  </section>
+  </div>
+  <div class="footer"><button class="primary" onclick="nextDate()">Continuar <span>→</span></button></div>
+</section>
 
-  <section class="card hidden" id="step6">
-    <h2 class="title">Revisa tu solicitud</h2>
-    <p class="sub">Las visitas grupales se cotizan de manera personalizada. Enviar esta solicitud no confirma precio, pago, disponibilidad ni reserva.</p>
-    <div id="summary"></div>
-    <label style="display:flex;gap:10px;align-items:flex-start;margin-top:18px"><input id="consent" type="checkbox" style="margin-top:3px"><span style="font-size:13px;line-height:1.45">Acepto el reglamento y políticas de Cumbre Salvaje, y autorizo que el equipo me contacte para dar seguimiento a esta solicitud.</span></label>
-    <div id="submitErr"></div>
-    <div class="actions"><button class="btn soft" onclick="go(5)">Atrás</button><button id="submitBtn" class="btn primary" onclick="submitGroup()">Solicitar cotización</button></div>
-  </section>
+<section id="s5" class="screen">
+  <div class="topbar"><button class="back" onclick="go(4)">←</button><div class="kicker">Experiencias</div></div>
+  <div class="head"><h1>¿Qué les gustaría vivir?</h1><p>Pueden elegir varias. La disponibilidad, capacidad y precio final los validará el equipo.</p></div>
+  <div class="progress" data-progress="5"></div>
+  <div class="scroll"><div id="activities" class="photo-grid"></div><div style="height:20px"></div></div>
+  <div class="footer"><button class="primary" onclick="go(6)">Continuar <span>→</span></button></div>
+</section>
 
-  <section class="card hidden" id="success">
-    <div class="success">
-      <div class="tag">Solicitud recibida</div>
-      <div class="folio" id="folio"></div>
-      <h2>Tu visita ya está en manos del equipo.</h2>
-      <p class="sub">Cumbre Salvaje revisará logística, disponibilidad y servicios para preparar una propuesta personalizada. Este folio no es comprobante de pago ni reserva.</p>
-      <div class="actions" style="justify-content:center"><button class="btn dark" onclick="location.href='/'">Volver a Cumbre GO</button></div>
+<section id="s6" class="screen">
+  <div class="topbar"><button class="back" onclick="go(5)">←</button><div class="kicker">Contacto</div></div>
+  <div class="head"><h1>¿Con quién hablamos?</h1><p>Estos datos llegarán al equipo de reservaciones para continuar la propuesta.</p></div>
+  <div class="progress" data-progress="6"></div>
+  <div class="scroll">
+    <div class="field-card">
+      <span class="label">Nombre</span><input id="name" class="field" maxlength="100" placeholder="Nombre de contacto">
+      <span class="label" style="margin-top:15px">WhatsApp</span><input id="phone" class="field" inputmode="tel" placeholder="10 dígitos">
+      <span class="label" style="margin-top:15px">Correo</span><input id="email" class="field" type="email" maxlength="150" placeholder="Opcional">
+      <span class="label" style="margin-top:15px">Cuéntanos algo importante</span><textarea id="notes" class="field" maxlength="2000" placeholder="Horarios, alimentos, celebración, necesidades especiales, logística..."></textarea>
     </div>
-  </section>
-</div>
+  </div>
+  <div class="footer"><button class="primary" onclick="nextContact()">Revisar solicitud <span>→</span></button></div>
+</section>
 
+<section id="s7" class="screen">
+  <div class="topbar"><button class="back" onclick="go(6)">←</button><div class="kicker">Resumen</div></div>
+  <div class="head"><h1>Tu visita grupal.</h1><p>Revisa la información antes de enviarla al equipo.</p></div>
+  <div class="progress" data-progress="7"></div>
+  <div class="scroll">
+    <div id="summary" class="summary"></div>
+    <div style="padding:13px 20px 0">
+      <label class="consent"><input id="consent" type="checkbox"><span>Acepto el reglamento y políticas de Cumbre Salvaje y autorizo que el equipo me contacte para dar seguimiento a esta solicitud.</span></label>
+      <div id="submitErr"></div>
+    </div>
+  </div>
+  <div class="footer"><button id="submitBtn" class="primary" onclick="submitGroup()">SOLICITAR PROPUESTA <span>→</span></button></div>
+</section>
+
+<section id="success" class="screen">
+  <div class="success-wrap">
+    <div class="success-icon">✓</div>
+    <div class="success-tag">Solicitud enviada</div>
+    <div class="folio" id="folio"></div>
+    <h2>Ya tenemos su visita.</h2>
+    <p>El equipo de Cumbre Salvaje revisará la información y dará seguimiento para preparar una cotización personalizada. El folio identifica la solicitud; no representa pago ni reserva confirmada.</p>
+  </div>
+  <div class="footer"><button class="primary" onclick="location.href='/'">Volver a Cumbre GO <span>→</span></button></div>
+</section>
+
+</main></div>
 <script>
 const SUPABASE_URL='https://xnztlanptbdgpdjhbnzv.supabase.co';
 const SUPABASE_KEY='sb_publishable_JcKnBtzboji75Em1M0wa8w_3_fb0LB3';
+const POLICY_VERSION='group-mvp-2026-09-23-v1';
+
 const GROUPS=[
- ['escuela_colegio','Escuela / Colegio','Excursiones, grupos académicos y visitas educativas'],
- ['empresa_equipo','Empresa / Equipo','Convivencias, integración y experiencias corporativas'],
- ['familia_amigos','Familia o grupo de amigos','Grupos privados que necesitan coordinación especial'],
- ['asociacion_grupo','Asociación / Grupo organizado','Clubes, asociaciones y comunidades'],
- ['otro','Otro','Cuéntanos qué tipo de grupo es']
+  ['escuela_colegio','🎒','Escuela / Colegio','Excursiones, grupos académicos y visitas educativas'],
+  ['empresa_equipo','💼','Empresa / Equipo','Convivencias, integración y experiencias corporativas'],
+  ['familia_amigos','👨‍👩‍👧‍👦','Familia / Amigos','Un grupo privado que necesita coordinación especial'],
+  ['asociacion_grupo','🤝','Asociación / Grupo organizado','Clubes, asociaciones y comunidades'],
+  ['otro','✨','Otro','Cuéntanos qué tipo de grupo es']
 ];
 const NEEDS=[
- ['cotizador_normal','Elegir actividades y conocer el precio','Para grupos que no necesitan logística especial'],
- ['organizar_grupo','Organizar una visita para todo el grupo','Coordinación, horarios, servicios y operación'],
- ['propuesta_personalizada','Solicitar una propuesta personalizada','Una experiencia diseñada según sus necesidades'],
- ['no_seguro','Aún no estoy seguro','Te ayudamos a definir el mejor formato']
+  ['cotizador_normal','⚡','Elegir actividades y conocer precio','Quiero armar la experiencia y ver un estimado rápido'],
+  ['organizar_grupo','🗓️','Organizar una visita completa','Necesitamos coordinar personas, horarios y servicios'],
+  ['propuesta_personalizada','✦','Una propuesta personalizada','Queremos que Cumbre Salvaje nos ayude a diseñarla'],
+  ['no_seguro','?','Aún no estoy seguro','Necesito orientación para decidir el formato']
 ];
 const ACTS=[
- ['tirolesa','Tirolesa','img/04-tirolesa.jpg'],['puente','Puente colgante','img/31-puente-colgante.jpg'],['cuatrimoto','Cuatrimoto','img/14-cuatrimoto.jpg'],
- ['ranger','Ranger','img/13-ranger.jpg'],['caballo','Caballos','img/27-cabalgata.jpg'],['gotcha','Gotcha','img/06-gotcha.jpg'],
- ['herpetario','Herpetario / fauna','img/32-herpetario-portada.jpg'],['aviario','Aviario','img/19-aviario.jpg'],['arco','Tiro con arco','img/26-arco-con-flecha.jpg'],
- ['safari','Safari','img/07-safari.jpg'],['granjita','Granja Interactiva','img/18-granjita-familia.jpg'],['camping','Camping','img/28-camping-noche.jpg'],
- ['hospedaje','Hospedaje','img/30-glamping-triangulo.jpg'],['alimentos','Alimentos','img/09-alimentos.jpg']
+  ['tirolesa','Tirolesa','img/04-tirolesa.jpg'],
+  ['puente','Puente colgante','img/31-puente-colgante.jpg'],
+  ['cuatrimoto','Cuatrimoto','img/14-cuatrimoto.jpg'],
+  ['ranger','Ranger','img/13-ranger.jpg'],
+  ['caballo','Caballos','img/27-cabalgata.jpg'],
+  ['gotcha','Gotcha','img/06-gotcha.jpg'],
+  ['herpetario','Herpetario / fauna','img/32-herpetario-portada.jpg'],
+  ['aviario','Aviario','img/19-aviario.jpg'],
+  ['arco','Tiro con arco','img/26-arco-con-flecha.jpg'],
+  ['safari','Safari','img/07-safari.jpg'],
+  ['granjita','Granja Interactiva','img/18-granjita-familia.jpg'],
+  ['camping','Camping','img/28-camping-noche.jpg'],
+  ['hospedaje','Hospedaje','img/30-glamping-triangulo.jpg'],
+  ['alimentos','Alimentos','img/09-alimentos.jpg']
 ];
-let step=1,groupType=null,need=null,selected=new Set(),forceGroup=false,requestKey=null;
+
+let state={screen:0,groupType:null,total:20,need:null,stay:'por_definir',activities:new Set(),requestKey:null};
 
 function uuid(){return crypto.randomUUID?crypto.randomUUID():([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16))}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function go(n){step=n;for(let i=1;i<=6;i++)document.getElementById('step'+i)?.classList.toggle('hidden',i!==n);document.getElementById('success').classList.add('hidden');renderProgress();window.scrollTo({top:0,behavior:'smooth'})}
-function renderProgress(){document.getElementById('progress').innerHTML=[1,2,3,4,5,6].map(i=>'<div class="dot '+(i<=step?'on':'')+'"></div>').join('')}
-function choose(container,key,value){container.querySelectorAll('.choice').forEach(x=>x.classList.toggle('active',x.dataset.value===value));if(key==='group')groupType=value;else need=value}
-document.getElementById('groupChoices').innerHTML=GROUPS.map(x=>'<button class="choice" data-value="'+x[0]+'" onclick="choose(this.parentElement,\'group\',\''+x[0]+'\')"><b>'+x[1]+'</b><span>'+x[2]+'</span></button>').join('');
-document.getElementById('needChoices').innerHTML=NEEDS.map(x=>'<button class="choice" data-value="'+x[0]+'" onclick="chooseNeed(this.parentElement,\''+x[0]+'\')"><b>'+x[1]+'</b><span>'+x[2]+'</span></button>').join('');
-function chooseNeed(el,v){choose(el,'need',v);document.getElementById('normalRecommendation').classList.toggle('hidden',v!=='cotizador_normal');document.getElementById('step2Next').classList.toggle('hidden',v==='cotizador_normal'&&!forceGroup)}
-function next1(){if(!groupType)return alert('Selecciona el tipo de grupo.');go(2)}
-function continueGroupAnyway(){forceGroup=true;document.getElementById('normalRecommendation').classList.add('hidden');document.getElementById('step2Next').classList.remove('hidden')}
-function next2(){if(!need)return alert('Selecciona qué necesitas organizar.');if(need==='cotizador_normal'&&!forceGroup)return;go(3)}
-function bump(n){setTotal(Math.max(1,Number(document.getElementById('total').value||1)+n))}
-function setTotal(n){document.getElementById('total').value=n}
-function next3(){const d=document.getElementById('date').value,t=Number(document.getElementById('total').value);if(!d)return alert('Selecciona una fecha tentativa.');if(!Number.isInteger(t)||t<1||t>2000)return alert('Revisa el total de visitantes.');const a=document.getElementById('adults').value,c=document.getElementById('children').value;if(a!==''&&c!==''&&Number(a)+Number(c)!==t)return alert('El desglose debe coincidir con el total de visitantes.');go(4)}
-document.getElementById('activities').innerHTML=ACTS.map(x=>'<button class="act" data-id="'+x[0]+'" onclick="toggleAct(this)"><img src="'+x[2]+'" alt=""><div>'+x[1]+'</div></button>').join('');
-function toggleAct(el){const id=el.dataset.id;if(selected.has(id))selected.delete(id);else selected.add(id);el.classList.toggle('active',selected.has(id))}
-function next5(){const name=document.getElementById('name').value.trim(),phone=document.getElementById('phone').value.replace(/\D/g,''),email=document.getElementById('email').value.trim();if(!name)return alert('Escribe tu nombre.');if(phone.length<10||phone.length>15)return alert('Revisa el WhatsApp.');if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return alert('Revisa el correo.');renderSummary();go(6)}
-function label(arr,id){return arr.find(x=>x[0]===id)?.[1]||id}
-function renderSummary(){const total=Number(document.getElementById('total').value),acts=[...selected].map(id=>ACTS.find(x=>x[0]===id)?.[1]||id);document.getElementById('summary').innerHTML='<div class="summary">'+
-'<div class="mini"><label>Grupo</label><div>'+esc(label(GROUPS,groupType))+'</div></div>'+
-'<div class="mini"><label>Necesidad</label><div>'+esc(label(NEEDS,need))+'</div></div>'+
-'<div class="mini"><label>Fecha</label><div>'+esc(document.getElementById('date').value)+'</div></div>'+
-'<div class="mini"><label>Visitantes</label><div>'+total+'</div></div>'+
-'</div><div class="services"><b>Actividades de interés</b>'+(acts.length?acts.map(x=>'<div class="service">'+esc(x)+'</div>').join(''):'<div class="service">Por definir con el equipo</div>')+'</div><div class="note" style="margin-top:14px"><b>Cotización personalizada.</b> No se calcula un total automático para visitas grupales.</div>'}
-function attribution(){const u=new URL(location.href),o={source:'direct'};['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(k=>{if(u.searchParams.get(k))o[k]=u.searchParams.get(k)});if(o.utm_source)o.source=o.utm_source;return o}
-async function submitGroup(){if(!document.getElementById('consent').checked){document.getElementById('submitErr').innerHTML='<div class="err">Necesitas aceptar las políticas para enviar la solicitud.</div>';return}const b=document.getElementById('submitBtn');b.disabled=true;document.getElementById('submitErr').innerHTML='';try{if(!requestKey)requestKey=uuid();const phone=document.getElementById('phone').value.replace(/\D/g,''),a=document.getElementById('adults').value,c=document.getElementById('children').value;const payload={schema_version:1,contact:{name:document.getElementById('name').value.trim(),phone,email:document.getElementById('email').value.trim()},group:{type:groupType,need,date:document.getElementById('date').value,visitors_total:Number(document.getElementById('total').value),adults:a===''?null:Number(a),children:c===''?null:Number(c),stay:document.getElementById('stay').value},activities:[...selected],notes:{message:document.getElementById('notes').value.trim()},attribution:attribution(),consent:{policies:true,contact:true,version:'group-mvp-2026-09-23-v1'}};const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/cumbre_go_submit_group',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify({p_request_key:requestKey,p_payload:payload})});const text=await r.text();if(!r.ok)throw new Error((()=>{try{return JSON.parse(text).message||text}catch{return text}})());const data=JSON.parse(text);document.getElementById('folio').textContent=data.folio;for(let i=1;i<=6;i++)document.getElementById('step'+i).classList.add('hidden');document.getElementById('success').classList.remove('hidden');document.getElementById('progress').innerHTML='';window.scrollTo({top:0,behavior:'smooth'})}catch(e){document.getElementById('submitErr').innerHTML='<div class="err">'+esc(e.message||'No pudimos enviar la solicitud.')+'</div>'}finally{b.disabled=false}}
-document.getElementById('date').min=new Date().toISOString().slice(0,10);renderProgress();
+function label(list,id){return list.find(x=>x[0]===id)?.[2]||id||'—'}
+function actLabel(id){return ACTS.find(x=>x[0]===id)?.[1]||id}
+
+function renderProgress(){
+  document.querySelectorAll('[data-progress]').forEach(el=>{
+    const n=Number(el.dataset.progress);
+    el.innerHTML=[1,2,3,4,5,6,7].map(i=>'<span class="'+(i<=n?'on':'')+'"></span>').join('');
+  });
+}
+function go(n){
+  state.screen=n;
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  const t=document.getElementById('s'+n);
+  if(t)t.classList.add('active');
+  else if(n==='success')document.getElementById('success').classList.add('active');
+  const sc=t?.querySelector('.scroll');if(sc)sc.scrollTop=0;
+}
+
+document.getElementById('groupChoices').innerHTML=GROUPS.map(x=>
+  '<button class="choice" data-id="'+x[0]+'" onclick="pickGroup(\''+x[0]+'\')">'+
+  '<div class="choice-main"><div class="choice-title"><span>'+x[1]+'</span>'+x[2]+'</div><div class="choice-copy">'+x[3]+'</div></div><div class="radio"></div></button>'
+).join('');
+function pickGroup(id){
+  state.groupType=id;
+  document.querySelectorAll('#groupChoices .choice').forEach(x=>x.classList.toggle('active',x.dataset.id===id));
+  document.getElementById('b1').disabled=false;
+}
+function nextType(){if(!state.groupType)return;go(2)}
+
+function setTotal(v){state.total=Math.max(1,Math.min(2000,Number(v)||1));document.getElementById('totalView').textContent=state.total;document.querySelectorAll('.quick .chip').forEach(x=>x.classList.toggle('active',Number(x.textContent.replace('+',''))===state.total))}
+function bump(d){setTotal(state.total+d)}
+function nextSize(){
+  const a=document.getElementById('adults').value,c=document.getElementById('children').value;
+  if(a!==''&&c!==''&&Number(a)+Number(c)!==state.total){alert('El desglose de adultos y menores debe coincidir con el total de visitantes.');return}
+  go(3);
+}
+
+document.getElementById('needChoices').innerHTML=NEEDS.map(x=>
+  '<button class="choice" data-id="'+x[0]+'" onclick="pickNeed(\''+x[0]+'\')">'+
+  '<div class="choice-main"><div class="choice-title"><span>'+x[1]+'</span>'+x[2]+'</div><div class="choice-copy">'+x[3]+'</div></div><div class="radio"></div></button>'
+).join('');
+function pickNeed(id){
+  state.need=id;
+  document.querySelectorAll('#needChoices .choice').forEach(x=>x.classList.toggle('active',x.dataset.id===id));
+  document.getElementById('normalRoute').classList.toggle('show',id==='cotizador_normal');
+  document.getElementById('b3').disabled=false;
+}
+function nextNeed(){
+  if(!state.need)return;
+  if(state.need==='cotizador_normal'){location.href='/';return}
+  go(4);
+}
+function pickStay(v){
+  state.stay=v;
+  document.querySelectorAll('[data-stay]').forEach(x=>x.classList.toggle('active',x.dataset.stay===v));
+}
+function nextDate(){
+  if(!document.getElementById('date').value){alert('Selecciona una fecha tentativa.');return}
+  go(5);
+}
+
+document.getElementById('activities').innerHTML=ACTS.map(x=>
+  '<button class="photo-card" data-id="'+x[0]+'" onclick="toggleAct(\''+x[0]+'\')">'+
+  '<img src="'+x[2]+'" alt="'+x[1]+'"><span class="checkmark">✓</span><div class="photo-copy"><b>'+x[1]+'</b><small>Seleccionar experiencia</small></div></button>'
+).join('');
+function toggleAct(id){
+  if(state.activities.has(id))state.activities.delete(id);else state.activities.add(id);
+  document.querySelectorAll('.photo-card').forEach(x=>x.classList.toggle('active',state.activities.has(x.dataset.id)));
+}
+
+function nextContact(){
+  const n=document.getElementById('name').value.trim();
+  const p=document.getElementById('phone').value.replace(/\D/g,'');
+  const e=document.getElementById('email').value.trim();
+  if(!n){alert('Escribe el nombre de contacto.');return}
+  if(p.length<10||p.length>15){alert('Revisa el número de WhatsApp.');return}
+  if(e&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){alert('Revisa el correo.');return}
+  renderSummary();go(7);
+}
+function renderSummary(){
+  const date=document.getElementById('date').value;
+  const acts=[...state.activities];
+  document.getElementById('summary').innerHTML=
+    '<div class="summary-price"><small>COTIZACIÓN PERSONALIZADA</small><strong>Su grupo merece una propuesta a medida.</strong><p>No mostramos un total automático porque el equipo validará capacidad, operación, horarios y servicios antes de cotizar.</p></div>'+
+    '<div class="summary-card"><div class="summary-row"><span>Grupo</span><b>'+esc(label(GROUPS,state.groupType))+'</b></div></div>'+
+    '<div class="summary-card"><div class="summary-row"><span>Visitantes</span><b>'+state.total+' personas</b></div></div>'+
+    '<div class="summary-card"><div class="summary-row"><span>Qué necesitan</span><b>'+esc(label(NEEDS,state.need))+'</b></div></div>'+
+    '<div class="summary-card"><div class="summary-row"><span>Fecha tentativa</span><b>'+esc(date)+'</b></div></div>'+
+    '<div class="summary-card"><div class="summary-row"><span>Estancia</span><b>'+esc(state.stay==='dia'?'Visita de día':state.stay==='noche'?'Con noche':'Por definir')+'</b></div>'+
+      '<div class="services">'+(acts.length?acts.map(x=>'<span class="service-pill">'+esc(actLabel(x))+'</span>').join(''):'<span class="service-pill">Experiencias por definir</span>')+'</div></div>';
+}
+
+function attribution(){
+  const q=new URLSearchParams(location.search);
+  const o={source:q.get('utm_source')||q.get('source')||'direct'};
+  ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(k=>{if(q.get(k))o[k]=q.get(k)});
+  return o;
+}
+async function submitGroup(){
+  const consent=document.getElementById('consent');
+  const err=document.getElementById('submitErr');
+  if(!consent.checked){err.innerHTML='<div class="error">Necesitas aceptar las políticas para enviar la solicitud.</div>';return}
+  const btn=document.getElementById('submitBtn');btn.disabled=true;err.innerHTML='';
+  try{
+    if(!state.requestKey)state.requestKey=uuid();
+    const a=document.getElementById('adults').value,c=document.getElementById('children').value;
+    const payload={
+      schema_version:1,
+      contact:{
+        name:document.getElementById('name').value.trim(),
+        phone:document.getElementById('phone').value.replace(/\D/g,''),
+        email:document.getElementById('email').value.trim()
+      },
+      group:{
+        type:state.groupType,
+        need:state.need,
+        date:document.getElementById('date').value,
+        visitors_total:state.total,
+        adults:a===''?null:Number(a),
+        children:c===''?null:Number(c),
+        stay:state.stay
+      },
+      activities:[...state.activities],
+      notes:{message:document.getElementById('notes').value.trim()},
+      attribution:attribution(),
+      consent:{policies:true,contact:true,version:POLICY_VERSION}
+    };
+    const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/cumbre_go_submit_group',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body:JSON.stringify({p_request_key:state.requestKey,p_payload:payload})
+    });
+    const raw=await r.text();
+    let data={};try{data=raw?JSON.parse(raw):{}}catch(_){}
+    if(!r.ok)throw new Error(data.message||'No pudimos enviar la solicitud.');
+    document.getElementById('folio').textContent=data.folio||'';
+    go('success');
+  }catch(e){
+    err.innerHTML='<div class="error">'+esc(e.message||'No pudimos enviar la solicitud.')+'</div>';
+  }finally{btn.disabled=false}
+}
+
+document.getElementById('date').min=new Date().toISOString().slice(0,10);
+renderProgress();
 </script>
 </body>
 </html>

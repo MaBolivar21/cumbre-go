@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F6F1E7">
-<meta name="cumbre-group-build" content="group-routing-schools-companies-v1">
+<meta name="cumbre-group-build" content="group-wa-promo-v1">
 <title>Cumbre GO · Visitas Grupales</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,6 +97,7 @@ input[type="date"].field::-webkit-date-and-time-value{text-align:left}
 input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
 .route-box{display:none}.route-box.show{display:block}
 </style>
+<link rel="stylesheet" href="/group-commercial.css?v=1">
 </head>
 <body>
 <div id="app"><main class="device">
@@ -215,7 +216,7 @@ input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
 </section>
 
 <section id="success" class="screen">
-  <div class="success-wrap">
+  <div class="success-scroll"><div class="success-wrap">
     <div class="success-icon">✓</div>
     <div class="success-tag">Solicitud enviada</div>
     <div class="folio" id="folio"></div>
@@ -223,11 +224,19 @@ input[type="date"].field::-webkit-calendar-picker-indicator{opacity:.9}
     <p>El equipo de Cumbre Salvaje revisará la información y dará seguimiento para preparar una cotización personalizada. El folio identifica la solicitud; no representa pago ni reserva confirmada.</p>
     <div class="qr-card"><div id="qrBox" class="qr-box"></div><div class="qr-help">QR de seguimiento de la solicitud. No acredita pago ni autoriza la entrada.</div></div>
   </div>
-  <div class="footer"><button class="primary" onclick="location.href='/'">Volver a Cumbre GO <span>→</span></button></div>
+  </div>
+  <div class="footer"><button class="primary wa-action" id="groupWaButton" onclick="openGroupWhatsApp()">Enviar por WhatsApp <span>↗</span></button><button class="secondary" onclick="location.href='/'">Volver a Cumbre GO</button></div>
 </section>
 
+<section id="groupWhatsapp" class="screen">
+  <div class="topbar"><button class="back" onclick="go('success')" aria-label="Volver a la confirmación">←</button><div class="kicker">Compartir solicitud</div></div>
+  <div class="head"><h1>Enviar por WhatsApp</h1><p>Tu solicitud ya está registrada. Este mensaje se abrirá precargado; tú decides cuándo enviarlo.</p></div>
+  <div class="scroll"><div id="groupWaMessage" class="wa-message"></div><div class="wa-destination"><b>WhatsApp oficial · Cumbre Salvaje</b><br>33 3143 6632</div><button class="secondary" onclick="copyGroupWhatsApp()">Copiar mensaje</button><div id="groupWaCopyStatus" class="wa-copy-status" role="status" aria-live="polite"></div></div>
+  <div class="footer"><a id="groupWaOpen" class="primary" target="_blank" rel="noopener noreferrer">Abrir WhatsApp oficial <span>↗</span></a></div>
+</section>
 </main></div>
 <script src="/qr.js"></script>
+<script src="/group-commercial.js?v=1"></script>
 <script>
 const SUPABASE_URL='https://xnztlanptbdgpdjhbnzv.supabase.co';
 const SUPABASE_KEY='sb_publishable_JcKnBtzboji75Em1M0wa8w_3_fb0LB3';
@@ -280,12 +289,14 @@ function renderProgress(){
   });
 }
 function go(n){
+  if((groupCommerce.saving||groupCommerce.pending)&&!groupCommerce.receipt&&n!==7)return;
   state.screen=n;
   renderProgress();
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
   const t=document.getElementById('s'+n);
   if(t)t.classList.add('active');
   else if(n==='success')document.getElementById('success').classList.add('active');
+  else if(n==='whatsapp')document.getElementById('groupWhatsapp').classList.add('active');
   const sc=t?.querySelector('.scroll');if(sc)sc.scrollTop=0;
 }
 
@@ -361,10 +372,11 @@ function renderSummary(){
     '<div class="summary-card"><div class="summary-row"><span>Fecha tentativa</span><b>'+esc(date)+'</b></div></div>'+
     '<div class="summary-card"><div class="summary-row"><span>Estancia</span><b>'+esc(state.stay==='dia'?'Visita de día':state.stay==='noche'?'Con noche':'Por definir')+'</b></div>'+
       '<div class="services">'+(acts.length?acts.map(x=>'<span class="service-pill">'+esc(actLabel(x))+'</span>').join(''):'<span class="service-pill">Experiencias por definir</span>')+'</div></div>';
+  renderGroupPromo();
 }
 
 function qrRequestURL(folio){
-  return location.origin+'/?folio='+encodeURIComponent(folio);
+  return groupFollowupUrl(folio);
 }
 function renderQr(folio){
   const box=document.getElementById('qrBox');
@@ -384,50 +396,7 @@ function attribution(){
   ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(k=>{if(q.get(k))o[k]=q.get(k)});
   return o;
 }
-async function submitGroup(){
-  const consent=document.getElementById('consent');
-  const err=document.getElementById('submitErr');
-  if(!consent.checked){err.innerHTML='<div class="error">Necesitas aceptar las políticas para enviar la solicitud.</div>';return}
-  const btn=document.getElementById('submitBtn');btn.disabled=true;err.innerHTML='';
-  try{
-    if(!state.requestKey)state.requestKey=uuid();
-    const a=document.getElementById('adults').value,c=document.getElementById('children').value;
-    const payload={
-      schema_version:1,
-      contact:{
-        name:document.getElementById('name').value.trim(),
-        phone:document.getElementById('phone').value.replace(/\D/g,''),
-        email:document.getElementById('email').value.trim()
-      },
-      group:{
-        type:state.groupType,
-        need:state.need,
-        date:document.getElementById('date').value,
-        visitors_total:state.total,
-        adults:a===''?null:Number(a),
-        children:c===''?null:Number(c),
-        stay:state.stay
-      },
-      activities:[...state.activities],
-      notes:{message:document.getElementById('notes').value.trim()},
-      attribution:attribution(),
-      consent:{policies:true,contact:true,version:POLICY_VERSION}
-    };
-    const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/cumbre_go_submit_group',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
-      body:JSON.stringify({p_request_key:state.requestKey,p_payload:payload})
-    });
-    const raw=await r.text();
-    let data={};try{data=raw?JSON.parse(raw):{}}catch(_){}
-    if(!r.ok)throw new Error(data.message||'No pudimos enviar la solicitud.');
-    document.getElementById('folio').textContent=data.folio||'';
-    renderQr(data.folio||'');
-    go('success');
-  }catch(e){
-    err.innerHTML='<div class="error">'+esc(e.message||'No pudimos enviar la solicitud.')+'</div>';
-  }finally{btn.disabled=false}
-}
+async function submitGroup(){return submitGroupRequest()}
 
 document.getElementById('date').min=new Date().toISOString().slice(0,10);
 renderProgress();

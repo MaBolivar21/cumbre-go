@@ -1,4 +1,6 @@
 /* Group screens only: preserve the approved photo-led design and mobile controls. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,a,input,textarea,select,[role="button"]{touch-action:manipulation}
 #s1 .head,#s2 .head,#s3 .head,#s4 .head,#s5 .head,#s6 .head,#s7 .head{padding-top:26px;padding-bottom:22px;flex:none}
 .step-heading{display:flex;flex-direction:column;gap:7px}
 .flow-kicker{font-size:11px;letter-spacing:.12em;font-weight:800;color:var(--orange)}

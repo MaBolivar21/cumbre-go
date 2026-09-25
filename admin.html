@@ -75,7 +75,10 @@ button,input,select,textarea{font:inherit}.hidden{display:none!important}
             <select id="estadoFilter"><option value="">Todos los estados</option></select>
             <select id="tipoFilter"><option value="">Normal y grupal</option><option value="normal">Normal</option><option value="grupal">Grupal</option></select>
           </div>
-          <select id="prioridadFilter" style="margin-bottom:10px"><option value="">Todas las prioridades</option><option value="normal">Normal</option><option value="revisar">Revisar</option><option value="urgente">Urgente</option></select>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+            <select id="prioridadFilter"><option value="">Todas las prioridades</option><option value="normal">Normal</option><option value="revisar">Revisar</option><option value="urgente">Urgente</option></select>
+            <select id="qaFilter"><option value="operacion">Solo operación real</option><option value="incluir">Incluir QA / pruebas</option></select>
+          </div>
         </div>
         <div id="requestList" class="list"></div>
       </div>
@@ -177,7 +180,7 @@ function metricsHtml(m){
 }
 function rowHtml(r){
   return '<div class="row '+(r.id===selectedId?'active':'')+'" data-id="'+r.id+'">'+
-    '<div class="row-top"><div><div class="row-name">'+esc(r.nombre)+'</div><div style="margin-top:5px">'+stateBadge(r.estado_comercial)+' '+priorityBadge(r.prioridad)+'</div></div><div class="amount">'+amountLabel(r.total_validado_mxn??r.estimado_cliente_mxn,r.flujo==='grupal')+'</div></div>'+
+    '<div class="row-top"><div><div class="row-name">'+esc(r.nombre)+(r.es_qa?' <span class="badge" style="background:#fff1df;color:#80571a">QA</span>':'')+'</div><div style="margin-top:5px">'+stateBadge(r.estado_comercial)+' '+priorityBadge(r.prioridad)+'</div></div><div class="amount">'+amountLabel(r.total_validado_mxn??r.estimado_cliente_mxn,r.flujo==='grupal')+'</div></div>'+
     '<div class="row-meta"><span>'+esc(r.folio)+' · '+dateMx(r.fecha_visita)+' · '+esc(r.visitantes_total)+' visitantes</span><span>'+esc(r.flujo==='grupal'?'Grupo':'Normal')+'</span></div>'+
     (r.proxima_accion?'<div style="margin-top:8px;font-size:12px"><b>Siguiente:</b> '+esc(r.proxima_accion)+'</div>':'')+
   '</div>';
@@ -185,7 +188,7 @@ function rowHtml(r){
 function bindRows(root){root.querySelectorAll('.row').forEach(el=>el.onclick=()=>{showView('solicitudes');loadDetail(el.dataset.id)})}
 
 async function loadHome(){
-  const data=await rpc('cumbre_crm_list_v2',{p_search:'',p_estado:'',p_tipo:'',p_prioridad:'',p_offset:0});
+  const data=await rpc('cumbre_crm_list_v3',{p_search:'',p_estado:'',p_tipo:'',p_prioridad:'',p_incluir_qa:false,p_offset:0});
   rows=data.rows||[];
   document.getElementById('metrics').innerHTML=metricsHtml(data.metrics||{});
   const pri=[...rows].sort((a,b)=>{
@@ -202,7 +205,8 @@ async function loadHome(){
     '</div><p style="color:var(--muted);line-height:1.55">La prioridad es trabajar cada lead hasta definir una siguiente acción. “Reservado” solo debe usarse cuando administración haya confirmado la reserva; el anticipo pagado es dinero realmente validado, no intención del cliente.</p>';
 }
 async function loadList(){
-  const data=await rpc('cumbre_crm_list_v2',{p_search:document.getElementById('search').value.trim(),p_estado:document.getElementById('estadoFilter').value,p_tipo:document.getElementById('tipoFilter').value,p_prioridad:document.getElementById('prioridadFilter').value,p_offset:0});
+  const includeQA=document.getElementById('qaFilter').value==='incluir';
+  const data=await rpc('cumbre_crm_list_v3',{p_search:document.getElementById('search').value.trim(),p_estado:document.getElementById('estadoFilter').value,p_tipo:document.getElementById('tipoFilter').value,p_prioridad:document.getElementById('prioridadFilter').value,p_incluir_qa:includeQA,p_offset:0});
   rows=data.rows||[];
   document.getElementById('requestList').innerHTML=rows.length?rows.map(rowHtml).join(''):'<div class="empty">No encontramos solicitudes.</div>';
   bindRows(document.getElementById('requestList'));
@@ -232,7 +236,7 @@ function renderDetail(d){
       :'<div class="empty" style="padding:20px">Sin desglose disponible.</div>');
   const timeline=ev.length?ev.map(e=>'<div class="event"><b>'+esc(e.autor_nombre||'Sistema')+' · '+esc(STATE_LABEL[e.estado_nuevo]||e.estado_nuevo)+'</b><small>'+dt(e.created_at)+'</small><div style="margin-top:4px">'+esc(e.nota||'')+'</div>'+(e.metadata&&Object.prototype.hasOwnProperty.call(e.metadata,'fecha_visita')?'<div style="margin-top:4px;font-size:12px"><b>Fecha de visita:</b> '+esc(dateMx(e.metadata.fecha_visita))+'</div>':'')+'</div>').join(''):'<div style="color:var(--muted)">Aún no hay seguimiento registrado.</div>';
   document.getElementById('detail').innerHTML=
-    '<div class="detail-title"><div><div class="folio">'+esc(s.folio)+'</div><h1>'+esc(s.nombre)+'</h1><div>'+stateBadge(o.estado_comercial||'nuevo')+' '+priorityBadge(o.prioridad)+'</div></div><div class="amount">'+amountLabel(o.total_validado_mxn??s.estimado_cliente_mxn,s.flujo==='grupal')+'</div></div>'+
+    '<div class="detail-title"><div><div class="folio">'+esc(s.folio)+'</div><h1>'+esc(s.nombre)+'</h1><div>'+stateBadge(o.estado_comercial||'nuevo')+' '+priorityBadge(o.prioridad)+(s.es_qa?' <span class="badge" style="background:#fff1df;color:#80571a">QA / prueba</span>':'')+'</div></div><div class="amount">'+amountLabel(o.total_validado_mxn??s.estimado_cliente_mxn,s.flujo==='grupal')+'</div></div>'+
     '<div class="cards2">'+
       '<div class="mini"><label>Fecha de visita</label><div>'+dateMx(s.fecha_visita)+'</div></div>'+
       '<div class="mini"><label>Visitantes</label><div>'+esc(s.visitantes_total)+' personas</div></div>'+
@@ -293,7 +297,7 @@ async function saveDetail(){
 }
 
 async function loadAgenda(){
-  const data=await rpc('cumbre_crm_agenda_v2',{p_start:document.getElementById('agendaStart').value,p_end:document.getElementById('agendaEnd').value});
+  const data=await rpc('cumbre_crm_agenda_v3',{p_start:document.getElementById('agendaStart').value,p_end:document.getElementById('agendaEnd').value,p_incluir_qa:false});
   const m=data.metrics||{};
   document.getElementById('agendaMetrics').innerHTML=[
     ['Reservas',m.reservas||0],['Visitantes',m.visitantes_esperados||0],['Saldo por cobrar',money(m.saldo_por_cobrar_mxn),'money'],['Grupos',m.grupos||0],['Con alerta',m.reservas_con_alerta||0]
@@ -314,7 +318,7 @@ document.getElementById('loginBtn').onclick=login;document.getElementById('passw
 document.getElementById('logoutBtn').onclick=()=>{clearSession();location.reload()};
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showView(t.dataset.view));
 document.getElementById('refreshHome').onclick=loadHome;document.getElementById('refreshList').onclick=loadList;document.getElementById('reloadDetail').onclick=()=>selectedId&&loadDetail(selectedId);
-['estadoFilter','tipoFilter','prioridadFilter'].forEach(id=>document.getElementById(id).onchange=loadList);
+['estadoFilter','tipoFilter','prioridadFilter','qaFilter'].forEach(id=>document.getElementById(id).onchange=loadList);
 let st;document.getElementById('search').oninput=()=>{clearTimeout(st);st=setTimeout(loadList,300)};
 document.getElementById('loadAgenda').onclick=loadAgenda;
 document.getElementById('estadoFilter').innerHTML+='<option value="nuevo">Nuevo</option><option value="contactado">Contactado</option><option value="cotizado">Cotizado</option><option value="esperando_pago">Esperando pago</option><option value="reservado">Reservado</option><option value="completado">Completado</option><option value="no_concretado">No concretado</option>';

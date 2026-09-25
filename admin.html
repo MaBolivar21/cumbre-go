@@ -113,6 +113,10 @@ let token=null, refreshToken=null, currentUser=null, rows=[], selectedId=null, s
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function money(v){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(Number(v||0))}
 function amountLabel(v,isGroup){return v==null&&isGroup?'Cotización personalizada':money(v)}
+function pendingBalanceLabel(s,o){
+  const hasKnownTotal=o.total_validado_mxn!=null||s.estimado_cliente_mxn!=null;
+  return hasKnownTotal?money(o.saldo_pendiente_mxn):'Por definir';
+}
 const GROUP_LABEL={escuela_colegio:'Escuela / Colegio',empresa_equipo:'Empresa / Equipo',familia_amigos:'Familia / Amigos',asociacion_grupo:'Asociación / Grupo',otro:'Otro'};
 const NEED_LABEL={cotizador_normal:'Elegir actividades y conocer precio',organizar_grupo:'Organizar visita completa',propuesta_personalizada:'Propuesta personalizada',no_seguro:'Por definir'};
 function stayLabel(v){return v==='noche'?'Con noche':v==='dia'?'Visita de día':'Por definir'}
@@ -236,7 +240,7 @@ function renderDetail(d){
       '<div class="mini"><label>Necesidad</label><div>'+esc(s.necesidad_visita?(NEED_LABEL[s.necesidad_visita]||s.necesidad_visita):'—')+'</div></div>'+
       '<div class="mini"><label>Estancia</label><div>'+esc(stayLabel(s.estancia))+(s.hospedaje?' · '+esc(s.hospedaje):'')+'</div></div>'+
       '<div class="mini"><label>Anticipo pagado</label><div>'+money(o.anticipo_pagado_mxn)+'</div></div>'+
-      '<div class="mini"><label>Saldo pendiente</label><div>'+money(o.saldo_pendiente_mxn)+'</div></div>'+
+      '<div class="mini"><label>Saldo pendiente</label><div>'+pendingBalanceLabel(s,o)+'</div></div>'+
     '</div>'+
     '<div class="actions"><a class="linkbtn" target="_blank" href="'+wa+'">Abrir WhatsApp</a>'+(s.email?'<a class="linkbtn" href="mailto:'+encodeURIComponent(s.email)+'">Escribir correo</a>':'')+'</div>'+
     '<div class="section"><h3>Aventura solicitada</h3>'+services+'</div>'+

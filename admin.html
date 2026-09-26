@@ -31,10 +31,10 @@ button,input,select,textarea{font:inherit}.hidden{display:none!important}
 .empty{padding:46px;text-align:center;color:var(--muted)}.detail-title{display:flex;align-items:center;justify-content:space-between;gap:12px}.detail-title h1{font-size:26px;margin:4px 0}.folio{font-size:12px;color:var(--muted);font-weight:800}.cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.mini{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.mini label{display:block;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:900}.mini div{margin-top:5px;font-weight:800}.service{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:10px 0}.service:first-child{border-top:0}.service strong{display:block}.service small{color:var(--muted)}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.linkbtn{display:inline-block;text-decoration:none;background:#e8ede8;color:var(--forest);font-weight:900;padding:10px 13px;border-radius:12px}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.form-grid .full{grid-column:1/-1}.label{font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px;display:block}.timeline{display:flex;flex-direction:column;gap:10px}.event{border-left:3px solid #c8d3cc;padding:6px 0 6px 12px}.event b{font-size:13px}.event small{display:block;color:var(--muted);margin-top:3px}
-.agenda-toolbar{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.agenda-day{margin:18px 0}.agenda-day h3{font-size:14px;color:var(--muted)}.agenda-card{border:1px solid var(--line);border-radius:16px;padding:14px;margin:9px 0;background:white;display:grid;grid-template-columns:90px 1.2fr 1fr 1fr;gap:12px;align-items:center}.agenda-card .time{font-weight:900;font-size:18px}.warn{color:var(--red);font-weight:900;font-size:12px}
+.agenda-toolbar{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.agenda-toolbar>div{min-width:155px}.agenda-toolbar .agenda-scope{margin-left:auto;min-width:205px}.agenda-presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.agenda-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font-size:11px;font-weight:800;color:var(--forest);cursor:pointer}.agenda-chip.active{background:var(--forest);border-color:var(--forest);color:#fff}.agenda-split{display:grid;grid-template-columns:1.35fr .85fr;gap:16px;margin-top:18px}.agenda-column{border:1px solid var(--line);border-radius:18px;background:#fbf8f1;overflow:hidden}.agenda-column-head{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.agenda-column-head h3{margin:0;font-size:15px}.agenda-column-head p{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.4}.agenda-day{padding:0 14px;margin:18px 0}.agenda-day h3{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 9px}.agenda-card{border:1px solid var(--line);border-radius:16px;padding:14px;margin:9px 0;background:white;display:grid;grid-template-columns:92px minmax(170px,1.2fr) minmax(120px,.8fr) minmax(110px,.7fr);gap:12px;align-items:center}.agenda-card .time{font-weight:900;font-size:18px}.agenda-card small{color:var(--muted)}.agenda-tentative{padding:12px}.tentative-card{border:1px solid var(--line);border-radius:15px;padding:13px;background:white;margin-bottom:9px;cursor:pointer}.tentative-card:hover{background:#eef2ed}.tentative-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.tentative-name{font-weight:900}.tentative-date{font-size:12px;color:var(--muted);margin-top:5px}.tentative-meta{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);margin-top:8px}.agenda-empty{padding:42px 20px;text-align:center;color:var(--muted)}.agenda-empty b{display:block;color:var(--forest);font-size:15px;margin-bottom:5px}.agenda-empty span{font-size:12px;line-height:1.5}.agenda-count{font-size:11px;color:var(--muted);font-weight:800;white-space:nowrap}.warn{color:var(--red);font-weight:900;font-size:12px}
 .login{min-height:100vh;background:linear-gradient(130deg,var(--forest),#173d32);display:grid;place-items:center;padding:20px}.login-card{width:min(440px,100%);background:var(--card);border-radius:26px;padding:28px;box-shadow:0 28px 80px rgba(0,0,0,.22)}.login-card img{width:100px;display:block;margin:0 auto 12px}.login-card h1{margin:4px 0 8px;text-align:center}.login-card p{text-align:center;color:var(--muted);margin-bottom:22px}.login-card .field{margin-bottom:10px}.error{background:#f8e3df;color:#8e362b;border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}.notice{background:#edf3e4;color:#48633a;border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}
-@media(max-width:1100px){.metrics{grid-template-columns:repeat(3,1fr)}.insights-grid{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.requests-grid{grid-template-columns:1fr}.agenda-card{grid-template-columns:80px 1fr 1fr}}
-@media(max-width:720px){.shell{padding:14px}.top{padding:12px 14px}.brand strong{font-size:18px}.top-actions span{display:none}.metrics{grid-template-columns:repeat(2,1fr)}.insights-grid{grid-template-columns:1fr}.home-toolbar{align-items:stretch}.home-toolbar .scope{width:100%;flex-direction:column;align-items:stretch}.home-toolbar select{min-width:0}.filters,.form-grid,.cards2,.detail-contact,.attr-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.agenda-card{grid-template-columns:1fr}.grid{display:block}.panel{margin-bottom:14px}.detail-title{align-items:flex-start;flex-direction:column}.requests-grid:not(.detail-open) #requestDetailPanel{display:none}.requests-grid.detail-open #requestListPanel{display:none}.requests-grid.detail-open #requestDetailPanel{display:block}.mobile-back{display:inline-flex}.quick-filters{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}.quick-chip{white-space:nowrap}.row-extra{align-items:flex-start;flex-direction:column}.panel-head{padding:15px 16px}.panel-body{padding:16px}.top-actions a{display:none}}
+@media(max-width:1100px){.metrics{grid-template-columns:repeat(3,1fr)}.insights-grid{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.requests-grid{grid-template-columns:1fr}.agenda-split{grid-template-columns:1fr}.agenda-card{grid-template-columns:80px 1fr 1fr}}
+@media(max-width:720px){.shell{padding:14px}.top{padding:12px 14px}.brand strong{font-size:18px}.top-actions span{display:none}.metrics{grid-template-columns:repeat(2,1fr)}.insights-grid{grid-template-columns:1fr}.home-toolbar{align-items:stretch}.home-toolbar .scope{width:100%;flex-direction:column;align-items:stretch}.home-toolbar select{min-width:0}.filters,.form-grid,.cards2,.detail-contact,.attr-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.agenda-card{grid-template-columns:1fr}.grid{display:block}.panel{margin-bottom:14px}.detail-title{align-items:flex-start;flex-direction:column}.requests-grid:not(.detail-open) #requestDetailPanel{display:none}.requests-grid.detail-open #requestListPanel{display:none}.requests-grid.detail-open #requestDetailPanel{display:block}.mobile-back{display:inline-flex}.quick-filters{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}.quick-chip{white-space:nowrap}.row-extra{align-items:flex-start;flex-direction:column}.panel-head{padding:15px 16px}.panel-body{padding:16px}.top-actions a{display:none}.agenda-toolbar{display:grid;grid-template-columns:1fr 1fr;width:100%}.agenda-toolbar>div,.agenda-toolbar .agenda-scope{min-width:0;margin:0}.agenda-toolbar .agenda-scope,.agenda-toolbar #loadAgenda{grid-column:1/-1}.agenda-presets{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}.agenda-chip{white-space:nowrap}.agenda-card{grid-template-columns:1fr;gap:8px}.agenda-card .time{font-size:16px}.agenda-column-head{padding:14px}.tentative-meta{flex-direction:column;gap:4px}}
 </style>
 </head>
 <body>
@@ -125,15 +125,33 @@ button,input,select,textarea{font:inherit}.hidden{display:none!important}
 
   <section id="view-agenda" class="hidden">
     <div class="panel">
-      <div class="panel-head"><h2>Agenda de reservas</h2></div>
+      <div class="panel-head">
+        <div class="panel-title-wrap"><h2>Agenda V2</h2><span class="result-count">Reservas confirmadas y fechas tentativas</span></div>
+      </div>
       <div class="panel-body">
         <div class="agenda-toolbar">
           <div><label class="label">Desde</label><input type="date" id="agendaStart" class="field"></div>
           <div><label class="label">Hasta</label><input type="date" id="agendaEnd" class="field"></div>
-          <button class="btn" id="loadAgenda">Cargar agenda</button>
+          <button class="btn" id="loadAgenda">Actualizar agenda</button>
+          <div class="agenda-scope"><label class="label">Vista</label><select id="agendaScope"><option value="operacion">Operación real</option><option value="incluir">Incluir QA / demo</option></select></div>
+        </div>
+        <div class="agenda-presets" id="agendaPresets">
+          <button class="agenda-chip active" data-range="7">Próximos 7 días</button>
+          <button class="agenda-chip" data-range="14">14 días</button>
+          <button class="agenda-chip" data-range="30">30 días</button>
+          <button class="agenda-chip" data-range="month">Este mes</button>
         </div>
         <div class="metrics" id="agendaMetrics" style="margin-top:16px"></div>
-        <div id="agendaRows"></div>
+        <div class="agenda-split">
+          <div class="agenda-column">
+            <div class="agenda-column-head"><div><h3>Reservas confirmadas</h3><p>Solo compromisos confirmados por operación.</p></div><span id="agendaConfirmedCount" class="agenda-count">0 reservas</span></div>
+            <div id="agendaRows"></div>
+          </div>
+          <div class="agenda-column">
+            <div class="agenda-column-head"><div><h3>Fechas tentativas</h3><p>Leads con fecha definida que aún no son reserva.</p></div><span id="agendaTentativeCount" class="agenda-count">0 leads</span></div>
+            <div id="agendaTentative" class="agenda-tentative"></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -412,15 +430,63 @@ async function saveDetail(){
   }catch(e){msg.textContent='';alert(e.message)}finally{b.disabled=false}
 }
 
+function agendaInRange(dateValue,start,end){
+  if(!dateValue)return false;
+  const d=new Date(dateValue+'T12:00:00'),a=new Date(start+'T00:00:00'),b=new Date(end+'T23:59:59');
+  return d>=a&&d<=b;
+}
+function setAgendaRange(range){
+  const start=todayISO();let end;
+  if(range==='month'){
+    const d=new Date();end=new Date(d.getFullYear(),d.getMonth()+1,0,12).toISOString().slice(0,10);
+  }else end=plusDays(start,Math.max(0,Number(range||7)-1));
+  document.getElementById('agendaStart').value=start;document.getElementById('agendaEnd').value=end;
+  document.querySelectorAll('#agendaPresets .agenda-chip').forEach(x=>x.classList.toggle('active',x.dataset.range===String(range)));
+  loadAgenda();
+}
+function bindTentativeAgenda(){
+  document.querySelectorAll('#agendaTentative .tentative-card[data-id]').forEach(el=>el.onclick=()=>openRequest(el.dataset.id));
+}
 async function loadAgenda(){
-  const data=await rpc('cumbre_crm_agenda_v3',{p_start:document.getElementById('agendaStart').value,p_end:document.getElementById('agendaEnd').value,p_incluir_qa:false});
-  const m=data.metrics||{};
+  const start=document.getElementById('agendaStart').value,end=document.getElementById('agendaEnd').value;
+  const includeQA=document.getElementById('agendaScope').value==='incluir';
+  const [data,listData]=await Promise.all([
+    rpc('cumbre_crm_agenda_v3',{p_start:start,p_end:end,p_incluir_qa:includeQA}),
+    rpc('cumbre_crm_list_v3',{p_search:'',p_estado:'',p_tipo:'',p_prioridad:'',p_incluir_qa:includeQA,p_offset:0})
+  ]);
+  const confirmed=data.rows||[],m=data.metrics||{};
+  const tentatives=(listData.rows||[]).filter(r=>agendaInRange(r.fecha_visita,start,end)&&!['reservado','completado','no_concretado'].includes(r.estado_comercial));
   document.getElementById('agendaMetrics').innerHTML=[
-    ['Reservas',m.reservas||0],['Visitantes',m.visitantes_esperados||0],['Saldo por cobrar',money(m.saldo_por_cobrar_mxn),'money'],['Grupos',m.grupos||0],['Con alerta',m.reservas_con_alerta||0]
+    ['Reservas confirmadas',m.reservas||0],
+    ['Visitantes confirmados',m.visitantes_esperados||0],
+    ['Saldo confirmado por cobrar',money(m.saldo_por_cobrar_mxn),'money'],
+    ['Grupos confirmados',m.grupos||0],
+    ['Con alerta',m.reservas_con_alerta||0],
+    ['Fechas tentativas',tentatives.length]
   ].map(x=>'<div class="metric '+(x[2]||'')+'"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');
-  const groups={};(data.rows||[]).forEach(r=>(groups[r.fecha_visita]??=[]).push(r));
+
+  document.getElementById('agendaConfirmedCount').textContent=confirmed.length+' '+(confirmed.length===1?'reserva':'reservas');
+  const groups={};confirmed.forEach(r=>(groups[r.fecha_visita]??=[]).push(r));
   const keys=Object.keys(groups).sort();
-  document.getElementById('agendaRows').innerHTML=keys.length?keys.map(k=>'<div class="agenda-day"><h3>'+dateMx(k)+'</h3>'+groups[k].map(r=>'<div class="agenda-card"><div class="time">'+esc(r.hora_llegada||'Por definir')+'</div><div><b>'+esc(r.nombre)+'</b><div style="font-size:12px;color:var(--muted)">'+esc(r.folio)+' · '+esc(r.visitantes_total)+' visitantes</div></div><div>'+stateBadge(r.estado_comercial)+'<div style="margin-top:5px;font-size:12px">'+esc(r.hospedaje||'Sin hospedaje')+'</div></div><div><b>'+money(r.saldo_pendiente_mxn)+'</b><div style="font-size:11px;color:var(--muted)">saldo</div>'+(r.alertas?.length?'<div class="warn">'+r.alertas.length+' alerta(s)</div>':'')+'</div></div>').join('')+'</div>').join(''):'<div class="empty">No hay reservas confirmadas en este rango.</div>';
+  document.getElementById('agendaRows').innerHTML=keys.length?keys.map(k=>
+    '<div class="agenda-day"><h3>'+dateMx(k)+'</h3>'+
+    groups[k].map(r=>'<div class="agenda-card">'+
+      '<div class="time">'+esc(r.hora_llegada||'Por definir')+'</div>'+
+      '<div><b>'+esc(r.nombre)+'</b><div style="font-size:12px;color:var(--muted);margin-top:4px">'+esc(r.folio)+' · '+esc(r.visitantes_total)+' visitantes</div></div>'+
+      '<div>'+stateBadge(r.estado_comercial)+'<div style="margin-top:5px;font-size:12px">'+esc(r.hospedaje||'Sin hospedaje')+'</div></div>'+
+      '<div><b>'+money(r.saldo_pendiente_mxn)+'</b><div style="font-size:11px;color:var(--muted)">saldo confirmado</div>'+(r.alertas?.length?'<div class="warn">'+r.alertas.length+' alerta(s)</div>':'')+'</div>'+
+    '</div>').join('')+'</div>'
+  ).join(''):'<div class="agenda-empty"><b>No hay reservas confirmadas</b><span>En este rango todavía no existen compromisos confirmados por operación.</span></div>';
+
+  document.getElementById('agendaTentativeCount').textContent=tentatives.length+' '+(tentatives.length===1?'lead':'leads');
+  document.getElementById('agendaTentative').innerHTML=tentatives.length?tentatives.sort((a,b)=>String(a.fecha_visita).localeCompare(String(b.fecha_visita))).map(r=>
+    '<div class="tentative-card" data-id="'+esc(r.id)+'">'+
+      '<div class="tentative-top"><div><div class="tentative-name">'+esc(r.nombre)+'</div><div class="tentative-date">'+dateMx(r.fecha_visita)+'</div></div><div class="amount">'+amountLabel(r.total_validado_mxn??r.estimado_cliente_mxn,r.flujo==='grupal')+'</div></div>'+
+      '<div style="margin-top:8px">'+stateBadge(r.estado_comercial)+' '+priorityBadge(r.prioridad)+'</div>'+
+      '<div class="tentative-meta"><span>'+esc(r.folio)+' · '+esc(r.visitantes_total)+' visitantes</span><span>'+esc(r.flujo==='grupal'?'Grupo':'Normal')+'</span></div>'+
+    '</div>'
+  ).join(''):'<div class="agenda-empty"><b>Sin fechas tentativas</b><span>Los leads con fecha definida aparecerán aquí hasta que la reserva sea confirmada.</span></div>';
+  bindTentativeAgenda();
 }
 
 function showView(name){
@@ -439,8 +505,11 @@ document.querySelectorAll('#quickFilters .quick-chip').forEach(btn=>btn.onclick=
 ['estadoFilter','tipoFilter','prioridadFilter','qaFilter'].forEach(id=>document.getElementById(id).onchange=loadList);
 let st;document.getElementById('search').oninput=()=>{clearTimeout(st);st=setTimeout(loadList,300)};
 document.getElementById('loadAgenda').onclick=loadAgenda;
+document.getElementById('agendaScope').onchange=loadAgenda;
+document.querySelectorAll('#agendaPresets .agenda-chip').forEach(btn=>btn.onclick=()=>setAgendaRange(btn.dataset.range));
+['agendaStart','agendaEnd'].forEach(id=>document.getElementById(id).onchange=()=>document.querySelectorAll('#agendaPresets .agenda-chip').forEach(x=>x.classList.remove('active')));
 document.getElementById('estadoFilter').innerHTML+='<option value="nuevo">Nuevo</option><option value="contactado">Contactado</option><option value="cotizado">Cotizado</option><option value="esperando_pago">Esperando pago</option><option value="reservado">Reservado</option><option value="completado">Completado</option><option value="no_concretado">No concretado</option>';
-document.getElementById('agendaStart').value=todayISO();document.getElementById('agendaEnd').value=plusDays(todayISO(),7);
+document.getElementById('agendaStart').value=todayISO();document.getElementById('agendaEnd').value=plusDays(todayISO(),6);
 if(restore())boot();
 </script>
 </body>

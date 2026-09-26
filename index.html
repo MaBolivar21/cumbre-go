@@ -3095,7 +3095,7 @@ function trafficMeta(){
     meta_fbp:cookieValue('_fbp'),
     meta_fbc:cookieValue('_fbc'),
     user_agent:navigator.userAgent,
-    build:'CSG-20260923-1.10.4'
+    build:'CSG-20260926-FRESITA10-1'
   };
 }
 function newQuoteFolio(){
@@ -3506,13 +3506,32 @@ class Component extends DCLogic {
       const eventQuoteId=(payload&&payload.quote_id)||this.state.quoteId||null;
       const enriched={...(payload||{}),visit_id:meta.visit_id,source:meta.source,utm_source:meta.utm_source,utm_medium:meta.utm_medium,utm_campaign:meta.utm_campaign,utm_content:meta.utm_content,utm_term:meta.utm_term,utm_id:meta.utm_id,landing_page:meta.landing_page,referrer_domain:meta.referrer_domain,attribution:meta.attribution,device_type:meta.device_type,os:meta.os,browser:meta.browser,device_model:meta.device_model,platform_version:meta.platform_version,viewport:meta.viewport,screen_size:meta.screen_size,pixel_ratio:meta.pixel_ratio,touch_points:meta.touch_points,meta_fbp:meta.meta_fbp,meta_fbc:meta.meta_fbc,build:meta.build};
       trackMetaFunnelEvent(name,enriched,{visitId:meta.visit_id,quoteId:eventQuoteId});
-      // Send only commercial funnel fields to PostHog; keep contact and quote IDs in Supabase.
-      if(window.posthog && ['app_open','screen_view','quote_generated','whatsapp_clicked'].includes(name)){
-        const phProps={build:meta.build};
-        if(name==='screen_view'){phProps.screen=payload.screen;phProps.content_id=payload.content_id||null;}
-        if(name==='quote_generated'||name==='whatsapp_clicked'){phProps.total=Number(payload.total)||0;phProps.currency='MXN';}
-        window.posthog.capture(name,phProps);
-      }
+      // Keep campaign and promotion measurements separate from customer/contact data.
+      // Analytics failures must never prevent the first-party event from being recorded.
+      try{
+        const phEvents=['app_open','screen_view','promo_applied','promo_rejected','promo_removed','quote_generated','whatsapp_clicked'];
+        if(window.posthog && phEvents.includes(name)){
+          const data=payload||{}, phProps={build:meta.build};
+          for(const key of ['utm_source','utm_medium','utm_campaign','utm_content']){
+            const value=meta[key];
+            if(typeof value==='string'&&value.length<=100&&/^[a-z0-9_.-]+$/i.test(value))phProps[key]=value;
+          }
+          if(name==='screen_view'){phProps.screen=data.screen;phProps.content_id=data.content_id||null;}
+          if(['promo_applied','promo_rejected','promo_removed','quote_generated','whatsapp_clicked'].includes(name)){
+            const code=String(data.promo_code||'').trim().toUpperCase();
+            if(/^[A-Z0-9_-]{1,40}$/.test(code))phProps.promo_code=code;
+          }
+          if(['promo_applied','promo_removed','quote_generated','whatsapp_clicked'].includes(name)){
+            for(const key of ['subtotal','discount','total']){
+              const raw=key==='total'?(data.total??data.final_total):data[key];
+              const value=Number(raw);
+              if(raw!=null&&raw!==''&&Number.isFinite(value)&&value>=0)phProps[key]=value;
+            }
+            phProps.currency='MXN';
+          }
+          window.posthog.capture(name,phProps);
+        }
+      }catch(e){console.warn('PostHog event skipped',name);}
       return await supabaseRpc('track_event',{p_session_id:this.state.sessionId,p_quote_id:eventQuoteId,p_event_name:name,p_payload:enriched});
     }
     catch(e){console.warn('track_event failed',name,e);return null;}

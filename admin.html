@@ -31,6 +31,9 @@ button,input,select,textarea{font:inherit}.hidden{display:none!important}
 .empty{padding:46px;text-align:center;color:var(--muted)}.detail-title{display:flex;align-items:center;justify-content:space-between;gap:12px}.detail-title h1{font-size:26px;margin:4px 0}.folio{font-size:12px;color:var(--muted);font-weight:800}.cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.mini{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.mini label{display:block;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:900}.mini div{margin-top:5px;font-weight:800}.service{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:10px 0}.service:first-child{border-top:0}.service strong{display:block}.service small{color:var(--muted)}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.linkbtn{display:inline-block;text-decoration:none;background:#e8ede8;color:var(--forest);font-weight:900;padding:10px 13px;border-radius:12px}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.form-grid .full{grid-column:1/-1}.label{font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px;display:block}.timeline{display:flex;flex-direction:column;gap:10px}.event{border-left:3px solid #c8d3cc;padding:6px 0 6px 12px}.event b{font-size:13px}.event small{display:block;color:var(--muted);margin-top:3px}
+.analytics-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.analytics-toolbar .scope{display:flex;align-items:center;gap:8px}.analytics-toolbar select{min-width:210px}.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.analytics-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:var(--shadow)}.analytics-card h3{margin:0 0 6px;font-size:15px}.analytics-card p{margin:0 0 14px;font-size:11px;color:var(--muted)}.bar-list{display:flex;flex-direction:column;gap:10px}.bar-row{display:grid;grid-template-columns:130px 1fr auto;gap:10px;align-items:center;font-size:11px}.bar-track{height:10px;background:#ece7dc;border-radius:999px;overflow:hidden}.bar-fill{height:100%;background:linear-gradient(90deg,var(--orange),#f29a5b);border-radius:999px}.bar-fill.green{background:linear-gradient(90deg,var(--forest2),var(--green))}.analytics-table{width:100%;border-collapse:collapse;font-size:12px}.analytics-table th,.analytics-table td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}.analytics-table th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.analytics-table td:last-child,.analytics-table th:last-child{text-align:right}.analytics-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.analytics-kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}.analytics-kpi span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.analytics-kpi b{display:block;font-size:22px;margin-top:6px}
+@media(max-width:1100px){.analytics-grid{grid-template-columns:1fr}.analytics-kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:720px){.analytics-toolbar{align-items:stretch}.analytics-toolbar .scope{width:100%;flex-direction:column;align-items:stretch}.analytics-toolbar select{min-width:0}.analytics-kpis{grid-template-columns:1fr 1fr}.bar-row{grid-template-columns:92px 1fr auto}.analytics-table{font-size:11px}.analytics-card{overflow-x:auto}}
 .agenda-toolbar{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.agenda-toolbar>div{min-width:155px}.agenda-toolbar .agenda-scope{margin-left:auto;min-width:205px}.agenda-presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.agenda-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font-size:11px;font-weight:800;color:var(--forest);cursor:pointer}.agenda-chip.active{background:var(--forest);border-color:var(--forest);color:#fff}.agenda-split{display:grid;grid-template-columns:1.35fr .85fr;gap:16px;margin-top:18px}.agenda-column{border:1px solid var(--line);border-radius:18px;background:#fbf8f1;overflow:hidden}.agenda-column-head{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.agenda-column-head h3{margin:0;font-size:15px}.agenda-column-head p{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.4}.agenda-day{padding:0 14px;margin:18px 0}.agenda-day h3{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 9px}.agenda-card{border:1px solid var(--line);border-radius:16px;padding:14px;margin:9px 0;background:white;display:grid;grid-template-columns:92px minmax(170px,1.2fr) minmax(120px,.8fr) minmax(110px,.7fr);gap:12px;align-items:center}.agenda-card .time{font-weight:900;font-size:18px}.agenda-card small{color:var(--muted)}.agenda-tentative{padding:12px}.tentative-card{border:1px solid var(--line);border-radius:15px;padding:13px;background:white;margin-bottom:9px;cursor:pointer}.tentative-card:hover{background:#eef2ed}.tentative-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.tentative-name{font-weight:900}.tentative-date{font-size:12px;color:var(--muted);margin-top:5px}.tentative-meta{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);margin-top:8px}.agenda-empty{padding:42px 20px;text-align:center;color:var(--muted)}.agenda-empty b{display:block;color:var(--forest);font-size:15px;margin-bottom:5px}.agenda-empty span{font-size:12px;line-height:1.5}.agenda-count{font-size:11px;color:var(--muted);font-weight:800;white-space:nowrap}.warn{color:var(--red);font-weight:900;font-size:12px}
 .login{min-height:100vh;background:linear-gradient(130deg,var(--forest),#173d32);display:grid;place-items:center;padding:20px}.login-card{width:min(440px,100%);background:var(--card);border-radius:26px;padding:28px;box-shadow:0 28px 80px rgba(0,0,0,.22)}.login-card img{width:100px;display:block;margin:0 auto 12px}.login-card h1{margin:4px 0 8px;text-align:center}.login-card p{text-align:center;color:var(--muted);margin-bottom:22px}.login-card .field{margin-bottom:10px}.error{background:#f8e3df;color:#8e362b;border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}.notice{background:#edf3e4;color:#48633a;border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}
 @media(max-width:1100px){.metrics{grid-template-columns:repeat(3,1fr)}.insights-grid{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.requests-grid{grid-template-columns:1fr}.agenda-split{grid-template-columns:1fr}.agenda-card{grid-template-columns:80px 1fr 1fr}}
@@ -60,6 +63,7 @@ button,input,select,textarea{font:inherit}.hidden{display:none!important}
     <button class="tab active" data-view="inicio">Inicio</button>
     <button class="tab" data-view="solicitudes">Solicitudes</button>
     <button class="tab" data-view="agenda">Agenda</button>
+    <button class="tab" data-view="analitica">Analítica</button>
   </div>
 
   <section id="view-inicio">
@@ -152,6 +156,42 @@ button,input,select,textarea{font:inherit}.hidden{display:none!important}
             <div id="agendaTentative" class="agenda-tentative"></div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-analitica" class="hidden">
+    <div class="analytics-toolbar">
+      <div>
+        <div class="home-kicker">Marketing y atribución</div>
+        <div style="font-size:22px;font-weight:900;margin-top:3px">De dónde vienen los leads y qué están pidiendo</div>
+      </div>
+      <div class="scope">
+        <label class="label" for="analyticsScope" style="margin:0">Vista</label>
+        <select id="analyticsScope"><option value="operacion">Operación real</option><option value="incluir">Incluir QA / demo</option></select>
+      </div>
+    </div>
+    <div id="analyticsKpis" class="analytics-kpis"></div>
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <h3>Fuentes de leads</h3>
+        <p>Último punto de origen atribuido al lead.</p>
+        <div id="analyticsSources" class="bar-list"></div>
+      </div>
+      <div class="analytics-card">
+        <h3>Campañas</h3>
+        <p>Campañas UTM asociadas a las solicitudes.</p>
+        <div id="analyticsCampaigns" class="bar-list"></div>
+      </div>
+      <div class="analytics-card">
+        <h3>Top experiencias solicitadas</h3>
+        <p>Basado en cotizaciones enlazadas al CRM.</p>
+        <div id="analyticsActivities"></div>
+      </div>
+      <div class="analytics-card">
+        <h3>CTA que generó el lead</h3>
+        <p>Contenido/CTA del último toque atribuido.</p>
+        <div id="analyticsCtas" class="bar-list"></div>
       </div>
     </div>
   </section>
@@ -489,11 +529,42 @@ async function loadAgenda(){
   bindTentativeAgenda();
 }
 
+function renderAnalyticsBars(targetId,items,labelKey,valueKey,fillClass=''){
+  const el=document.getElementById(targetId);
+  if(!el)return;
+  if(!items?.length){el.innerHTML='<div class="empty" style="padding:26px">Sin datos suficientes todavía.</div>';return}
+  const max=Math.max(1,...items.map(x=>Number(x[valueKey]||0)));
+  el.innerHTML=items.map(x=>
+    '<div class="bar-row"><span>'+esc(x[labelKey]||'—')+'</span><div class="bar-track"><div class="bar-fill '+fillClass+'" style="width:'+Math.max(4,Math.round(Number(x[valueKey]||0)/max*100))+'%"></div></div><b>'+esc(x[valueKey]||0)+'</b></div>'
+  ).join('');
+}
+async function loadAnalytics(){
+  const includeQA=document.getElementById('analyticsScope').value==='incluir';
+  const data=await rpc('cumbre_crm_analytics_v1',{p_incluir_qa:includeQA});
+  const s=data.summary||{};
+  document.getElementById('analyticsKpis').innerHTML=[
+    ['Leads',s.leads||0],
+    ['Pipeline',money(s.pipeline_mxn),'money'],
+    ['Normal',s.normal||0],
+    ['Grupal',s.grupal||0]
+  ].map(x=>'<div class="analytics-kpi"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');
+  renderAnalyticsBars('analyticsSources',data.sources||[],'source','leads','green');
+  renderAnalyticsBars('analyticsCampaigns',data.campaigns||[],'campaign','leads','');
+  renderAnalyticsBars('analyticsCtas',data.ctas||[],'cta','leads','green');
+  const acts=data.activities||[];
+  document.getElementById('analyticsActivities').innerHTML=acts.length
+    ?'<table class="analytics-table"><thead><tr><th>Experiencia</th><th>Cotizaciones</th><th>Unidades</th><th>Valor estimado</th></tr></thead><tbody>'+
+      acts.map(a=>'<tr><td>'+esc(a.activity)+'</td><td>'+esc(a.quotes)+'</td><td>'+esc(a.units)+'</td><td>'+money(a.estimated_value)+'</td></tr>').join('')+
+      '</tbody></table>'
+    :'<div class="empty" style="padding:26px">Aún no hay suficientes cotizaciones enlazadas.</div>';
+}
+
 function showView(name){
-  ['inicio','solicitudes','agenda'].forEach(v=>document.getElementById('view-'+v).classList.toggle('hidden',v!==name));
+  ['inicio','solicitudes','agenda','analitica'].forEach(v=>document.getElementById('view-'+v).classList.toggle('hidden',v!==name));
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===name));
   if(name==='solicitudes'){document.getElementById('requestsGrid')?.classList.remove('detail-open');loadList()}
   if(name==='agenda')loadAgenda();
+  if(name==='analitica')loadAnalytics();
 }
 
 document.getElementById('loginBtn').onclick=login;document.getElementById('password').onkeydown=e=>{if(e.key==='Enter')login()};
@@ -506,6 +577,7 @@ document.querySelectorAll('#quickFilters .quick-chip').forEach(btn=>btn.onclick=
 let st;document.getElementById('search').oninput=()=>{clearTimeout(st);st=setTimeout(loadList,300)};
 document.getElementById('loadAgenda').onclick=loadAgenda;
 document.getElementById('agendaScope').onchange=loadAgenda;
+document.getElementById('analyticsScope').onchange=loadAnalytics;
 document.querySelectorAll('#agendaPresets .agenda-chip').forEach(btn=>btn.onclick=()=>setAgendaRange(btn.dataset.range));
 ['agendaStart','agendaEnd'].forEach(id=>document.getElementById(id).onchange=()=>document.querySelectorAll('#agendaPresets .agenda-chip').forEach(x=>x.classList.remove('active')));
 document.getElementById('estadoFilter').innerHTML+='<option value="nuevo">Nuevo</option><option value="contactado">Contactado</option><option value="cotizado">Cotizado</option><option value="esperando_pago">Esperando pago</option><option value="reservado">Reservado</option><option value="completado">Completado</option><option value="no_concretado">No concretado</option>';

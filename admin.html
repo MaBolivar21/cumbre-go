@@ -14,6 +14,13 @@ button,input,select,textarea{font:inherit}.hidden{display:none!important}
 .top-actions{display:flex;align-items:center;gap:10px;font-size:13px}.top a,.top button{color:#fff}.ghost{background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:9px 12px;cursor:pointer}
 .shell{max-width:1440px;margin:0 auto;padding:24px}.nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}.tab{border:1px solid var(--line);background:#fff8;border-radius:999px;padding:9px 15px;font-weight:800;cursor:pointer}.tab.active{background:var(--forest);border-color:var(--forest);color:white}
 .metrics{display:grid;grid-template-columns:repeat(6,minmax(140px,1fr));gap:12px;margin-bottom:18px}.metric{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}.metric span{display:block;font-size:12px;color:var(--muted);font-weight:700}.metric b{display:block;font-size:25px;margin-top:7px}.metric.money b{font-size:20px}
+.home-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}.home-toolbar .scope{display:flex;align-items:center;gap:8px}.home-toolbar select{min-width:210px}.home-kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:900}
+.insights-grid{display:grid;grid-template-columns:1.2fr 1.2fr .8fr .8fr;gap:14px;margin-bottom:18px}.insight{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow);min-height:220px}.insight h3{font-size:14px;margin:0 0 14px}.insight-sub{font-size:11px;color:var(--muted);margin-top:-7px;margin-bottom:12px}
+.funnel{display:flex;flex-direction:column;gap:8px}.funnel-row{display:grid;grid-template-columns:110px 1fr 34px;gap:8px;align-items:center;font-size:11px}.funnel-track{height:10px;background:#ece7dc;border-radius:999px;overflow:hidden}.funnel-fill{height:100%;background:linear-gradient(90deg,var(--forest2),var(--green));border-radius:999px}
+.trend{display:flex;align-items:end;gap:6px;height:142px;padding-top:10px}.trend-col{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px}.trend-bar{width:100%;max-width:22px;min-height:3px;background:var(--orange);border-radius:6px 6px 2px 2px}.trend-col small{font-size:8px;color:var(--muted);white-space:nowrap}
+.mix-wrap{display:grid;place-items:center;gap:12px}.donut{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;position:relative}.donut:after{content:"";width:72px;height:72px;border-radius:50%;background:var(--card);position:absolute}.donut-center{position:relative;z-index:1;text-align:center}.donut-center b{font-size:22px;display:block}.donut-center span{font-size:10px;color:var(--muted)}.legend{width:100%;display:grid;gap:7px;font-size:11px}.legend div{display:flex;justify-content:space-between;gap:10px}
+.health{display:grid;grid-template-columns:1fr 1fr;gap:9px}.health-item{border:1px solid var(--line);background:white;border-radius:13px;padding:11px}.health-item span{display:block;font-size:10px;color:var(--muted);font-weight:800}.health-item b{display:block;font-size:22px;margin-top:4px}.health-item.alert b{color:var(--red)}.health-item.warnish b{color:var(--amber)}
+
 .grid{display:grid;grid-template-columns:minmax(380px,.9fr) minmax(520px,1.4fr);gap:18px}.panel{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}.panel-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.panel-head h2{font-size:18px;margin:0}.panel-body{padding:18px 20px}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.filters #search{grid-column:1/-1}.field,select,textarea{width:100%;background:white;border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:var(--ink)}textarea{min-height:82px;resize:vertical}.btn{border:0;background:var(--forest);color:white;font-weight:800;border-radius:12px;padding:11px 14px;cursor:pointer}.btn.secondary{background:#e8ede8;color:var(--forest)}.btn.orange{background:var(--orange)}.btn:disabled{opacity:.55;cursor:not-allowed}
 .list{display:flex;flex-direction:column;border-top:1px solid var(--line)}.row{padding:15px 18px;border-bottom:1px solid var(--line);cursor:pointer;background:transparent}.row:hover,.row.active{background:#eef2ed}.row-top,.row-meta{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.row-name{font-weight:900}.row-meta{font-size:12px;color:var(--muted);margin-top:6px}.amount{font-weight:900;white-space:nowrap}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}.st-nuevo{background:#eef1ee;color:#345146}.st-contactado{background:#e9f1f7;color:#315f80}.st-cotizado{background:#edf3e4;color:#55743e}.st-esperando_pago{background:#fff0d9;color:#8b5b17}.st-reservado{background:#dff1e7;color:#246449}.st-completado{background:#e6ece9;color:#4b5a53}.st-no_concretado{background:#f5e5e1;color:#903f31}.prio-urgente{background:#f8dfda;color:#9b3326}.prio-revisar{background:#fff0d9;color:#8b5b17}
@@ -22,8 +29,8 @@ button,input,select,textarea{font:inherit}.hidden{display:none!important}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.form-grid .full{grid-column:1/-1}.label{font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px;display:block}.timeline{display:flex;flex-direction:column;gap:10px}.event{border-left:3px solid #c8d3cc;padding:6px 0 6px 12px}.event b{font-size:13px}.event small{display:block;color:var(--muted);margin-top:3px}
 .agenda-toolbar{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.agenda-day{margin:18px 0}.agenda-day h3{font-size:14px;color:var(--muted)}.agenda-card{border:1px solid var(--line);border-radius:16px;padding:14px;margin:9px 0;background:white;display:grid;grid-template-columns:90px 1.2fr 1fr 1fr;gap:12px;align-items:center}.agenda-card .time{font-weight:900;font-size:18px}.warn{color:var(--red);font-weight:900;font-size:12px}
 .login{min-height:100vh;background:linear-gradient(130deg,var(--forest),#173d32);display:grid;place-items:center;padding:20px}.login-card{width:min(440px,100%);background:var(--card);border-radius:26px;padding:28px;box-shadow:0 28px 80px rgba(0,0,0,.22)}.login-card img{width:100px;display:block;margin:0 auto 12px}.login-card h1{margin:4px 0 8px;text-align:center}.login-card p{text-align:center;color:var(--muted);margin-bottom:22px}.login-card .field{margin-bottom:10px}.error{background:#f8e3df;color:#8e362b;border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}.notice{background:#edf3e4;color:#48633a;border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}
-@media(max-width:1100px){.metrics{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr}.agenda-card{grid-template-columns:80px 1fr 1fr}}
-@media(max-width:720px){.shell{padding:14px}.top{padding:12px 14px}.brand strong{font-size:18px}.top-actions span{display:none}.metrics{grid-template-columns:repeat(2,1fr)}.filters,.form-grid,.cards2{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.agenda-card{grid-template-columns:1fr}.grid{display:block}.panel{margin-bottom:14px}.detail-title{align-items:flex-start;flex-direction:column}}
+@media(max-width:1100px){.metrics{grid-template-columns:repeat(3,1fr)}.insights-grid{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.agenda-card{grid-template-columns:80px 1fr 1fr}}
+@media(max-width:720px){.shell{padding:14px}.top{padding:12px 14px}.brand strong{font-size:18px}.top-actions span{display:none}.metrics{grid-template-columns:repeat(2,1fr)}.insights-grid{grid-template-columns:1fr}.home-toolbar{align-items:stretch}.home-toolbar .scope{width:100%;flex-direction:column;align-items:stretch}.home-toolbar select{min-width:0}.filters,.form-grid,.cards2{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.agenda-card{grid-template-columns:1fr}.grid{display:block}.panel{margin-bottom:14px}.detail-title{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
@@ -52,7 +59,23 @@ button,input,select,textarea{font:inherit}.hidden{display:none!important}
   </div>
 
   <section id="view-inicio">
+    <div class="home-toolbar">
+      <div>
+        <div class="home-kicker">Dashboard comercial</div>
+        <div style="font-size:22px;font-weight:900;margin-top:3px">Pulso de ventas y operación</div>
+      </div>
+      <div class="scope">
+        <label class="label" for="homeScope" style="margin:0">Vista</label>
+        <select id="homeScope"><option value="operacion">Operación real</option><option value="incluir">Incluir QA / demo</option></select>
+      </div>
+    </div>
     <div class="metrics" id="metrics"></div>
+    <div class="insights-grid">
+      <div class="insight"><h3>Embudo comercial</h3><div class="insight-sub">Estado actual de los leads</div><div id="homeFunnel" class="funnel"></div></div>
+      <div class="insight"><h3>Solicitudes · 14 días</h3><div class="insight-sub">Ritmo de entrada de nuevos leads</div><div id="homeTrend" class="trend"></div></div>
+      <div class="insight"><h3>Mix de negocio</h3><div class="insight-sub">Normal vs grupal</div><div id="homeMix"></div></div>
+      <div class="insight"><h3>Salud comercial</h3><div class="insight-sub">Qué requiere acción</div><div id="homeHealth" class="health"></div></div>
+    </div>
     <div class="grid">
       <div class="panel">
         <div class="panel-head"><h2>Prioridades de hoy</h2><button class="btn secondary" id="refreshHome">Actualizar</button></div>
@@ -187,10 +210,47 @@ function rowHtml(r){
 }
 function bindRows(root){root.querySelectorAll('.row').forEach(el=>el.onclick=()=>{showView('solicitudes');loadDetail(el.dataset.id)})}
 
+function openLead(r){return !['completado','no_concretado'].includes(r.estado_comercial)}
+function renderHomeInsights(list){
+  const funnelStates=['nuevo','contactado','cotizado','esperando_pago','reservado','completado'];
+  const counts=Object.fromEntries(funnelStates.map(s=>[s,list.filter(r=>r.estado_comercial===s).length]));
+  const max=Math.max(1,...Object.values(counts));
+  document.getElementById('homeFunnel').innerHTML=funnelStates.map(s=>
+    '<div class="funnel-row"><span>'+esc(STATE_LABEL[s])+'</span><div class="funnel-track"><div class="funnel-fill" style="width:'+Math.round(counts[s]/max*100)+'%"></div></div><b>'+counts[s]+'</b></div>'
+  ).join('');
+
+  const now=new Date(),days=[];
+  for(let i=13;i>=0;i--){const d=new Date(now);d.setHours(0,0,0,0);d.setDate(d.getDate()-i);days.push(d)}
+  const daily=days.map(d=>list.filter(r=>{const x=new Date(r.created_at);return x.getFullYear()===d.getFullYear()&&x.getMonth()===d.getMonth()&&x.getDate()===d.getDate()}).length);
+  const maxDay=Math.max(1,...daily);
+  document.getElementById('homeTrend').innerHTML=days.map((d,i)=>
+    '<div class="trend-col" title="'+d.toLocaleDateString('es-MX')+': '+daily[i]+'"><div class="trend-bar" style="height:'+Math.max(3,Math.round(daily[i]/maxDay*112))+'px"></div><small>'+(i%2===0?d.getDate():'')+'</small></div>'
+  ).join('');
+
+  const normal=list.filter(r=>r.flujo==='normal').length,group=list.filter(r=>r.flujo==='grupal').length,total=Math.max(1,normal+group);
+  const normalPct=Math.round(normal/total*100);
+  document.getElementById('homeMix').innerHTML=
+    '<div class="mix-wrap"><div class="donut" style="background:conic-gradient(var(--orange) 0 '+normalPct+'%, var(--forest2) '+normalPct+'% 100%)"><div class="donut-center"><b>'+list.length+'</b><span>leads</span></div></div>'+
+    '<div class="legend"><div><span>Normal</span><b>'+normal+'</b></div><div><span>Grupal</span><b>'+group+'</b></div></div></div>';
+
+  const nowMs=Date.now();
+  const urgent=list.filter(r=>openLead(r)&&r.prioridad==='urgente').length;
+  const overdue=list.filter(r=>openLead(r)&&r.proximo_seguimiento_at&&new Date(r.proximo_seguimiento_at).getTime()<nowMs).length;
+  const noAction=list.filter(r=>openLead(r)&&!String(r.proxima_accion||'').trim()).length;
+  const visitors=list.filter(openLead).reduce((a,r)=>a+Number(r.visitantes_total||0),0);
+  document.getElementById('homeHealth').innerHTML=
+    '<div class="health-item alert"><span>Urgentes</span><b>'+urgent+'</b></div>'+
+    '<div class="health-item warnish"><span>Seguimientos vencidos</span><b>'+overdue+'</b></div>'+
+    '<div class="health-item"><span>Sin siguiente acción</span><b>'+noAction+'</b></div>'+
+    '<div class="health-item"><span>Visitantes en pipeline</span><b>'+visitors+'</b></div>';
+}
+
 async function loadHome(){
-  const data=await rpc('cumbre_crm_list_v3',{p_search:'',p_estado:'',p_tipo:'',p_prioridad:'',p_incluir_qa:false,p_offset:0});
+  const includeQA=document.getElementById('homeScope')?.value==='incluir';
+  const data=await rpc('cumbre_crm_list_v3',{p_search:'',p_estado:'',p_tipo:'',p_prioridad:'',p_incluir_qa:includeQA,p_offset:0});
   rows=data.rows||[];
   document.getElementById('metrics').innerHTML=metricsHtml(data.metrics||{});
+  renderHomeInsights(rows);
   const pri=[...rows].sort((a,b)=>{
     const score=x=>(x.prioridad==='urgente'?0:x.prioridad==='revisar'?1:x.estado_comercial==='nuevo'?2:x.proximo_seguimiento_at&&new Date(x.proximo_seguimiento_at)<=new Date()?3:4);
     return score(a)-score(b)||new Date(b.created_at)-new Date(a.created_at)
@@ -202,7 +262,8 @@ async function loadHome(){
     '<div class="cards2">'+
     '<div class="mini"><label>Leads abiertos</label><div>'+((m.solicitudes_nuevas||0)+(m.esperando_pago||0))+'</div></div>'+
     '<div class="mini"><label>Dinero potencial</label><div>'+money(m.pipeline_potencial_mxn)+'</div></div>'+
-    '</div><p style="color:var(--muted);line-height:1.55">La prioridad es trabajar cada lead hasta definir una siguiente acción. “Reservado” solo debe usarse cuando administración haya confirmado la reserva; el anticipo pagado es dinero realmente validado, no intención del cliente.</p>';
+    '</div><p style="color:var(--muted);line-height:1.55">La prioridad es trabajar cada lead hasta definir una siguiente acción. “Reservado” solo debe usarse cuando administración haya confirmado la reserva; el anticipo pagado es dinero realmente validado, no intención del cliente.</p>'+
+    '<div class="notice" style="margin-top:12px">Vista actual: <b>'+(includeQA?'Operación + QA/demo':'Solo operación real')+'</b>. Las pruebas pueden incluirse para validar el sistema sin mezclarlas con resultados reales.</div>';
 }
 async function loadList(){
   const includeQA=document.getElementById('qaFilter').value==='incluir';
@@ -317,7 +378,7 @@ function showView(name){
 document.getElementById('loginBtn').onclick=login;document.getElementById('password').onkeydown=e=>{if(e.key==='Enter')login()};
 document.getElementById('logoutBtn').onclick=()=>{clearSession();location.reload()};
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showView(t.dataset.view));
-document.getElementById('refreshHome').onclick=loadHome;document.getElementById('refreshList').onclick=loadList;document.getElementById('reloadDetail').onclick=()=>selectedId&&loadDetail(selectedId);
+document.getElementById('refreshHome').onclick=loadHome;document.getElementById('homeScope').onchange=loadHome;document.getElementById('refreshList').onclick=loadList;document.getElementById('reloadDetail').onclick=()=>selectedId&&loadDetail(selectedId);
 ['estadoFilter','tipoFilter','prioridadFilter','qaFilter'].forEach(id=>document.getElementById(id).onchange=loadList);
 let st;document.getElementById('search').oninput=()=>{clearTimeout(st);st=setTimeout(loadList,300)};
 document.getElementById('loadAgenda').onclick=loadAgenda;

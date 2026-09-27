@@ -570,14 +570,24 @@ function showView(name){
 document.getElementById('loginBtn').onclick=login;document.getElementById('password').onkeydown=e=>{if(e.key==='Enter')login()};
 document.getElementById('logoutBtn').onclick=()=>{clearSession();location.reload()};
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showView(t.dataset.view));
-document.getElementById('refreshHome').onclick=loadHome;document.getElementById('homeScope').onchange=loadHome;document.getElementById('refreshList').onclick=loadList;document.getElementById('reloadDetail').onclick=()=>selectedId&&loadDetail(selectedId);
+function syncGlobalScope(value){
+  ['homeScope','qaFilter','agendaScope','analyticsScope'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&el.value!==value)el.value=value;
+  });
+}
+document.getElementById('refreshHome').onclick=loadHome;
+document.getElementById('homeScope').onchange=e=>{syncGlobalScope(e.target.value);loadHome()};
+document.getElementById('refreshList').onclick=loadList;
+document.getElementById('reloadDetail').onclick=()=>selectedId&&loadDetail(selectedId);
 document.getElementById('mobileBack').onclick=()=>document.getElementById('requestsGrid').classList.remove('detail-open');
 document.querySelectorAll('#quickFilters .quick-chip').forEach(btn=>btn.onclick=()=>{quickListFilter=btn.dataset.quick||'';document.querySelectorAll('#quickFilters .quick-chip').forEach(x=>x.classList.toggle('active',x===btn));loadList()});
-['estadoFilter','tipoFilter','prioridadFilter','qaFilter'].forEach(id=>document.getElementById(id).onchange=loadList);
+['estadoFilter','tipoFilter','prioridadFilter'].forEach(id=>document.getElementById(id).onchange=loadList);
+document.getElementById('qaFilter').onchange=e=>{syncGlobalScope(e.target.value);loadList()};
 let st;document.getElementById('search').oninput=()=>{clearTimeout(st);st=setTimeout(loadList,300)};
 document.getElementById('loadAgenda').onclick=loadAgenda;
-document.getElementById('agendaScope').onchange=loadAgenda;
-document.getElementById('analyticsScope').onchange=loadAnalytics;
+document.getElementById('agendaScope').onchange=e=>{syncGlobalScope(e.target.value);loadAgenda()};
+document.getElementById('analyticsScope').onchange=e=>{syncGlobalScope(e.target.value);loadAnalytics()};
 document.querySelectorAll('#agendaPresets .agenda-chip').forEach(btn=>btn.onclick=()=>setAgendaRange(btn.dataset.range));
 ['agendaStart','agendaEnd'].forEach(id=>document.getElementById(id).onchange=()=>document.querySelectorAll('#agendaPresets .agenda-chip').forEach(x=>x.classList.remove('active')));
 document.getElementById('estadoFilter').innerHTML+='<option value="nuevo">Nuevo</option><option value="contactado">Contactado</option><option value="cotizado">Cotizado</option><option value="esperando_pago">Esperando pago</option><option value="reservado">Reservado</option><option value="completado">Completado</option><option value="no_concretado">No concretado</option>';

@@ -3456,6 +3456,10 @@ class Component extends DCLogic {
   promoDiscountFor(subtotal){
     const p=this.state.appliedPromo; if(!p||!p.code||subtotal<=0)return 0;
     const min=Number(p.min_total||0); if(subtotal+1e-9<min)return 0;
+    if(p.discount_amount!=null){
+      const d=Number(p.discount_amount||0);
+      return Math.max(0,Math.min(subtotal,Math.round(d*100)/100));
+    }
     let d=p.discount_type==='percent'?subtotal*(Number(p.discount_value||0)/100):Number(p.discount_value||0);
     if(p.max_discount!=null&&Number(p.max_discount)>0)d=Math.min(d,Number(p.max_discount));
     return Math.max(0,Math.min(subtotal,Math.round(d*100)/100));
@@ -3466,9 +3470,23 @@ class Component extends DCLogic {
     if(!code){this.setState({promoStatus:'error',promoMessage:'Escribe un código para intentar aplicarlo.',appliedPromo:null});return;}
     if(T.hasQuote){this.setState({promoStatus:'error',promoMessage:'El descuento se habilita cuando todos los servicios tienen precio confirmado.',appliedPromo:null});return;}
     this.setState({promoBusy:true,promoStatus:'loading',promoMessage:'Validando beneficio…'});
-    try{const result=await supabaseRpc('validate_promo',{p_code:code,p_subtotal:T.subtotal});const row=Array.isArray(result)?result[0]:result;
-      if(!row||!row.valid){this.setState(st=>({promoBusy:false,promoStatus:'error',promoMessage:(row&&row.message)||'Ese código no es válido o ya no está disponible.',appliedPromo:null,promoAnimKey:st.promoAnimKey+1}));this.trackEvent('promo_rejected',{promo_code:code,subtotal:T.subtotal,reason:(row&&row.message)||'invalid'});return;}
-      this.setState(st=>({promoBusy:false,promoStatus:'success',promoInput:row.code||code,promoMessage:row.message||'Beneficio aplicado correctamente.',appliedPromo:row,promoOpen:true,promoAnimKey:st.promoAnimKey+1,totalKey:st.totalKey+1}));this.trackEvent('promo_applied',{promo_code:row.code||code,promo_label:row.label||null,subtotal:T.subtotal,discount:Number(row.discount_amount||0),final_total:Number(row.final_total||T.subtotal)});this.showToast('🎉 Descuento aplicado');
+    try{
+      const result=await supabaseRpc('validate_promo_v2',{
+        p_code:code,
+        p_subtotal:T.subtotal,
+        p_items:this.quoteItems(),
+        p_phone:this.state.phone||null,
+        p_email:this.state.email||null
+      });
+      const row=Array.isArray(result)?result[0]:result;
+      if(!row||!row.valid){
+        this.setState(st=>({promoBusy:false,promoStatus:'error',promoMessage:(row&&row.message)||'Ese código no es válido o ya no está disponible.',appliedPromo:null,promoAnimKey:st.promoAnimKey+1}));
+        this.trackEvent('promo_rejected',{promo_code:code,subtotal:T.subtotal,reason:(row&&row.message)||'invalid'});
+        return;
+      }
+      this.setState(st=>({promoBusy:false,promoStatus:'success',promoInput:row.code||code,promoMessage:row.message||'Beneficio aplicado correctamente.',appliedPromo:row,promoOpen:true,promoAnimKey:st.promoAnimKey+1,totalKey:st.totalKey+1}));
+      this.trackEvent('promo_applied',{promo_code:row.code||code,promo_label:row.label||null,subtotal:T.subtotal,discount:Number(row.discount_amount||0),final_total:Number(row.final_total||T.subtotal)});
+      this.showToast('🎉 Descuento aplicado');
     }catch(e){console.error('validate_promo failed',e);this.setState(st=>({promoBusy:false,promoStatus:'error',promoMessage:'No pudimos validar el código. Revisa tu conexión e inténtalo de nuevo.',appliedPromo:null,promoAnimKey:st.promoAnimKey+1}));}
   }
   removePromoCode(){const p=this.state.appliedPromo,T=this.totals();if(p)this.trackEvent('promo_removed',{promo_code:p.code||null,discount:T.discount,subtotal:T.subtotal});this.setState(st=>({appliedPromo:null,promoStatus:'idle',promoMessage:'',promoInput:'',promoAnimKey:st.promoAnimKey+1,totalKey:st.totalKey+1}));}

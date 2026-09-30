@@ -362,7 +362,15 @@ async function loadList(){
 }
 async function loadDetail(id){
   selectedId=id;document.getElementById('detail').innerHTML='<div class="empty">Cargando…</div>';document.getElementById('reloadDetail').classList.remove('hidden');
-  try{selectedDetail=await rpc('cumbre_crm_detail_v2',{p_id:id});renderDetail(selectedDetail);document.querySelectorAll('.row').forEach(r=>r.classList.toggle('active',r.dataset.id===id))}
+  try{
+    const [detail,bookingContext]=await Promise.all([
+      rpc('cumbre_crm_detail_v2',{p_id:id}),
+      rpc('cumbre_booking_context_v1',{p_solicitud_id:id})
+    ]);
+    selectedDetail={...detail,bookingContext};
+    renderDetail(selectedDetail);
+    document.querySelectorAll('.row').forEach(r=>r.classList.toggle('active',r.dataset.id===id));
+  }
   catch(e){document.getElementById('detail').innerHTML='<div class="error">'+esc(e.message)+'</div>'}
 }
 function groupClientNotesHtml(s){
@@ -388,6 +396,64 @@ function attributionInfo(s){
     referrer:last.referrer_domain||'—',
     first:first.source||'—'
   };
+}
+function bookingStatusLabel(v){return ({hold:'Apartado',confirmed:'Confirmado',cancelled:'Cancelado',completed:'Completado'})[v]||v||'—'}
+function bookingSectionHtml(ctx,o){
+  if(!ctx||(!ctx.hospedaje&&!ctx.booking))return '';
+  const booking=ctx.booking;
+  if(booking){
+    const active=(booking.occupancies||[]).filter(x=>x.status!=='released');
+    const resources=active.length
+      ?active.map(x=>'<div class="mini"><label>'+esc(x.code)+'</label><div>'+esc(x.name)+' · '+esc(x.quantity)+' '+(Number(x.quantity)===1?'unidad':'unidades')+'</div></div>').join('')
+      :'<div class="notice">La reservación existe, pero no tiene ocupaciones activas.</div>';
+    const canCancel=['hold','confirmed'].includes(booking.status);
+    return '<div class="section"><h3>Inventario de hospedaje</h3>'+
+      '<div class="notice"><b>Booking '+esc(bookingStatusLabel(booking.status))+'</b> · '+dateMx(booking.check_in)+' → '+dateMx(booking.check_out)+'</div>'+
+      '<div class="cards2">'+resources+'</div>'+
+      (canCancel?'<button id="cancelBookingBtn" class="btn secondary">Cancelar reserva y liberar inventario</button>':'')+
+    '</div>';
+  }
+
+  if(!ctx.booking_required){
+    return '<div class="section"><h3>Inventario de hospedaje</h3><div class="notice">Este hospedaje no requiere bloquear inventario físico administrado por el Booking Engine.</div></div>';
+  }
+
+  const availability=ctx.availability?.resources||[];
+  const required=ctx.required_resources||[];
+  const legacyReserved=['reservado','completado'].includes(o?.estado_comercial);
+  let body='';
+
+  if(ctx.resource_type==='camping'){
+    let ready=true;
+    body=required.map(req=>{
+      const a=availability.find(x=>x.code===req.code);
+      const need=Number(req.quantity||0),left=Number(a?.available_units||0);
+      if(!a||left<need)ready=false;
+      return '<div class="mini"><label>'+esc(req.code)+'</label><div>'+need+' tienda(s) requeridas · '+left+' disponibles</div></div>';
+    }).join('');
+    if(!required.length){ready=false;body='<div class="error">No se encontró renta de casas de campaña en la cotización.</div>'}
+    return '<div class="section"><h3>Asignación de inventario</h3>'+
+      (legacyReserved?'<div class="error"><b>Reserva histórica sin inventario asignado.</b> Asigna las casas de campaña para blindar disponibilidad.</div>':'')+
+      '<div class="cards2">'+body+'</div>'+
+      '<div style="font-size:12px;color:var(--muted);margin:10px 0">Estancia: '+dateMx(ctx.check_in)+' → '+dateMx(ctx.check_out)+'</div>'+
+      '<button id="confirmBookingBtn" class="btn orange" '+(ready?'':'disabled')+'>Confirmar reserva e inventario</button>'+
+    '</div>';
+  }
+
+  const qty=Math.max(1,Number(required?.[0]?.quantity||1));
+  const options=availability.map(r=>
+    '<label style="display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:11px;margin:8px 0;'+(!r.available?'opacity:.55':'')+'">'+
+      '<input class="booking-resource-check" type="checkbox" data-code="'+esc(r.code)+'" '+(!r.available?'disabled':'')+'>'+
+      '<span><b>'+esc(r.name)+'</b><small style="display:block;color:var(--muted);margin-top:3px">'+esc(r.code)+' · '+(r.available?'Disponible':'No disponible')+' · hasta '+esc(r.capacity_people||'—')+' personas</small></span>'+
+    '</label>'
+  ).join('');
+
+  return '<div class="section"><h3>Asignación de inventario</h3>'+
+    (legacyReserved?'<div class="error"><b>Reserva histórica sin unidad asignada.</b> Selecciona la unidad física para incorporarla al Booking Engine.</div>':'')+
+    '<div class="notice">Selecciona '+qty+' '+(qty===1?'unidad':'unidades')+' para '+dateMx(ctx.check_in)+' → '+dateMx(ctx.check_out)+'.</div>'+
+    (options||'<div class="error">No hay unidades configuradas para este hospedaje.</div>')+
+    '<button id="confirmBookingBtn" class="btn orange" data-required="'+qty+'">Confirmar reserva e inventario</button>'+
+  '</div>';
 }
 function renderDetail(d){
   const s=d.solicitud,o=d.operacion||{},items=d.quote_items||[],ev=d.seguimiento||[],attr=attributionInfo(s);
@@ -416,6 +482,7 @@ function renderDetail(d){
     '</div><div class="actions"><a class="linkbtn" target="_blank" href="'+wa+'">Abrir WhatsApp</a>'+(s.email?'<a class="linkbtn" href="mailto:'+encodeURIComponent(s.email)+'">Escribir correo</a>':'')+'</div></div>'+
     '<div class="section"><h3>Aventura solicitada</h3>'+services+'</div>'+
     groupClientNotesHtml(s)+
+    bookingSectionHtml(d.bookingContext,o)+
     '<div class="section"><h3>Gestión comercial</h3>'+
       '<div class="form-grid">'+
         (s.flujo==='grupal'?'<div class="full"><label class="label" for="dFechaVisita">Fecha de visita del grupo</label><input id="dFechaVisita" class="field" type="date" value="'+esc(s.fecha_visita||'')+'"><label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px"><input id="dFechaSinDefinir" type="checkbox" '+(!s.fecha_visita?'checked':'')+'> Fecha por definir</label><small style="display:block;color:var(--muted);margin-top:6px">Puedes dar seguimiento sin fecha. Para confirmar la reserva, captura la fecha acordada.</small></div>':'')+
@@ -441,10 +508,72 @@ function renderDetail(d){
       '<div class="attr-item"><span>Referrer</span><b>'+esc(attr.referrer)+'</b></div>'+
     '</div><div style="font-size:11px;color:var(--muted);margin-top:10px">Folio de cotización: '+esc(d.quote?.folio||'—')+'</div></div>';
   document.getElementById('saveDetail').onclick=saveDetail;
+  const confirmBookingBtn=document.getElementById('confirmBookingBtn');
+  if(confirmBookingBtn)confirmBookingBtn.onclick=confirmBookingFromDetail;
+  const cancelBookingBtn=document.getElementById('cancelBookingBtn');
+  if(cancelBookingBtn)cancelBookingBtn.onclick=cancelBookingFromDetail;
   const visitDate=document.getElementById('dFechaVisita'),unknownDate=document.getElementById('dFechaSinDefinir');
   if(visitDate&&unknownDate){visitDate.onchange=()=>{unknownDate.checked=!visitDate.value};unknownDate.onchange=()=>{if(unknownDate.checked)visitDate.value='';else visitDate.focus()}}
 }
 function localToIso(v){return v?new Date(v).toISOString():null}
+async function confirmBookingFromDetail(){
+  const ctx=selectedDetail?.bookingContext;
+  if(!ctx||!ctx.booking_required)throw new Error('Esta solicitud no requiere inventario administrado.');
+  const btn=document.getElementById('confirmBookingBtn');
+  if(btn)btn.disabled=true;
+  try{
+    let resources=[];
+    if(ctx.resource_type==='camping'){
+      resources=(ctx.required_resources||[]).map(x=>({code:x.code,quantity:Number(x.quantity||1)}));
+      if(!resources.length)throw new Error('No se identificó la renta de casas de campaña.');
+      const availability=ctx.availability?.resources||[];
+      for(const req of resources){
+        const a=availability.find(x=>x.code===req.code);
+        if(!a||Number(a.available_units||0)<req.quantity)throw new Error('No hay suficiente inventario disponible de '+req.code+'.');
+      }
+    }else{
+      const required=Math.max(1,Number(ctx.required_resources?.[0]?.quantity||1));
+      const checked=[...document.querySelectorAll('.booking-resource-check:checked')].map(x=>x.dataset.code);
+      if(checked.length!==required)throw new Error('Selecciona exactamente '+required+' '+(required===1?'unidad':'unidades')+'.');
+      resources=checked.map(code=>({code,quantity:1}));
+    }
+    const note=(document.getElementById('dNota')?.value||'').trim()||'Reserva confirmada con inventario asignado desde CRM.';
+    const result=await rpc('cumbre_booking_confirm_v1',{
+      p_solicitud_id:selectedId,
+      p_revision:selectedDetail.solicitud.revision,
+      p_resources:resources,
+      p_check_in:ctx.check_in,
+      p_check_out:ctx.check_out,
+      p_nota:note,
+      p_action_key:uuid()
+    });
+    if(!result?.ok)throw new Error(result?.message||'No fue posible asignar el inventario.');
+    alert('Reserva e inventario confirmados.');
+    await Promise.all([loadDetail(selectedId),loadHome(),loadList()]);
+  }catch(e){alert(e.message)}
+  finally{if(btn)btn.disabled=false}
+}
+async function cancelBookingFromDetail(){
+  const ctx=selectedDetail?.bookingContext;
+  if(!ctx?.booking)return;
+  const reason=prompt('Motivo de cancelación y liberación de inventario:');
+  if(reason===null)return;
+  if(reason.trim().length<3){alert('Captura un motivo de al menos 3 caracteres.');return}
+  const btn=document.getElementById('cancelBookingBtn');
+  if(btn)btn.disabled=true;
+  try{
+    const result=await rpc('cumbre_booking_cancel_v1',{
+      p_solicitud_id:selectedId,
+      p_revision:selectedDetail.solicitud.revision,
+      p_reason:reason.trim(),
+      p_action_key:uuid()
+    });
+    if(!result?.ok)throw new Error('No fue posible cancelar la reservación.');
+    alert('Reserva cancelada e inventario liberado.');
+    await Promise.all([loadDetail(selectedId),loadHome(),loadList()]);
+  }catch(e){alert(e.message)}
+  finally{if(btn)btn.disabled=false}
+}
 async function saveDetail(){
   const b=document.getElementById('saveDetail'),msg=document.getElementById('saveMsg');b.disabled=true;msg.textContent='Guardando…';
   try{
@@ -458,6 +587,20 @@ async function saveDetail(){
       anticipo_pagado_mxn:Number(document.getElementById('dAnticipo').value||0),
       hora_llegada:document.getElementById('dHora').value||null
     };
+    const bookingCtx=selectedDetail.bookingContext||{};
+    const currentState=selectedDetail.operacion?.estado_comercial||'nuevo';
+    const activeBooking=bookingCtx.booking&&['hold','confirmed'].includes(bookingCtx.booking.status);
+    if(['reservado','completado'].includes(patch.estado_comercial)
+       && !['reservado','completado'].includes(currentState)
+       && bookingCtx.booking_required
+       && !bookingCtx.booking){
+      throw new Error('Este hospedaje requiere inventario. Usa “Confirmar reserva e inventario”.');
+    }
+    if(activeBooking
+       && patch.estado_comercial!==currentState
+       && !['reservado','completado'].includes(patch.estado_comercial)){
+      throw new Error('La reserva tiene inventario bloqueado. Usa “Cancelar reserva y liberar inventario”.');
+    }
     if(selectedDetail.solicitud.flujo==='grupal'){
       const unknown=document.getElementById('dFechaSinDefinir').checked;
       const visitDate=unknown?null:document.getElementById('dFechaVisita').value;
@@ -491,7 +634,7 @@ async function loadAgenda(){
   const start=document.getElementById('agendaStart').value,end=document.getElementById('agendaEnd').value;
   const includeQA=document.getElementById('agendaScope').value==='incluir';
   const [data,listData]=await Promise.all([
-    rpc('cumbre_crm_agenda_v3',{p_start:start,p_end:end,p_incluir_qa:includeQA}),
+    rpc('cumbre_crm_agenda_v4',{p_start:start,p_end:end,p_incluir_qa:includeQA}),
     rpc('cumbre_crm_list_v3',{p_search:'',p_estado:'',p_tipo:'',p_prioridad:'',p_incluir_qa:includeQA,p_offset:0})
   ]);
   const confirmed=data.rows||[],m=data.metrics||{};
@@ -502,6 +645,7 @@ async function loadAgenda(){
     ['Saldo confirmado por cobrar',money(m.saldo_por_cobrar_mxn),'money'],
     ['Grupos confirmados',m.grupos||0],
     ['Con alerta',m.reservas_con_alerta||0],
+    ['Sin inventario asignado',m.sin_inventario_asignado||0],
     ['Fechas tentativas',tentatives.length]
   ].map(x=>'<div class="metric '+(x[2]||'')+'"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');
 
@@ -513,7 +657,11 @@ async function loadAgenda(){
     groups[k].map(r=>'<div class="agenda-card">'+
       '<div class="time">'+esc(r.hora_llegada||'Por definir')+'</div>'+
       '<div><b>'+esc(r.nombre)+'</b><div style="font-size:12px;color:var(--muted);margin-top:4px">'+esc(r.folio)+' · '+esc(r.visitantes_total)+' visitantes</div></div>'+
-      '<div>'+stateBadge(r.estado_comercial)+'<div style="margin-top:5px;font-size:12px">'+esc(r.hospedaje||'Sin hospedaje')+'</div></div>'+
+      '<div>'+stateBadge(r.estado_comercial)+'<div style="margin-top:5px;font-size:12px">'+esc(r.hospedaje||'Sin hospedaje')+'</div>'+
+        (r.booking?.resources?.length
+          ?'<div style="margin-top:5px;font-size:11px;font-weight:800;color:var(--forest)">'+r.booking.resources.map(x=>esc(x.code)+(Number(x.quantity)>1?' ×'+esc(x.quantity):'')).join(' · ')+'</div>'
+          :r.booking_required?'<div class="warn" style="margin-top:5px">Sin inventario asignado</div>':'')+
+      '</div>'+
       '<div><b>'+money(r.saldo_pendiente_mxn)+'</b><div style="font-size:11px;color:var(--muted)">saldo confirmado</div>'+(r.alertas?.length?'<div class="warn">'+r.alertas.length+' alerta(s)</div>':'')+'</div>'+
     '</div>').join('')+'</div>'
   ).join(''):'<div class="agenda-empty"><b>No hay reservas confirmadas</b><span>En este rango todavía no existen compromisos confirmados por operación.</span></div>';

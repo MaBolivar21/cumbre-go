@@ -203,7 +203,7 @@ const SUPABASE_URL='https://xnztlanptbdgpdjhbnzv.supabase.co';
 const SUPABASE_KEY='sb_publishable_JcKnBtzboji75Em1M0wa8w_3_fb0LB3';
 const STATES=['nuevo','contactado','cotizado','esperando_pago','reservado','completado','no_concretado'];
 const STATE_LABEL={nuevo:'Nuevo',contactado:'Contactado',cotizado:'Cotizado',esperando_pago:'Esperando pago',reservado:'Reservado',completado:'Completado',no_concretado:'No concretado'};
-let token=null, refreshToken=null, currentUser=null, rows=[], selectedId=null, selectedDetail=null, quickListFilter='';
+let token=null, refreshToken=null, currentUser=null, rows=[], selectedId=null, selectedDetail=null, quickListFilter='', opsHealth=null;
 
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function money(v){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(Number(v||0))}
@@ -333,7 +333,11 @@ function renderHomeInsights(list){
 
 async function loadHome(){
   const includeQA=document.getElementById('homeScope')?.value==='incluir';
-  const data=await rpc('cumbre_crm_list_v3',{p_search:'',p_estado:'',p_tipo:'',p_prioridad:'',p_incluir_qa:includeQA,p_offset:0});
+  const [data,health]=await Promise.all([
+    rpc('cumbre_crm_list_v3',{p_search:'',p_estado:'',p_tipo:'',p_prioridad:'',p_incluir_qa:includeQA,p_offset:0}),
+    rpc('cumbre_ops_health_v1',{})
+  ]);
+  opsHealth=health||null;
   rows=data.rows||[];
   document.getElementById('metrics').innerHTML=metricsHtml(data.metrics||{});
   renderHomeInsights(rows);
@@ -344,12 +348,29 @@ async function loadHome(){
   document.getElementById('priorityList').innerHTML=pri.length?pri.map(rowHtml).join(''):'<div class="empty">No hay pendientes prioritarios.</div>';
   bindRows(document.getElementById('priorityList'));
   const m=data.metrics||{};
+  const hs=opsHealth?.summary||{};
+  const hx=opsHealth?.exceptions||[];
+  const critical=hx.filter(x=>x.severity==='critical');
+  const warnings=hx.filter(x=>x.severity==='warning');
+  const healthHtml=
+    '<div class="section" style="margin-top:14px"><h3>Salud operativa</h3>'+
+      '<div class="cards2">'+
+        '<div class="mini"><label>Hospedaje sin booking</label><div>'+esc(hs.lodging_without_booking||0)+'</div></div>'+
+        '<div class="mini"><label>Correos sin cierre</label><div>'+esc(hs.confirmation_email_not_closed||0)+'</div></div>'+
+        '<div class="mini"><label>Correos estancados</label><div>'+esc(hs.email_queue_stale||0)+'</div></div>'+
+        '<div class="mini"><label>Fallos de correo</label><div>'+esc(hs.email_failed||0)+'</div></div>'+
+      '</div>'+
+      (critical.length?'<div class="error"><b>'+critical.length+' incidencia(s) crítica(s)</b><br>'+critical.slice(0,3).map(x=>esc(x.folio)+': '+esc(x.detail)).join('<br>')+'</div>':'')+
+      (warnings.length?'<div class="notice"><b>'+warnings.length+' advertencia(s)</b><br>'+warnings.slice(0,5).map(x=>esc(x.folio)+': '+esc(x.detail)).join('<br>')+'</div>':'')+
+      (!critical.length&&!warnings.length?'<div class="notice"><b>Sin excepciones operativas activas.</b></div>':'')+
+    '</div>';
   document.getElementById('homeSummary').innerHTML=
     '<div class="cards2">'+
     '<div class="mini"><label>Leads abiertos</label><div>'+((m.solicitudes_nuevas||0)+(m.esperando_pago||0))+'</div></div>'+
     '<div class="mini"><label>Dinero potencial</label><div>'+money(m.pipeline_potencial_mxn)+'</div></div>'+
     '</div><p style="color:var(--muted);line-height:1.55">La prioridad es trabajar cada lead hasta definir una siguiente acción. “Reservado” solo debe usarse cuando administración haya confirmado la reserva; el anticipo pagado es dinero realmente validado, no intención del cliente.</p>'+
-    '<div class="notice" style="margin-top:12px">Vista actual: <b>'+(includeQA?'Operación + QA/demo':'Solo operación real')+'</b>. Las pruebas pueden incluirse para validar el sistema sin mezclarlas con resultados reales.</div>';
+    '<div class="notice" style="margin-top:12px">Vista actual: <b>'+(includeQA?'Operación + QA/demo':'Solo operación real')+'</b>. Las pruebas pueden incluirse para validar el sistema sin mezclarlas con resultados reales.</div>'+
+    healthHtml;
 }
 async function loadList(){
   const includeQA=document.getElementById('qaFilter').value==='incluir';
